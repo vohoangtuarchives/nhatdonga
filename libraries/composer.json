@@ -1,0 +1,19 @@
+{
+    "require": {
+        "scssphp/scssphp": "^1.11",
+        "symfony/var-dumper": "*",
+        "illuminate/container": "*",
+        "illuminate/support": "*",
+        "illuminate/config": "*",
+        "illuminate/cache": "*",
+        "illuminate/filesystem": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "NN\\": "class/"
+        },
+        "files": [
+            "functions.php"
+        ]
+    }
+}
