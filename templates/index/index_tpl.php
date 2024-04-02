@@ -1,10 +1,29 @@
+<div class="welcome block-padding">
+    <div class="container">
+        <div class="wlcm__left">
+            <img data-src="<?=THUMBS . '/564x425x2/' . UPLOAD_NEWS_L . $welcome['photo']?>" alt="<?=$welcome["desc$lang"]?>" class="lazy">
+            <span class="seperator">WELCOME</span>
+        </div>
+        <div class="wlcm__right">
+            <p class="name"><?=$welcome["name$lang"]?></p>
+            <p class="descr"><?=$welcome["desc$lang"]?></p>
+            <div class="content"><?=$func->decodeHtmlChars($welcome["content$lang"])?></div>
+            <a class="more" href="gioi-thieu"><?=xemthem?></a>
+        </div>
+    </div>
+</div>
+
 <div class="block-sanpham block-padding">
     <div class="container ">
         <div class="title-main"><span>SẢN PHẨM CỦA CHÚNG TÔI</span></div>
-        <div class="w-100">
+        <div class="w-100 d-flex justify-content-center align-items-center flex-wrap mb-4">
+            <span class="btn btn-sm btn-tab active">TẤT CẢ</span>
 			<?php foreach ($indexProductListsNoiBat as $k => $item) { ?>
-			        <span class="btn btn-sm"><?=$item["name$lang"]?></span>
+			        <span class="btn btn-sm btn-tab" data-list="<?=$item["id"]?>"><?=$item["name$lang"]?></span>
 			<?php } ?>
+            <div class="tab-content paging-product-category mt-4">
+                    <div class="paging-product"></div>
+            </div>
         </div>
     </div>
 </div>

@@ -127,6 +127,13 @@ NN_FRAMEWORK.Pagings = function () {
         var _cat = $(this).data("cat");
         loadPaging("api/product.php?idList=" + _list + "&idCat=" + _cat + "&perpage=8", ".paging-product-category-" + _list, true);
     });
+
+    $(document).on("click", ".btn-tab", function () {
+        $(".btn-tab.active").removeClass("active");
+        $(this).addClass("active");
+        var _list = $(this).data("list");
+        loadPaging("api/product.php?idList=" + _list  + "&perpage=8", ".paging-product-category" , true);
+    });
 };
 
 /* Ticker scroll */

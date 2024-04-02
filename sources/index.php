@@ -18,7 +18,6 @@ $popup = $cache->get("select name$lang, photo, link from #_photo where type = ? 
 
 $slider = $cache->get("select name$lang, photo, link from #_photo where type = ? and find_in_set('hienthi',status) order by numb desc", array('slide'), 'result', 7200);
 $sliderGioithieu = $cache->get("select name$lang, photo, link from #_photo where type = ? and find_in_set('hienthi',status) order by numb,id desc", array('gioi-thieu'), 'result', 7200);
-$sliderFooter = $cache->get("select name$lang, photo, link from #_photo where type = ? and find_in_set('hienthi',status) order by numb desc", array('slide-footer'), 'result', 7200);
 
 
 $brand = $cache->get("select name$lang, slugvi, slugen, id, photo from #_product_brand where type = ? and find_in_set('hienthi',status) order by numb,id desc", array('san-pham'), 'result', 7200);
@@ -44,7 +43,7 @@ $khachhangNews = $cache->get("select name$lang, slugvi, slugen, desc$lang, date_
 $gallery = $cache->get("select * from #_product where type=? and find_in_set('hienthi',status) order by numb,id desc limit 8", array('thu-vien-anh'), 'result', 7200);
 $indexServices = $cache->get("select * from #_news where type = ? and find_in_set('noibat',status) and find_in_set('hienthi',status) order by numb,id desc", array('dich-vu'), 'result', 7200);
 
-$gioithieuIndex = $cache->get("SELECT * from table_static where type=? and find_in_set('hienthi',status) limit 0,1", array('gioi-thieu'), 'fetch', 7200);
+$welcome = $cache->get("SELECT * from table_static where type=? and find_in_set('hienthi',status) limit 0,1", array('gioi-thieu'), 'fetch', 7200);
 
 /* SEO */
 
