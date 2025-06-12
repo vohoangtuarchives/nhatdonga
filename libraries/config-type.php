@@ -150,7 +150,7 @@ $config['contact']['check'] = array("hienthi" => "Xác nhận");
 
 /* Quản lý địa điểm */
 
-$config['places']['active'] = false;
+$config['places']['active'] = true;
 
 $config['places']['check_city'] = array("hienthi" => "Hiển thị");
 
@@ -174,7 +174,7 @@ $config['onesignal'] = false;
 
 /* Quản lý giỏ hàng */
 
-$config['order']['active'] = false;
+$config['order']['active'] = true;
 
 
 
