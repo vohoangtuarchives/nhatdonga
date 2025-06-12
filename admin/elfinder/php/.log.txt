@@ -1,0 +1,154 @@
+mkdir [24.10 14:09]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files
+
+mkfile [24.10 14:15]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/NewFile.jpeg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [24.10 14:16]
+
+upload [24.10 15:46]
+
+upload [24.10 15:08]
+
+upload [24.10 15:09]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/1.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [24.10 15:56]
+	WARNING: errUploadFile blob errUploadTransfer 3
+
+upload [25.10 09:28]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/5f7d7e694d82ebdcb29356.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/5fc5599d6a76cc28956759.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/6c1faa96bf7d1923406c21.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/6f9f79116cfacaa493eb25.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/6fd7a358b6b310ed49a227.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [25.10 09:28]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/7fa2a52db0c616984fd724.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/8f51a31f399480cad98520.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/9a4bc1c3d42872762b3923.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/9e169ec30348ba16e35922.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/9f8e860693ed35b36cfc29.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [25.10 09:28]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/0f26ef5ba5b003ee5aa177.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/2ab7e9c1a32a05745c3b79.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/3b8c5c5715bcb3e2eaad74.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/3bb1a373ea984cc6158975.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/3dad86cbca206c7e353163.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/4e8cb8ccf6275079093668.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [25.10 09:32]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/785a6cdff6544f0a164517.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/808d7cfae071592f006027.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/909c4e2d01c6a798fed769.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/1111.PNG
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/5030bfe9f202545c0d1365.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [25.10 09:32]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/16f7448e0d65ab3bf27476.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/54fa25d0ba5b03055a4a21.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/68bfb237a7dc018258cd28.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/80a44464088faed1f79e61.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/182d17b98d32346c6d2315.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/356ed043c5a863f63ab94.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/441f6765298e8fd0d69f67.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [25.10 09:33]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/6731d6b9c352650c3c4319.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/56427ebce3375a69032625.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/79938417c8fc6ea237ed60.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/415432627a89dcd7859873.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/441847780d93abcdf28280.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/a04d35907d7bdb25826a71.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [25.10 09:37]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/cham-soc-da-nhu-gai-han.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/d5b2bcbff654500a094578.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/d5034bb80653a00df94264.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/e7ac3b812e6a8834d17b5.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/e7ed118c22678439dd7658.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [25.10 09:37]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/a42d1aa50f4ea910f05f26.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/a491aecb34408d1ed45119.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/a36804da9e51270f7e4018.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/ab93461b53f0f5aeace130.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/b1.PNG
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/b4.PNG
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/b204a68cb36715394c7620.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/bc1.PNG
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/bc2.PNG
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/BC3.PNG
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/bea932eeae65173b4e7426.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [25.10 09:38]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/bs-huong.png
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/bs-quynh-nhu.png
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/c3aeabaf98443e1a675557.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/c87bbabd27369e68c72724.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/c685e7077d8cc4d29d9d16.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/cab6d43ec1d5678b3ec422.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/ck.PNG
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [25.10 09:38]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/ht.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/ht1.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/ht4.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/idn.PNG
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/image-6311.png
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [25.10 09:40]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/e185f1a6e44d42131b5c6.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/ee9a54a91c42ba1ce35372.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/f60e300d7ce6dab883f762.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/f352ec43a2a804f65db966.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/f2824b40d6cb6f9536da23.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/f90116ba9131286f712028.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/fb.PNG
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/fc14bba4f44f52110b5e70.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/ha1.PNG
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+mkdir [25.10 14:08]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/.trash/NewFolder
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/.trash
+
+paste [25.10 14:08]
+	REMOVED: 
+	REMOVED: 
+	REMOVED: 
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/.trash/NewFolder/ht.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/.trash/NewFolder/ht1.jpg
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/.trash/NewFolder/ht4.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/.trash/NewFolder
+
+upload [26.10 10:31]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/dieu-tri-mun.png
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [08.11 18:53]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/MÔI THÂM.jpeg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [08.11 18:02]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/khu-tham-moi.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+
+upload [08.11 18:41]
+	ADDED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder/hinh-anh-phun-moi-khu-tham-hcm.jpg
+	CHANGED: /home/trungtam6703/domains/trungtamdalieusaigon.vn/public_html/admin/elfinder/files/NewFolder
+

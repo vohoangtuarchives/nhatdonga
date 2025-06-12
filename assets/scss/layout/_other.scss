@@ -1,0 +1,153 @@
+
+
+#show_popup {
+  padding: 0 !important;
+  @include Responsive($lg) {
+    transform: scale(0.8);
+  }
+  @include Responsive($md) {
+    transform: scale(0.7);
+  }
+  @include Responsive($sm) {
+    transform: scale(0.6);
+  }
+}
+.wow {
+  visibility: hidden;
+}
+.noidung iframe,
+.noidung object {
+  max-width: 100% !important;
+}
+
+.noidung table {
+  width: 100%;
+}
+
+.noidung *:not(iframe):not(object) {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.flex-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex !important;
+  flex-wrap: wrap;
+}
+
+.text-split {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+}
+
+/* Scale IMG */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-scale {
+  img {
+    transition: 0.3s !important;
+  }
+  &:hover img {
+    transform: scale(1.15);
+  }
+}
+.hover-rotateZ {
+  img {
+    transition: 0.8s !important;
+  }
+  &:hover img {
+    transform: rotateZ(30deg)
+  }
+}
+.hover-rotateY {
+  img {
+    transition: 0.8s !important;
+  }
+  &:hover img {
+    transform: rotateY(180deg)
+  }
+}
+
+.bg {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.yt {
+  position: relative;
+  aspect-ratio: 139 / 106;
+}
+
+
+/* Transition All */
+.transition {
+  -webkit-transition: 0.3s ease-out;
+  -moz-transition: 0.3s ease-out;
+  -o-transition: 0.3s ease-out;
+  transition: 0.3s ease-out;
+}
+
+
+/* General */
+
+
+/* Hidden Google Captcha */
+.grecaptcha-badge {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  visibility: hidden !important;
+  overflow: hidden;
+}
+
+/* Hidden Check Grammar Coccoc */
+coccocgrammar {
+  display: none;
+}
+
+/* Scroll Top */
+.scrollToTop {
+  width: 41px;
+  height: 41px;
+  text-align: center;
+  font-weight: bold;
+  color: #444;
+  text-decoration: none;
+  position: fixed;
+  bottom: 65px;
+  right: 25px;
+  display: none;
+  z-index: 10;
+  cursor: pointer;
+}
+.modal-quickiew{
+  max-width: 1000px !important;
+}
+
+.fw-bold{
+  font-weight: bold;
+}
+.ft-italic{
+  font-style: italic;
+}
+.slick-data{
+  display:none !important;
+  &.loaded{
+    display: block !important;
+  }
+  &.slick-dotted{
+    margin-bottom: 0;
+  }
+}

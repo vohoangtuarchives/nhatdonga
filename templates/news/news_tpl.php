@@ -1,1 +1,21 @@
-<div class="row">    <div class="col-md-12">        <div class="title-main"><span><?= (!empty($titleCate)) ? $titleCate : @$titleMain ?></span></div>        <div class="content-main row">            <?php if (!empty($news)) {                foreach ($news as $k => $item) {                    include TEMPLATE . "components/news_item.php";                }            } else { ?>                <div class="col-12">                    <div class="alert alert-warning w-100" role="alert">                        <strong><?= khongtimthayketqua ?></strong>                    </div>                </div>            <?php } ?>            <div class="clear"></div>            <div class="col-12">                <div class="pagination-home w-100"><?= (!empty($paging)) ? $paging : '' ?></div>            </div>        </div>    </div>    <?php /* <div class="col-md-4 content1" id="right-nav-navigation">        <div class="mb-4">            <div class="block-title __border text-center mb-4">                <h3>                    <span>DANH MỤC SẢN PHẨM</span>                </h3>            </div>            <?php if (count($splist)) { ?>                <ul class="cateUl">                    <?php foreach ($splist as $klist => $vlist) {                        $spcat = $d->rawQuery("select name$lang, slugvi, slugen, id from #_product_cat where id_list = ? and find_in_set('hienthi',status) order by numb,id desc", array($vlist['id'])); ?>                        <li class="col-auto">                            <a class="has-child transition" title="<?= $vlist['name' . $lang] ?>" href="<?= $vlist[$sluglang] ?>"><?= $vlist['name' . $lang] ?></a>                        </li>                    <?php } ?>                </ul>            <?php } ?>        </div>        <div class="mb-4">            <div class="block-title __border text-center mb-4">                <h3>                    <span>DỊCH VỤ</span>                </h3>            </div>            <?php foreach ($newsDichvu as $k => $item) {                include TEMPLATE . "components/news_item.php";            } ?>        </div>        <div class="mb-4">            <div class="block-title __border text-center mb-4">                <h3>                    <span>TIN TỨC</span>                </h3>            </div>            <?php foreach ($newsTinTuc as $k => $item) {                include TEMPLATE . "components/news_item.php";            } ?>        </div>    </div> */ ?></div>
+<div class="section-main">
+    <div class="wrapper">
+        <div class="content-main">
+            <?php if (!empty($news)) { ?>
+                <?= $custom->titleContainer($titleMain) ?>
+                <div class="row row-news">
+                    <?php foreach ($news as $k => $v) {
+                        echo $custom->news($v, "col-news col-xl-4 col-lg-3 col-md-6 col-12");
+                    } ?>
+                </div>
+            <?php } else { ?>
+                <div class="alert alert-warning w-100" role="alert">
+                    <strong><?= khongtimthayketqua ?></strong>
+                </div>
+            <?php } ?>
+            <div class="w-100">
+                <div class="pagination-home w-100"><?= (!empty($paging)) ? $paging : '' ?></div>
+            </div>
+        </div>
+    </div>
+</div>

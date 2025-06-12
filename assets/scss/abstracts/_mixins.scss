@@ -1,0 +1,97 @@
+// $SM: 577px;
+// $MD: 769px;
+// $LG: 993px;
+
+// media queries
+
+// @mixin Responsive($canvas) {
+//     @if $canvas == SM {
+//         @media screen and (max-width: $SM) {
+//             @content;
+//         }
+//     } @else if $canvas == MD {
+//         @media screen and (max-width: $MD) {
+//             @content;
+//         }
+//     } @else if $canvas == LG {
+//         @media screen and (max-width: $XL) {
+//             @content;
+//         }
+//     }
+// }
+@mixin Responsive($with) {
+    @media screen and (max-width: $with) {
+        @content;
+    }
+}
+@mixin Responsive_Min($with) {
+    @media screen and (min-width: $with) {
+        @content;
+    }
+}
+@mixin Column($value){
+    flex:0 0 #{$value};
+    -ms-flex:0 0 #{$value};
+    max-width: #{$value};
+}
+@mixin Column_2($value){
+    flex:0 0 calc(100% - #{$value});
+    -ms-flex:0 0 calc(100% - #{$value});
+    max-width: calc(100% - #{$value});
+}
+@mixin Column_Per($value,$wrapper:$container) {
+    $percent:percentage($value/$wrapper);
+    flex: 0 0 $percent;
+    -ms-flex: 0 0 $percent;
+    max-width: $percent;
+}
+@mixin rgba-bg($color,$opacity:1){
+    background-color:rgba($color: $color, $alpha: $opacity)
+}
+@mixin rgba-border($position,$color,$opacity:1){
+    border-#{$position}-color:rgba($color: $color, $alpha: $opacity)
+}
+// =============================================================================
+// Font Face
+// =============================================================================
+
+// @mixin font-face($name, $path, $weight: null, $style: null, $exts: eot woff2 woff ttf svg) {
+//     $src: null;
+
+//     $extmods: (
+//         eot: "?",
+//         svg: "#" + str-replace($name, " ", "_"),
+//     );
+
+//     $formats: (
+//         otf: "opentype",
+//         ttf: "truetype",
+//     );
+
+//     @each $ext in $exts {
+//         $extmod: if(map-has-key($extmods, $ext), $ext + map-get($extmods, $ext), $ext);
+//         $format: if(map-has-key($formats, $ext), map-get($formats, $ext), $ext);
+//         $src: append($src, url(quote($path + "." + $extmod)) format(quote($format)), comma);
+//     }
+
+//     @font-face {
+//         font-family: quote($name);
+//         font-style: $style;
+//         font-weight: $weight;
+//         src: $src;
+//         font-display: swap;
+//     }
+// }
+@mixin font-face($family,$weight:normal,$style:normal) {
+    @font-face {
+        font-family: $family;
+        src: url("../fonts/" + $family + ".eot");
+        src: url("../fonts/" + $family + ".eot?#iefix") format("embedded-opentype"),
+            url("../fonts/" + $family +".woff2") format("woff2"), url("../fonts/" + $family +".woff") format("woff"),
+            url("../fonts/" + $family + ".ttf") format("truetype"),
+            url("../fonts/" + $family + ".svg#"+$family) format("svg");
+        font-weight: $weight;
+        font-style: $style;
+        font-display: swap;
+    }
+}

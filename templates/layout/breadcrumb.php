@@ -1,1 +1,1 @@
-<div class="breadCrumbs">    <div class="container"><?= $breadcrumbs ?></div></div>
+<div class="breadCrumbs"><div class="wrapper"><?=$breadcrumbs?></div></div>

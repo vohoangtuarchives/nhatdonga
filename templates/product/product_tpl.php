@@ -1,1 +1,39 @@
-<div class="title-main"><span><?= (!empty($titleCate)) ? $titleCate : @$titleMain ?></span></div><div class="content-main w-clear">    <div class="grid-page">        <?php if (!empty($product)) {            echo '<div class="row">';            foreach ($product as $k => $item) {                echo '<div class="col-lg-3 col-md-4 col-6">';                include TEMPLATE . "components/product_item.php";                echo '</div>';            }            echo '</div>';        } else { ?>            <div class="col-12">                <div class="alert alert-warning w-100" role="alert">                    <strong><?= khongtimthayketqua ?></strong>                </div>            </div>        <?php } ?>        <div class="clear"></div>        <div class="col-12">            <div class="pagination-home w-100"><?= (!empty($paging)) ? $paging : '' ?></div>        </div>    </div></div>
+<div class="section-main">
+    <div class="wrapper">
+        <div class="content-main">
+            <?php if (!empty($product)) { ?>
+                <?php if ($source == 'product') { ?>
+                    <?php $titleProduct = '';
+                    if ($idl != '') {
+                        $titleProduct = $productList['name' . $lang];
+                    } elseif ($idc != '') {
+                        $titleProduct = $productCat['name' . $lang];
+                    } elseif ($idi != '') {
+                        $titleProduct = $productItem['name' . $lang];
+                    } elseif ($ids != '') {
+                        $titleProduct = $productSub['name' . $lang];
+                    } elseif ($idb != '') {
+                        $titleProduct = $productBrand['name' . $lang];
+                    } else {
+                        $titleProduct = $titleMain;
+                    } ?>
+                    <?= $custom->titleContainer($titleProduct) ?>
+                <?php } else { ?>
+                    <?= $custom->titleContainer($titleMain) ?>
+                <?php } ?>
+                <div class="row row-product">
+                    <?php foreach ($product as $k => $v) {
+                        echo $custom->products($v);
+                    } ?>
+                </div>
+                <div class="w-100">
+                    <div class="pagination-home w-100"><?= (!empty($paging)) ? $paging : '' ?></div>
+                </div>
+            <?php } else { ?>
+                <div class="alert alert-warning w-100" role="alert">
+                    <strong><?= khongtimthayketqua ?></strong>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
+</div>

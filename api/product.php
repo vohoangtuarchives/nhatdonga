@@ -1,1 +1,44 @@
-<?phpinclude "config.php";use NN\PaginationsAjax;/* Paginations */$pagingAjax = new PaginationsAjax();$pagingAjax->perpage = (!empty($_GET['perpage'])) ? htmlspecialchars($_GET['perpage']) : 1;$eShow = htmlspecialchars($_GET['eShow']);$idList = (!empty($_GET['idList'])) ? htmlspecialchars($_GET['idList']) : 0;$idCat = (!empty($_GET['idCat'])) ? htmlspecialchars($_GET['idCat']) : 0;$p = (!empty($_GET['p'])) ? htmlspecialchars($_GET['p']) : 1;$start = ($p - 1) * $pagingAjax->perpage;$pageLink = "api/product.php?perpage=" . $pagingAjax->perpage;$tempLink = "";$where = "";$params = array();$_type = (!empty($_GET['type'])) ? htmlspecialchars($_GET['type']) : 'san-pham';/* Math url */if ($idList) {    $tempLink .= "&idList=" . $idList;    $where .= " and id_list = ?";    array_push($params, $idList);}if ($idCat) {    $tempLink .= "&idCat=" . $idCat;    $where .= " and id_cat = ?";    array_push($params, $idCat);}$tempLink .= "&p=";$pageLink .= $tempLink;/* Get data */$sql = "select * from #_product where type='"    . $_type . "' $where and find_in_set('noibat',status) and find_in_set('hienthi',status) order by numb,id desc";$sqlCache = $sql . " limit $start, $pagingAjax->perpage";$items = $cache->get($sqlCache, $params, 'result', 7200);/* Count all data */$countItems = count($cache->get($sql, $params, 'result', 7200));/* Get page result */$pagingItems = $pagingAjax->getAllPageLinks($countItems, $pageLink, $eShow);?><?php if ($countItems) { ?>    <div class="grid-page w-clear">        <div class="row">            <?php foreach ($items as $k => $item) {                echo '<div class="col-md-3 col-sm-6 col-6">';                include ROOT . "templates/components/product_item.php";                echo '</div>';            } ?>        </div>    </div>    <div class="pagination-ajax"><?= $pagingItems ?></div><?php } ?>
+<?php
+include "config.php";
+
+/* Paginations */
+include LIBRARIES . "class/class.PaginationsAjax.php";
+$pagingAjax = new PaginationsAjax();
+$pagingAjax->perpage = (!empty($_GET['perpage'])) ? htmlspecialchars($_GET['perpage']) : 1;
+$eShow = htmlspecialchars($_GET['eShow']);
+$idList = (!empty($_GET['idList'])) ? htmlspecialchars($_GET['idList']) : 0;
+$p = (!empty($_GET['p'])) ? htmlspecialchars($_GET['p']) : 1;
+$start = ($p - 1) * $pagingAjax->perpage;
+$pageLink = "api/product.php?perpage=" . $pagingAjax->perpage;
+$tempLink = "";
+$where = "";
+$params = array();
+
+/* Math url */
+if ($idList) {
+	$tempLink .= "&idList=" . $idList;
+	$where .= " and id_list = ?";
+	array_push($params, $idList);
+}
+$tempLink .= "&p=";
+$pageLink .= $tempLink;
+
+/* Get data */
+$sql = "select name$lang, slugvi, slugen, id, photo, regular_price, sale_price, discount, type from #_product where type='san-pham' $where and find_in_set('noibat',status) and find_in_set('hienthi',status) order by numb,id desc";
+$sqlCache = $sql . " limit $start, $pagingAjax->perpage";
+$items = $cache->get($sqlCache, $params, 'result', 7200);
+
+/* Count all data */
+$countItems = count($cache->get($sql, $params, 'result', 7200));
+
+/* Get page result */
+$pagingItems = $pagingAjax->getAllPageLinks($countItems, $pageLink, $eShow);
+?>
+<?php if ($countItems) { ?>
+	<div class="row row-product">
+		<?php foreach ($items as $k => $v) {
+			echo $custom->products($v);
+		} ?>
+	</div>
+	<div class="pagination-ajax"><?= $pagingItems ?></div>
+<?php } ?>

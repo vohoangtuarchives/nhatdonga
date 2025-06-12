@@ -1,0 +1,120 @@
+/* Main */
+:root{
+    --main-color:#{$main-color};
+    --hover-color:#{$hover-color};
+}
+body {
+    font-family: Roboto-Regular;
+    margin: 0;
+    line-height: 1.5em;
+    font-size: 14px;
+    color: #000;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.full {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9;
+}
+
+
+a {
+    color: inherit;
+    &:hover {
+        text-decoration: none;
+    }
+}
+p,
+h2,
+h3,
+h4 {
+    margin-bottom: 0;
+}
+
+figure {
+    margin-bottom: 0;
+}
+
+input,
+textarea,button {
+    outline: none;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button{
+        -webkit-appearance: none;
+    margin: 0;
+    }
+}
+.w-clear:after {
+    display: block;
+    content: "";
+    clear: both;
+}
+
+.hidden {
+    display: none;
+}
+
+.clear {
+    clear: both;
+}
+
+.none {
+    display: none;
+}
+
+.hidden-seoh {
+    visibility: hidden;
+    height: 0px;
+    margin: 0px;
+    overflow: hidden;
+}
+
+
+.wrapper {
+    margin: 0 auto;
+    padding: 0 15px;
+    position: relative;
+    @include Responsive_Min($sm) {
+        max-width: 570px;
+    }
+    @include Responsive_Min($md) {
+        max-width: 750px;
+    }
+    @include Responsive_Min($lg) {
+        max-width: $container + 30px;
+    }
+}
+
+img {
+    &:not([src]){
+        visibility: hidden;
+    }
+    &.lazy{
+        opacity: 0
+    }
+    &:not(.initial){
+        transition: opacity 1s;
+    }
+    &.initial,&.loaded,&.error{
+        opacity: 1;
+    }
+    &.img-full,&.img-responsive{
+        width: 100%;
+        height: auto;
+    }
+    &.img-max{
+        max-width: 100%;
+         height: auto;
+     }
+}
+
+

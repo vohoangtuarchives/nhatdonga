@@ -1,1 +1,27 @@
-<?phpsession_start();define('LIBRARIES', '../libraries/');define('THUMBS', 'thumbs');define('WATERMARK', 'watermark');if (empty($_SESSION['lang'])) $_SESSION['lang'] = 'vi';$lang = $_SESSION['lang'];require_once LIBRARIES . "config.php";require_once LIBRARIES . "vendor/autoload.php";use Illuminate\Container\Container;use NN\Cache;use NN\Cart;use NN\Functions;use NN\PDODb;$app = Container::getInstance();$app['files'] = new Illuminate\Filesystem\Filesystem();$app['config'] = new \Illuminate\Config\Repository($config);$app['locale'] = 'vi';(new \Illuminate\Cache\CacheServiceProvider($app))->register();$iCache = $app->make("cache");$storage = new \NN\Storage($iCache);$app['storage'] = $storage;$d = new PDODb($config['database']);$cache = new Cache($d);$func = new Functions($d, $cache);$cart = new Cart($d);require_once LIBRARIES . "lang/$lang.php";$sluglang = 'slugvi';/* Setting */$sqlCache = "select * from #_setting";$setting = $cache->get($sqlCache, null, 'fetch', 7200);$optsetting = (!empty($setting['options'])) ? json_decode($setting['options'], true) : null;
+<?php
+	session_start();
+	define('LIBRARIES','../libraries/');
+    define('THUMBS','thumbs');
+    define('WATERMARK','watermark');
+
+	if(empty($_SESSION['lang'])) $_SESSION['lang'] = 'vi';
+    $lang = $_SESSION['lang'];
+
+    require_once LIBRARIES."config.php";
+    require_once LIBRARIES.'autoload.php';
+    new AutoLoad();
+    $d = new PDODb($config['database']);
+    $cache = new Cache($d);
+    $func = new Functions($d, $cache);
+    $custom = new Custom($d);
+    $cart = new Cart($d);
+    require_once LIBRARIES."lang/$lang.php";
+
+    /* Slug lang */
+    $sluglang = 'slugvi';
+
+    /* Setting */
+    $sqlCache = "select * from #_setting";
+    $setting = $cache->get($sqlCache, null, 'fetch', 7200);
+    $optsetting = (!empty($setting['options'])) ? json_decode($setting['options'],true) : null;
+?>

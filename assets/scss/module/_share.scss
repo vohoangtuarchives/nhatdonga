@@ -1,0 +1,24 @@
+.share {
+  padding: 17px 15px 10px 15px;
+  line-height: normal;
+  background: rgba(128, 128, 128, 0.15);
+  margin-top: 15px;
+  border-radius: 5px;
+  b {
+    display: block;
+    margin-bottom: 5px;
+  }
+}
+
+/* Like Share */
+.social-plugin {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+  .at-share-btn {
+    margin-bottom: 0px !important;
+  }
+  .zalo-share-button {
+    margin-left: 3px;
+  }
+}

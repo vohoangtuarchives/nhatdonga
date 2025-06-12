@@ -1,0 +1,42 @@
+.section-main {
+  margin-top: 15px;
+  margin-bottom: 25px;
+}
+.title-main {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  span {
+    text-transform: uppercase;
+    color: var(--color-red);
+    font-weight: 800;
+    font-size: 23px;
+  }
+}
+
+.time-main {
+  margin-bottom: 0.75rem;
+  color: #999999;
+  i {
+    vertical-align: top;
+    margin: 3px 7px 0px 0px;
+  }
+  span {
+    vertical-align: top;
+    display: inline-block;
+  }
+}
+
+.header-container {
+  text-align: center;
+  h2 {
+    font: 37px Roboto-Bold;
+    color: var(--main-color);
+    text-transform: uppercase;
+    @include Responsive($md) {
+      font-size: 25px;
+    }
+  }
+  p {
+    font: 15px Roboto-Italic;
+  }
+}

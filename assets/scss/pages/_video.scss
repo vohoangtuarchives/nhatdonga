@@ -1,0 +1,35 @@
+/*video*/
+.video-name {
+    font: 14px Roboto-Bold;
+    text-align: center;
+    margin-top: 10px;
+    &.text-split{
+        -webkit-line-clamp: $row_name_video;
+    }
+}
+
+.col-video {
+    padding: $padding_col_video;
+    margin-bottom: $padding_col_video * 2;
+}
+
+.video {
+    cursor: pointer;
+}
+
+.youtube-logo {
+    position: relative;
+    &::before {
+        content: "";
+        position: absolute;
+        width: 50px;
+        height: 35px;
+        top: calc(50% - 50px / 2);
+        left: calc(50% - 35px / 2);
+        z-index: 1;
+        background: url(../images/play.png) no-repeat;
+        background-size: 100% 100%
+    }
+}
+
+/*video*/

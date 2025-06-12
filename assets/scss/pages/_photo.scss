@@ -1,0 +1,7 @@
+.col-photo {
+  padding:0 $padding_col_photo;
+  margin-bottom: $padding_col_photo * 2
+}
+.row-photo{
+  margin: 20px $padding_col_photo*(-1) 0 $padding_col_photo*(-1);
+}

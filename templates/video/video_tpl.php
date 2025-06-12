@@ -1,1 +1,28 @@
-<div class="title-main"><span><?= @$titleMain ?></span></div><div class="content-main form-row">    <?php if (!empty($video)) {        foreach ($video as $k => $v) { ?>            <div class="video col-6 col-md-4 col-lg-3 col-xl-3" data-fancybox="video"                 data-src="<?= $v['link_video'] ?>">                <div class="video-image scale-img">                    <?= $func->getImage(['class' => 'lazy w-100', 'size-error' => '480x360x1', 'url' => 'https://img.youtube.com/vi/' . $func->getYoutube($v['link_video']) . '/0.jpg', 'alt' => $v['name' . $lang]]) ?>                </div>                <h3 class="video-name text-split"><?= $v['name' . $lang] ?></h3>            </div>        <?php }    } else { ?>        <div class="col-12">            <div class="alert alert-warning w-100" role="alert">                <strong><?= khongtimthayketqua ?></strong>            </div>        </div>    <?php } ?>    <div class="clear"></div>    <div class="col-12">        <div class="pagination-home w-100"><?= (!empty($paging)) ? $paging : '' ?></div>    </div></div>
+<div class="section-main">
+    <div class="wrapper">
+        <div class="content-main">
+            <?php if (!empty($video)) { ?>
+                <?= $custom->titleContainer($titleMain) ?>
+                <div class="row row-video">
+                    <?php foreach ($video as $k => $v) { ?>
+                        <div class="col-6 col-md-4 col-lg-3 col-xl-3 col-video " data-animation="animate__zoomIn">
+                            <div class="video hover-scale" data-fancybox="video" data-src="<?= $v['link_video'] ?>">
+                                <div class="video-image youtube-logo overflow-hidden">
+                                    <?= $func->getImage(['class' => 'img-fluid', 'size-error' => '480x360x1', 'url' => $custom->getImgYoutube($v['link_video']), 'alt' => $v['name' . $lang]]) ?>
+                                </div>
+                                <h3 class="video-name text-split"><?= $v['name' . $lang] ?></h3>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            <?php } else { ?>
+                <div class="alert alert-warning w-100" role="alert">
+                    <strong><?= khongtimthayketqua ?></strong>
+                </div>
+            <?php } ?>
+            <div class="w-100">
+                <div class="pagination-home w-100"><?= (!empty($paging)) ? $paging : '' ?></div>
+            </div>
+        </div>
+    </div>
+</div>

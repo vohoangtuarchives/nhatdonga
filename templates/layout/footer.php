@@ -1,1 +1,100 @@
-<?php if (count($sliderFooter)) { ?>    <div class="slideshow">        <div class="owl-page owl-carousel owl-theme" data-items="screen:0|items:1" data-rewind="1" data-autoplay="1"             data-loop="0" data-lazyload="0" data-mousedrag="0" data-touchdrag="0" data-smartspeed="800"             data-autoplayspeed="800" data-autoplaytimeout="5000" data-dots="0"             data-animations="animate__fadeInDown, animate__backInUp, animate__rollIn, animate__backInRight, animate__zoomInUp, animate__backInLeft, animate__rotateInDownLeft, animate__backInDown, animate__zoomInDown, animate__fadeInUp, animate__zoomIn"             data-nav="1" data-navcontainer=".control-slideshow">			<?php foreach ($sliderFooter as $v) { ?>                <div class="slideshow-item" owl-item-animation>                    <a class="slideshow-image" href="<?= $v['link'] ?>" target="_blank"                       title="<?= $v['name' . $lang] ?>">						<?= $func->getImage(['class' => 'lazy w-100', 'sizes' => '1366x300x1', 'upload' => UPLOAD_PHOTO_L, 'image' => $v['photo'], 'alt' => $v['name' . $lang]]) ?>                    </a>                </div>						<?php } ?>        </div>        <div class="control-slideshow control-owl transition"></div>    </div><?php } ?><div class="footer bg_bgsize py-4">	<div class="container w-clear">		<div class="row">            <div class="col-lg-2">				<?= $func->getImage(['sizes' => '133x116x1', 'upload' => UPLOAD_PHOTO_L, 'image' => $logoFooter['photo'], 'alt' => $setting['name' . $lang]]) ?>            </div>			<div class="col-lg-6">				<div class="info-footer"><?= $func->decodeHtmlChars($footer['content' . $lang]) ?></div>				<div class="social-icon d-flex align-items-center">					<?php foreach ($social as $item) { ?>						<a class="d-block me-2" href="<?= $item["link"] ?>" target="_blank">							<img class='lazy' onerror="this.src='thumbs/45x45x2/assets/images/noimage' +                                         '.png';" data-src='storage/upload/photo/<?= $item["photo"] ?>' alt=''/>						</a>					<?php } ?>				</div>						</div>			<div class="col-lg-4">				<h2 class="title-footer-dt">BẢN ĐỒ</h2>                    <div id="footer-map"><?= $func->decodeHtmlChars($optsetting['coords_iframe']) ?></div>			</div>					</div>	</div></div><div class="footer-powered">	<div class="container">		<div class="d-flex flex-wrap align-items-center justify-content-between border-top border-white">			<div class="copyright text-center w-100">				Bản quyền © <?= ($setting["name$lang"]) ?> 2024. All Rights Reserved. Website design				by TLT VietNam			</div>		</div>	</div></div>	<?php // $addons->set('fanpage-facebook', 'fanpage-facebook') ?><?php if ($com != 'gio-hang' && config("order.active")) { ?>    <a class="cart-fixed text-decoration-none" href="gio-hang" title="Giỏ hàng">        <i class="fas fa-shopping-bag"></i>        <span class="count-cart"><?= (!empty($_SESSION['cart'])) ? count($_SESSION['cart']) : 0 ?></span>    </a><?php } ?><a class="btn-zalo btn-frame text-decoration-none" target="_blank"   href="https://zalo.me/<?= preg_replace('/[^0-9]/', '', $optsetting['zalo']); ?>">    <div class="animated infinite zoomIn kenit-alo-circle"></div>    <div class="animated infinite pulse kenit-alo-circle-fill"></div>    <i><?= $func->getImage(['size-error' => '35x35x2', 'upload' => 'assets/images/', 'image' => 'zl.png', 'alt' => 'Zalo']) ?></i></a><a class="btn-phone btn-frame text-decoration-none"   href="tel:<?= preg_replace('/[^0-9]/', '', $optsetting['hotline']); ?>">    <div class="animated infinite zoomIn kenit-alo-circle"></div>    <div class="animated infinite pulse kenit-alo-circle-fill"></div>    <i><?= $func->getImage(['size-error' => '35x35x2', 'upload' => 'assets/images/', 'image' => 'hl.png', 'alt' => 'Hotline']) ?></i></a><!-- Modal notify --><div class="modal modal-custom fade" id="popup-notify" tabindex="-1" role="dialog" aria-labelledby="popup-notify-label"     aria-hidden="true">    <div class="modal-dialog modal-dialog-top modal-md" role="document">        <div class="modal-content">            <div class="modal-header">                <h6 class="modal-title" id="popup-notify-label">Thông báo</h6>                <button type="button" class="close" data-dismiss="modal" aria-label="Close">                    <span aria-hidden="true">&times;</span>                </button>            </div>            <div class="modal-body"></div>            <div class="modal-footer justify-content-center">                <button type="button" class="btn btn-danger" data-dismiss="modal">ĐÃ HIỂU</button>            </div>        </div>    </div></div>
+<footer id="footer" >
+        <footer class="text-white text-sm ">
+            <div class="container text-center py-5">
+                <img src="/assets/images/logo.png" alt="Nhật Đông Á" class="mx-auto h-20 mb-4" />
+                <h2 class="text-lg font-semibold mb-6"><?=$setting["name$lang"]?></h2>
+            </div>
+            <div class="container my-4">
+                <div class="d-flex justify-content-between align-baseline">
+              <!-- Thông tin liên hệ -->
+                  <div>
+                    <h3 class="font-semibold mb-2 fs-20 titleFooter">THÔNG TIN LIÊN HỆ</h3>
+                    <p><i class="fa fa-location-arrow mr-2 p-2"></i><?=$optsetting["address"]?></p>
+                    <p><i class="fa fa-phone mr-2 mt-2 p-2"></i>Hotline:<?=$optsetting["hotline"]?></p>
+                    <p><i class="fa fa-envelope mr-2 mt-2 p-2"></i>Email: <?=$optsetting["email"]?></p>
+                    <p><i class="fa fa-file-invoice mr-2 mt-2 p-2"></i>MST: <?=$optsetting["email"]?></p>
+                    <div class="flex mt-3 space-x-3 text-xl">
+                      <a href="#"><i class="fa-brands fa-facebook-f hover:text-gray-300"></i></a>
+                      <a href="#"><i class="fa-brands fa-youtube hover:text-gray-300"></i></a>
+                      <a href="#"><i class="fa-brands fa-tiktok hover:text-gray-300"></i></a>
+                      <a href="#"><i class="fa-brands fa-instagram hover:text-gray-300"></i></a>
+                    </div>
+                  </div>
+
+              <!-- Dịch vụ -->
+              <div>
+                <h3 class="font-semibold mb-2 fs-20 titleFooter">DỊCH VỤ</h3>
+                <ul class="list-unstyled">
+
+                    <?php foreach($dichvuFooter as $v) { ?>
+                    <li><a class="text-decoration-none" href="<?=$v[$sluglang]?>" title="<?=$v['name'.$lang]?>"> <span>
+                          <img src="assets/images/star.svg" alt="star-icon" class="img-fluid">
+                      </span><?=$v['name'.$lang]?></a></li>
+                    <li>
+                    <?php } ?>
+                </ul>
+              </div>
+
+              <!-- Chính sách -->
+              <div>
+                <h3 class="font-semibold mb-2 fs-20 titleFooter">CHÍNH SÁCH</h3>
+                <ul class="list-unstyled">
+                    <?php foreach($chinhsach as $v) { ?>
+                    <li><a class="text-decoration-none" href="<?=$v[$sluglang]?>" title="<?=$v['name'.$lang]?>"> <span>
+                          <img src="assets/images/star.svg" alt="star-icon" class="img-fluid">
+                      </span><?=$v['name'.$lang]?></a></li>
+                    <li>
+                        <?php } ?>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Copyright -->
+           <div class="d-flex justify-content-between align-items-center">
+               <div class="border-t border-white/30 mt-10 pt-4 text-xs">
+                   <div class="text-left">
+                       <p>Copyright 2025 © All rights reserved. Design by <a href="#" class="underline">dahadu.com</a></p>
+                       <p>
+                           CÔNG TY TNHH MTV Nhật Đông Á, ĐKKD: <strong>3602946080</strong> do Sở KH & ĐT TP.HCM cấp ngày XX/XX/XXXX.<br />
+                           GPMXH: 238/GP-BTTTT Bộ TTTT ngày <strong>04/06/2025</strong>.
+                       </p>
+                   </div>
+               </div>
+               <div>
+                   <img src="assets/images/bocongthuong.png" alt="Bộ Công Thương" class="mx-auto img-fluid d-inline-block" />
+               </div>
+           </div>
+          </div>
+        </footer>
+    </div>
+    <div class="footer-powered">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="flex items-center space-x-1">
+                    <i class="fa fa-phone"></i>
+                    <span>Hotline mua hàng:</span>
+                    <span class="font-bold">0962 597 540</span>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <i class="fa fa-headset"></i>
+                    <span>Chăm sóc khách hàng:</span>
+                    <span class="font-bold">0962 597 540</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="text-decoration-none">
+                        <i class="fa fa-facebook-messenger"></i>
+                        <span>Messenger</span>
+                    </a>
+                    <a href="#" class="hover:text-gray-200 transition"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="hover:text-gray-200 transition"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="hover:text-gray-200 transition"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+</footer>
+

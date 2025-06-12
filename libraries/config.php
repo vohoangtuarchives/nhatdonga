@@ -2,151 +2,240 @@
 
 if (!defined('LIBRARIES')) die("Error");
 
-date_default_timezone_set('Asia/Ho_Chi_Minh');
-const NN_CONTRACT = '';
 
-define('ROOT', 
-    str_replace(basename(__DIR__), 
-    '', 
-    __DIR__));
+
+/* Timezone */
+
+date_default_timezone_set('Asia/Ho_Chi_Minh');
+
+
+
+/* Cấu hình coder */
+
+define('NN_CONTRACT', '788922w');
+
+define('NN_AUTHOR', 'hoangnguyenminh.nina@gmail.com');
+
+
+
+
+
+/* Cấu hình chung */
 
 $config = array(
-    'arrayDomainSSL' => array(), 
-    'cache' => ['default' => 'file', 
-    'stores' => ['array' => ['driver' => 'array', 
-    'serialize' => false,], 
-    'file' => ['driver' => 'file', 
-    'path' => ROOT . "/storage/icache", 
-    'lock_path' => ROOT . "/storage/icache",], 
-    'redis' => ['driver' => 'redis', 
-    'connection' => 'cache', 
-    'lock_connection' => 'default',],], 
-    'prefix' => '_cache_',], 
-    'database' => array('server-name' => $_SERVER["SERVER_NAME"], 
-    'url' => '/', 
-    'type' => 'mysql', 
-    'host' => 'localhost', 
-    'username' => 'root', 
-    'password' => '12345678@', 
-    'dbname' => 'database', 
-    'port' => 3306, 
-    'prefix' => 'table_', 
-    'charset' => 'utf8mb4'),
 
-    'menu' => ['index' => [], 
-        'gioi-thieu' => [], 
-        'san-pham' => [], 
-        'dich-vu' => [], 
-        'tin-tuc' => [], 
-        'tuyen-dung' => [], 
-        'lien-he' => [],],
+	'author' => array(
 
-    'website' => array(
-		'error-reporting' => true,
-        'secret' => '$nina@', 
-        'salt' => 'swKJjeS!t', 
-        'scss' => FALSE,
-        'debug-developer' => true, 
-        'debug-css' => true,
-        'debug-js' => true, 
-        'index' => false, 
-        'image' => array('hasWebp' => false,), 
-        'video' => array('extension' => array('mp4', 
-        'mkv'), 
-        'poster' => array('width' => 700, 
-        'height' => 610, 
-        'extension' => '.jpg|.png|.jpeg'), 
-        'allow-size' => '100Mb', 
-        'max-size' => 100 * 1024 * 1024),
+		'name' => 'Nguyễn Minh Hoàng',
 
-        'upload' => array('max-width' => 1600, 
-            'max-height' => 1600),
+		'email' => 'hoangnguyenminh.nina@gmail.com',
 
-        'lang' => array(
+		'timefinish' => '27/05/2022'
 
-            'vi' => 'Tiếng Việt',
+	),
 
-//            'en' => 'Tiếng Anh'
+	'arrayDomainSSL' => array(),
 
-        ),
+	'database' => array(
 
-        'lang-doc' => 'vi|en', 
-            'slug' => array('vi' => 'Tiếng Việt',//            'en' => 'Tiếng Anh'
-        ), 
-            'seo' => array('vi' => 'Tiếng Việt',//            'en' => 'Tiếng Anh'
+		'server-name' => $_SERVER["SERVER_NAME"],
 
-        ),
+		'url' => '/',
 
-        'comlang' => array("gioi-thieu" => array("vi" => "gioi-thieu", 
-            "en" => "about-us"), 
-            "san-pham" => array("vi" => "san-pham", 
-            "en" => "product"), 
-            "tin-tuc" => array("vi" => "tin-tuc", 
-            "en" => "news"), 
-            "tuyen-dung" => array("vi" => "tuyen-dung", 
-            "en" => "recruitment"), 
-            "thu-vien-anh" => array("vi" => "thu-vien-anh", 
-            "en" => "gallery"), 
-            "video" => array("vi" => "video", 
-            "en" => "video"), 
-            "lien-he" => array("vi" => "lien-he", 
-            "en" => "contact"))
+		'type' => 'mysql',
 
-    ),
+		'host' => 'localhost',
 
-    'order' => array(
+		'username' => 'root',
 
-        'ship' => true
+		'password' => '',
 
-    ),
+		'dbname' => 'cuuho',
 
-    'login' => array(
+		'port' => 3306,
 
-        'admin' => 'LoginAdmin' . NN_CONTRACT,
+		'prefix' => 'table_',
 
-        'member' => 'LoginMember' . NN_CONTRACT,
+		'charset' => 'utf8mb4'
 
-        'attempt' => 5,
+	),
 
-        'delay' => 15
+	'website' => array(
 
-    ),
+		'error-reporting' => false,
 
-    'googleAPI' => array(
+		'secret' => '$nina@',
 
-        'recaptcha' => array(
+		'salt' => 'swKJjeS!t',
 
-            'active' => false,
+		'debug-developer' => true,
 
-            'urlapi' => 'https://www.google.com/recaptcha/api/siteverify',
+		'debug-css' => true,
 
-            'sitekey' => '6LezS5kUAAAAAF2A6ICaSvm7R5M-BUAcVOgJT_31',
+		'debug-js' => true,
 
-            'secretkey' => '6LezS5kUAAAAAGCGtfV7C1DyiqlPFFuxvacuJfdq'
+		'index' => false,
 
-        )
+		'image' => array(
 
-    ),
+			'hasWebp' => false,
 
-    'oneSignal' => array(
+		),
 
-        'active' => false,
+		'video' => array(
 
-        'id' => 'af12ae0e-cfb7-41d0-91d8-8997fca889f8',
+			'extension' => array('mp4', 'mkv'),
 
-        'restId' => 'MWFmZGVhMzYtY2U0Zi00MjA0LTg0ODEtZWFkZTZlNmM1MDg4'
+			'poster' => array(
 
-    ),
+				'width' => 700,
 
-    'license' => array(
+				'height' => 610,
 
-        'version' => "7.1.0",
+				'extension' => '.jpg|.png|.jpeg'
 
-        'powered' => "phuctai.nina@gmail.com"
+			),
 
-    )
+			'allow-size' => '100Mb',
+
+			'max-size' => 100 * 1024 * 1024
+
+		),
+
+		'upload' => array(
+
+			'max-width' => 1600,
+
+			'max-height' => 1600
+
+		),
+
+		'lang' => array(
+
+			'vi' => 'Tiếng Việt',
+
+		),
+
+		'lang-doc' => 'vi',
+
+		'slug' => array(
+
+			'vi' => 'Tiếng Việt'
+
+		),
+
+		'seo' => array(
+
+			'vi' => 'Tiếng Việt'
+
+		),
+
+		'comlang' => array(
+
+			"gioi-thieu" => array("vi" => "gioi-thieu", "en" => "about-us"),
+
+			"san-pham" => array("vi" => "san-pham", "en" => "product"),
+
+			"tin-tuc" => array("vi" => "tin-tuc", "en" => "news"),
+
+			"dich-vu" => array("vi" => "dich-vu", "en" => "news"),
+
+			"dao-tao" => array("vi" => "dao-tao", "en" => "news"),
+
+			"tuyen-dung" => array("vi" => "tuyen-dung", "en" => "recruitment"),
+
+			"thu-vien-anh" => array("vi" => "thu-vien-anh", "en" => "gallery"),
+
+			"video" => array("vi" => "video", "en" => "video"),
+
+			"lien-he" => array("vi" => "lien-he", "en" => "contact")
+
+		)
+
+	),
+
+	'order' => array(
+
+		'ship' => false
+
+	),
+
+	'cart' => array(
+
+		"active" => false,
+
+	),
+
+	'coppy' => array(
+
+		"lock" => false,
+
+	),
+
+	'careers' => [
+
+		'casi' => "Ca sĩ",
+
+		'youtuber' => "Youtuber",
+
+		'kysu' => "Kỹ Sư",
+
+		'cogiao' => "Cô Giáo",
+
+		'laptrinhvien' => "Lập Trình Viên",
+
+		'mauanh' => "Mẫu Ảnh",
+
+		'tiktoker' => "Tiktoker"
+
+	],
+
+	'login' => array(
+
+		'admin' => 'LoginAdmin' . NN_CONTRACT,
+
+		'member' => 'LoginMember' . NN_CONTRACT,
+
+		'attempt' => 5,
+
+		'delay' => 15
+
+	),
+
+	'googleAPI' => array(
+
+		'recaptcha' => array(
+
+			'active' => true,
+
+			'urlapi' => 'https://www.google.com/recaptcha/api/siteverify',
+
+			'sitekey' => '6Ld_l2clAAAAAG9amJdEX-ghOQ3PdOyAXBPk88ib',
+
+			'secretkey' => '6Ld_l2clAAAAAH_xLNyfa2UuuiprJquQSmBD8prg'
+
+		)
+
+	),
+
+	'oneSignal' => array(
+
+		'active' => false,
+
+		'id' => '',
+
+		'restId' => ''
+
+	),
+
+	'license' => array(
+
+		'version' => "7.1.0",
+
+	)
 
 );
+
 
 
 /* Error reporting */
@@ -154,55 +243,86 @@ $config = array(
 error_reporting(($config['website']['error-reporting']) ? E_ALL : 0);
 
 
+
 /* Cấu hình http */
 
+/* Cấu hình SSL */
+
 if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
-    $http = 'https://';
+
+	$http = 'https://';
+
 } else {
-    $http = 'http://';
+
+	$http = 'http://';
+
 }
+
 
 
 /* Redirect http/https */
 
 if (!count($config['arrayDomainSSL']) && $http == 'https://') {
-    $host = $_SERVER['HTTP_HOST'];
-    $request_uri = $_SERVER['REQUEST_URI'];
-    $good_url = "http://" . $host . $request_uri;
-    header("HTTP/1.1 301 Moved Permanently");
-    header("Location: $good_url");
-    exit;
+
+	$host = $_SERVER['HTTP_HOST'];
+
+	$request_uri = $_SERVER['REQUEST_URI'];
+
+	$good_url = "http://" . $host . $request_uri;
+
+	header("HTTP/1.1 301 Moved Permanently");
+
+	header("Location: $good_url");
+
+	exit;
+
 }
+
+
 
 /* CheckSSL */
 
 if (count($config['arrayDomainSSL'])) {
-    include LIBRARIES . "checkSSL.php";
+
+	include LIBRARIES . "checkSSL.php";
+
 }
 
+
+
 /* Cấu hình base */
+
 $configUrl = $config['database']['server-name'] . $config['database']['url'];
-$configBase = $http . $configUrl;
+
+$config_base = $configBase = $http . $configUrl;
+
+
 
 /* Token */
 
-define('TOKEN', 
-    md5(NN_CONTRACT . $config['database']['url']));
+define('TOKEN', md5(NN_CONTRACT . $config['database']['url']));
+
+
 
 /* Path */
 
-define('ASSET', 
-    $http . $configUrl);
-const ADMIN = 'admin';
+define('ROOT', str_replace(basename(__DIR__), '', __DIR__));
+
+define('ASSET', $http . $configUrl);
+
+define('ADMIN', 'admin');
+
+
 
 /* Cấu hình login */
+
 $loginAdmin = $config['login']['admin'];
+
 $loginMember = $config['login']['member'];
 
+
+
 /* Cấu hình upload */
+
 require_once LIBRARIES . "constant.php";
-
-
-
-
 

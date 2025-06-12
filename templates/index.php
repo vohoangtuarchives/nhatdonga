@@ -1,1 +1,30 @@
-<!DOCTYPE html><html lang="<?= $config['website']['lang-doc'] ?>"><head>    <?php include TEMPLATE . LAYOUT . "head.php"; ?>    <?php include TEMPLATE . LAYOUT . "css.php"; ?></head><body class="body <?= ($source == 'index') ? '' : 'in-page' ?>"><?phpinclude TEMPLATE . LAYOUT . "seo.php";include TEMPLATE . LAYOUT . "header-section.php";?><div class="<?= ($source == 'index') ? 'position-relative' : ' ' ?>"> <?php   include TEMPLATE . LAYOUT . "menu.php";//    include TEMPLATE . LAYOUT . "mmenu.php";if ($source == 'index') include TEMPLATE . LAYOUT . "slide.php";else include TEMPLATE . LAYOUT . "breadcrumb.php";?><div class="wrap-main <?= ($source == 'index') ? 'wrap-home' : ' container py-5' ?> w-clear">    <?php include TEMPLATE . $template . "_tpl.php"; ?></div></div><?phpinclude TEMPLATE . LAYOUT . "footer.php";include TEMPLATE . LAYOUT . "modal.php";include TEMPLATE . LAYOUT . "js.php";// if($deviceType=='mobile') include TEMPLATE.LAYOUT."phone.php";?></body></html>
+<!DOCTYPE html>
+<html lang="<?= $config['website']['lang-doc'] ?>">
+
+<head>
+    <?php include TEMPLATE . LAYOUT . "head.php"; ?>
+    <?php include TEMPLATE . LAYOUT . "css.php"; ?>
+</head>
+
+<body>
+    <?php
+    include TEMPLATE . LAYOUT . "seo.php";
+    include TEMPLATE . LAYOUT . "header.php";
+    if ($source == 'index') include TEMPLATE . LAYOUT . "slide.php";
+    else include TEMPLATE . LAYOUT . "breadcrumb.php";
+    ?>
+    <div class="wrap-main <?= ($source == 'index') ? 'wrap-home' : '' ?> w-clear">
+        <?php include TEMPLATE . $template . "_tpl.php"; ?>
+    </div>
+    <?php
+    include TEMPLATE . LAYOUT . "footer.php";
+    if($config['cart']['active']==true){
+        include TEMPLATE.LAYOUT."modal.php";
+    }
+    include TEMPLATE . LAYOUT . "phone.php";
+    include TEMPLATE . LAYOUT . "js.php";
+    include TEMPLATE . "components/dknt.php";
+    ?>
+</body>
+
+</html>

@@ -1,1 +1,3 @@
-CKEDITOR.plugins.setLang('lineheight', 'ar', {    title: 'خط الطول'});
+CKEDITOR.plugins.setLang('lineheight','ar', {
+    title: 'خط الطول'
+} );

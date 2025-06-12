@@ -1,0 +1,211 @@
+/* Messenger */
+.js-facebook-messenger-container.closed,
+.js-facebook-messenger-tooltip.closed {
+    display: none !important;
+}
+
+.js-facebook-messenger-tooltip {
+    bottom: 97px;
+    right: 97px;
+}
+
+.js-facebook-messenger-tooltip {
+    color: #404040;
+    background: #fff;
+}
+
+.js-facebook-messenger-box,
+.js-facebook-messenger-button,
+.js-facebook-messenger-tooltip {
+    z-index: 999;
+}
+
+.js-facebook-messenger-tooltip {
+    display: none;
+    position: fixed;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 1;
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(0, 0, 0, 0.15) 0 2pt 10pt;
+    z-index: 1e30;
+}
+
+.js-facebook-messenger-close-tooltip {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.js-facebook-messenger-box.rubberBand {
+    -webkit-animation-name: rubberBand;
+    animation-name: rubberBand;
+}
+
+.js-facebook-messenger-box.animated {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.js-facebook-messenger-box,
+.js-facebook-messenger-button,
+.js-facebook-messenger-tooltip {
+    z-index: 999;
+}
+
+.js-facebook-messenger-box {
+    display: block;
+    position: fixed;
+    cursor: pointer;
+    bottom: 150px;
+    right: 17px;
+    width: 56px;
+    height: 56px;
+    text-align: center;
+    background: #1182fc;
+    border-radius: 100%;
+    overflow: hidden;
+    z-index: 99;
+    -webkit-box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.js-facebook-messenger-box.rotate svg#fb-msng-icon {
+    transform: rotate(0deg);
+}
+
+.js-facebook-messenger-box svg#fb-msng-icon {
+    width: 32px;
+    height: 33px;
+    position: absolute;
+    top: 13px;
+    left: 12px;
+    opacity: 1;
+    overflow: hidden;
+    -webkit-transition: opacity 160ms ease-in-out, transform 160ms ease-in-out;
+    -moz-transition: opacity 160ms ease-in-out, transform 160ms ease-in-out;
+    -o-transition: opacity 160ms ease-in-out, transform 160ms ease-in-out;
+    transition: opacity 160ms ease-in-out, transform 160ms ease-in-out;
+}
+
+.js-facebook-messenger-box.rotate svg#close-icon {
+    transform: rotate(-45deg);
+}
+
+.js-facebook-messenger-box svg#close-icon {
+    opacity: 0;
+    width: 19px;
+    height: 20px;
+    position: absolute;
+    top: 19px;
+    left: 19px;
+    -webkit-transition: opacity 160ms ease-in-out, transform 160ms ease-in-out;
+    -moz-transition: opacity 160ms ease-in-out, transform 160ms ease-in-out;
+    -o-transition: opacity 160ms ease-in-out, transform 160ms ease-in-out;
+    transition: opacity 160ms ease-in-out, transform 160ms ease-in-out;
+}
+
+.js-facebook-messenger-container,
+.js-facebook-messenger-container-button {
+    z-index: 1000;
+}
+
+.js-facebook-messenger-container {
+    position: fixed;
+    opacity: 0;
+    transform: translateY(50px);
+    bottom: 110px;
+    right: 90px;
+    border-radius: 10px;
+    pointer-events: none;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06), 0 2px 32px rgba(0, 0, 0, 0.16);
+    -webkit-transition: transform 160ms ease-in-out, opacity 160ms ease-in-out;
+    -moz-transition: transform 160ms ease-in-out, opacity 160ms ease-in-out;
+    -o-transition: transform 160ms ease-in-out, opacity 160ms ease-in-out;
+    transition: transform 160ms ease-in-out, opacity 160ms ease-in-out;
+}
+
+.js-facebook-messenger-top-header {
+    width: 220px;
+}
+
+.js-facebook-messenger-top-header {
+    color: #ffffff;
+    background: #1182fc;
+}
+
+.js-facebook-messenger-top-header {
+    display: block;
+    position: relative;
+    width: 220px;
+    background: #1182fc;
+    color: #ffffff;
+    text-align: center;
+    line-height: 1;
+    padding: 10px;
+    font-size: 14px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.js-facebook-messenger-container iframe,
+.js-facebook-messenger-container-button iframe {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.js-facebook-messenger-box,
+.js-facebook-messenger-button,
+.js-facebook-messenger-tooltip {
+    z-index: 999;
+}
+
+.js-facebook-messenger-container,
+.js-facebook-messenger-container-button {
+    z-index: 1000;
+}
+
+.js-facebook-messenger-top-header {
+    color: #ffffff;
+    background: #1182fc;
+}
+
+.js-facebook-messenger-top-header {
+    width: 220px;
+}
+
+.js-facebook-messenger-tooltip {
+    color: #404040;
+    background: #fff;
+}
+
+.js-facebook-messenger-container.open {
+    transform: translateY(0px);
+    opacity: 1;
+    pointer-events: all;
+}
+
+.js-facebook-messenger-tooltip {
+    bottom: 97px;
+    right: 97px;
+}
+
+.js-facebook-messenger-box.open svg#fb-msng-icon {
+    opacity: 0;
+}
+
+.js-facebook-messenger-box.rotate.open svg#close-icon {
+    transform: rotate(0deg);
+}
+
+.js-facebook-messenger-box.open svg#close-icon {
+    opacity: 1;
+}

@@ -1,0 +1,97 @@
+/* Paging */
+
+.pagination-cus {
+  .page-item {
+    margin: 0 4px;
+    &:first-child .page-link {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    &:last-child .page-link {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    &.active .page-link {
+      background: var(--main-color);
+      color: white;
+      border-color: var(--main-color);
+    }
+    &:not(:first-child) .page-link {
+      margin-left: 0;
+    }
+  }
+  .page-link {
+    color: var(--main-color);
+    padding: 0;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    border: 0;
+    &:hover {
+      z-index: 2;
+      color: white;
+      background-color: var(--main-color);
+      border-color: var(--main-color);
+    }
+  }
+}
+
+/* Paging Ajax */
+.pagination-ajax {
+  text-align: center;
+  a {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0px 3px 3px 3px;
+    width: 35px;
+    height: 35px;
+    line-height: 33px;
+    color: #666 !important;
+    border: 1px solid #e6e6e6;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none !important;
+    background-color: #ffffff;
+    &.current,
+    &:hover {
+      color: #ffffff !important;
+      border-color: var(--main-color);
+      background-color: var(--main-color);
+    }
+    $pagAjax: (
+      1: "first",
+      2: "last",
+      3: "prev",
+      4: "next",
+    );
+    @each $key, $value in $pagAjax {
+      &.#{$value} {
+        text-indent: -9999px;
+        position: relative;
+        background-color: #ffffff !important;
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0px;
+          left: 0px;
+          width: 100%;
+          height: 100%;
+          z-index: 2;
+          background-color: transparent;
+          background-repeat: no-repeat;
+          background-position: center;
+          @if $key==1 {
+            background-image: url(../images/page-first.png);
+          } @else if $key==2 {
+            background-image: url(../images/page-last.png);
+          } @else if $key==3 {
+            background-image: url(../images/page-prev.png);
+          } @else if $key==4 {
+            background-image: url(../images/page-next.png);
+          }
+        }
+      }
+    }
+  }
+}

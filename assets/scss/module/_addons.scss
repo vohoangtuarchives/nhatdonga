@@ -1,0 +1,15 @@
+#player {
+  display: block;
+  aspect-ratio: 435 / 330;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.item-video-addon {
+  padding: 0 5px;
+  transition: 0.6s;
+}
+
+.slick-video-addon {
+  margin: 0 -5px;
+}

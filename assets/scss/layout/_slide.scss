@@ -1,0 +1,57 @@
+/*slide*/
+.control-owl {
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+    left: 0px;
+    top: calc(50% - 45px / 2);
+    button {
+        opacity: 0.5;
+        top: 0px;
+        position: absolute;
+        outline: none;
+        border: 0px;
+        padding: 0px;
+        margin: 0px;
+        display: block;
+        cursor: pointer;
+        color: #ffffff;
+        width: 45px;
+        height: 45px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+        margin: 0px;
+        background-color: #000000;
+        border-radius: 3px;
+        -webkit-transition: 0.3s ease-out;
+        -moz-transition: 0.3s ease-out;
+        -o-transition: 0.3s ease-out;
+        transition: 0.3s ease-out;
+        &.owl-prev {
+            left: 20px;
+        }
+        &.owl-next {
+            right: 20px;
+        }
+        &:hover{
+            opacity: 1;
+        }
+    }
+}
+
+
+
+.form-control,
+.form-control-plaintext:not(textarea),
+.custom-select {
+    height: calc(1em + 1.25rem + 8px);
+}
+
+.text-sm {
+    font-size: 0.875rem !important;
+}
+
+/*slide*/

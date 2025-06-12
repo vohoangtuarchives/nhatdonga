@@ -1,0 +1,22 @@
+{
+    "name": "tuezy/nnkafe",
+    "autoload": {
+        "psr-4": {
+            "Tuezy\\": "src/",
+            "App\\": "admin-tools/"
+        }
+    },
+    "authors": [
+        {
+            "name": "hoangtu",
+            "email": "hoangtu@ohlaalaa.com"
+        }
+    ],
+    "require": {
+        "illuminate/support": "*",
+        "illuminate/config": "*",
+        "illuminate/container": "*",
+        "illuminate/database": "*",
+        "illuminate/view": "*"
+    }
+}

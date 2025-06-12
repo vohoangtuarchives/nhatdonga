@@ -1,0 +1,23 @@
+/* Breadcrumb */
+.breadCrumbs {
+  background-color: #eee;
+  .wrapper {
+    padding: 0.75rem 15px;
+    .breadcrumb {
+      padding: 0;
+      margin-bottom: 0;
+      background-color: transparent;
+      border-radius: 0;
+    }
+    .breadcrumb-item {
+      a {
+        color: $black;
+      }
+      &.active {
+        a {
+          color: $gray;
+        }
+      }
+    }
+  }
+}

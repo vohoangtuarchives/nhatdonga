@@ -1,0 +1,42 @@
+/* Toc */
+.box-readmore {
+  padding: 8px 15px;
+  border: 1px solid #dedede;
+  margin-bottom: 2rem;
+  border-radius: 5px;
+  background: rgba(128, 128, 128, 0.15);
+  ul {
+    list-style-type: none;
+    counter-reset: item;
+    margin-bottom: 0px;
+    padding-left: 0px !important;
+    margin-top: 8px;
+    li {
+      display: table;
+      counter-increment: item;
+      margin-bottom: 5px;
+      a {
+        color: #333333;
+        cursor: pointer;
+        font-weight: 600;
+        &:hover {
+          color: #767676;
+        }
+      }
+      &::before {
+        content: counters(item, ".") ". ";
+        display: table-cell;
+        padding-right: 5px;
+      }
+      ul {
+        & > li {
+          margin: 0;
+          margin-bottom: 8px;
+          &::before {
+            content: counters(item, ".") " ";
+          }
+        }
+      }
+    }
+  }
+}

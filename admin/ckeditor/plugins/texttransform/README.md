@@ -1,8 +1,7 @@
 Text Transform Plugin for CKEditor
 ================================
 
-A very simple plugin which provides transforming selected text to new cases. You can transform selected text to
-uppercase, lowercase or simply capitalize it.
+A very simple plugin which provides transforming selected text to new cases. You can transform selected text to uppercase, lowercase or simply capitalize it.
 
 Available Transform Cases
 -------------------------
@@ -36,7 +35,7 @@ Usage
 3. Add transform buttons to your editor toolbar.
 
         CKEDITOR.config.toolbar = [
-   	{ name: 'paragraph',   groups: ['texttransform'] }
+		{ name: 'paragraph',   groups: ['texttransform'] }
         ];
 
 4. Set your CKEDITOR language if you did not set it yet.
@@ -54,6 +53,5 @@ Cheers
 
 Thanks to [CKEditor] [1] and [jsFiddle] [2] for their good work.
 
-[1]: http://ckeditor.com        "CKEditor"
-
-[2]: http://jsfiddle.net        "jsFiddle"
+  [1]: http://ckeditor.com        "CKEditor"
+  [2]: http://jsfiddle.net        "jsFiddle"
