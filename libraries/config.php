@@ -228,7 +228,7 @@ $config = array(
 
 /* Error reporting */
 
-error_reporting(E_ALL);
+error_reporting(($config['website']['error-reporting']) ?  : 0);
 
 
 

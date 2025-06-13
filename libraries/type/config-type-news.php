@@ -146,7 +146,7 @@ $config['news']['khach-hang'] = array_merge(include "news/config-news-no-categor
 
 
 
-$config['news']['thu-vien'] = array_merge(include "news/config-news-no-category.php", [
+$config['news']['catalogue'] = array_merge(include "news/config-news-no-category.php", [
 
     'title_main' => 'Catalogue',
 
