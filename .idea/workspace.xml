@@ -6,46 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="7cb2e1da-5a5f-45f9-b70d-b9da988d2d3d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_040e1dc97b22d701c26bb5a7cbff44b4" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_040e1dc97b22d701c26bb5a7cbff44b4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/css/custom.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/custom.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/main.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_104dd53f52753deec036ffe07c23c15b" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_104dd53f52753deec036ffe07c23c15b" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_173ff0d4059a65e8d1c5c101a59cfead" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_2145a65732c7507e6e4cc9cf942b0f87" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_2145a65732c7507e6e4cc9cf942b0f87" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_2378e52fde850a09beace0300b68db54" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_2378e52fde850a09beace0300b68db54" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_25709d8deb80825c6f2144f84591ccb2" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_25709d8deb80825c6f2144f84591ccb2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_2879280c8e4d8f401d09d9da0a541649" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_441a79c74de4df9ced257afb0e8bdbd5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_51f3453377d21766cfa7ad73929f2734" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_51f3453377d21766cfa7ad73929f2734" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_5576847b492137292f306594bc3ada5b" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_5576847b492137292f306594bc3ada5b" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_5934ccc26f429a641a3862d39d8ca05c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_6036fda74776cf4c24e318af048d71d4" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_6036fda74776cf4c24e318af048d71d4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_606af27dd6a040c96073d378a4573473" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_6193eb9e9d365a565f2eea713c0d7867" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_7d0a6982efd5129c24798a04ea3b6546" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_7d0a6982efd5129c24798a04ea3b6546" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_82468cff532a1feb2c715b29fc1aa152" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_940ba8b8f9e589d8823d140db520586a" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_940ba8b8f9e589d8823d140db520586a" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_94f3bcac27edf34fcd6492605b032c45" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_94f3bcac27edf34fcd6492605b032c45" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_9dd2f4087ff62155c53d4d8d9f1a9a50" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_9ef150ba75bd8c3a5aa2b6f9f3c2a9d9" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_9ef150ba75bd8c3a5aa2b6f9f3c2a9d9" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_acfcf28c52edc9cce7f8586d88eb72e9" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_acfcf28c52edc9cce7f8586d88eb72e9" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_b3627021e85253e56939f9d9577361d4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_b692e88ad71025b75768b1e6cb599520" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_b692e88ad71025b75768b1e6cb599520" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_b88583bc3bca4f85e53fa9fb4b4926d2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_bef6eb6e18d8db7a83492711102d86df" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_bef6eb6e18d8db7a83492711102d86df" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_c203554797f5b83b1fa90ccbfca7df49" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_c203554797f5b83b1fa90ccbfca7df49" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_f07ec6809a6d43f7a6a2503ad3dd4095" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_f07ec6809a6d43f7a6a2503ad3dd4095" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_f3f51e17ac030a834d224bcdee98fab7" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_f3f51e17ac030a834d224bcdee98fab7" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_f5514d62fc9e08807c9f90ef5f6c2a26" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_f5514d62fc9e08807c9f90ef5f6c2a26" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_f67811551b30ec6d921eb5a6a68c8179" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_f67811551b30ec6d921eb5a6a68c8179" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_f7207ce7bed43acaa5064d43a057d9ff" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_f7b07f0b5e2a711491841849cef3147f" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_f7b07f0b5e2a711491841849cef3147f" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_f97445d2d047108f4e671b04e2459e62" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_fc6ff94f42983ba993bcc699dd402cbc" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_fc6ff94f42983ba993bcc699dd402cbc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/config.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libraries/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/router.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/type/config-type-news.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/type/config-type-news.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/13-06-2025.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/13-06-2025.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sources/search.php" beforeDir="false" afterPath="$PROJECT_DIR$/sources/search.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/header2.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/header2.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/news/news_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/news/news_tpl.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,7 +91,7 @@
       <option name="presentableId" value="Default" />
       <updated>1749711676005</updated>
       <workItem from="1749711677095" duration="9837000" />
-      <workItem from="1749779220088" duration="26025000" />
+      <workItem from="1749779220088" duration="26842000" />
     </task>
     <servers />
   </component>
