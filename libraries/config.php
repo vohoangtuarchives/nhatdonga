@@ -161,33 +161,21 @@ $config = array(
 	),
 
 	'cart' => array(
-
-		"active" => false,
-
+		"active" => true,
 	),
 
 	'coppy' => array(
-
 		"lock" => false,
-
 	),
 
 	'careers' => [
-
 		'casi' => "Ca sĩ",
-
 		'youtuber' => "Youtuber",
-
 		'kysu' => "Kỹ Sư",
-
 		'cogiao' => "Cô Giáo",
-
 		'laptrinhvien' => "Lập Trình Viên",
-
 		'mauanh' => "Mẫu Ảnh",
-
 		'tiktoker' => "Tiktoker"
-
 	],
 
 	'login' => array(

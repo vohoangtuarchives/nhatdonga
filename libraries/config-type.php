@@ -164,8 +164,6 @@ $config['places']['ship_price'] = array("city","district","ward");
 
 
 
-
-
 /* Quản lý thông báo đẩy */
 
 $config['onesignal'] = false;
@@ -175,8 +173,6 @@ $config['onesignal'] = false;
 /* Quản lý giỏ hàng */
 
 $config['order']['active'] = true;
-
-
 
 if($config['order']['active']){
 
