@@ -1,8 +1,76 @@
+<div class="desktop-dknt-wrapper">
+    <div class="container">
+        <div class="desktop-dknt-wrap flex-wrap">
+            <div class="w-100">
+               <div class="dknt-wrap-info">
+                   <h4 class="form-title">
+                       GỬI YÊU CẦU
+                   </h4>
+                   <p>
+                       Liên hệ ngay để được đội ngũ chuyên gia tư vấn chi tiết về sản phẩm, giải pháp kỹ thuật và báo giá phù hợp.
+                   </p>
+               </div>
+            </div>
+            <div class="desktop-dknt ">
+
+                <form class="form-newsletter validation-newsletter" novalidate method="post" action="" enctype="multipart/form-data">
+                    <div class="newsletter-row d-flex">
+                        <div class="d-block w-100 px-1">
+                            <div class="_iwrap">
+                                <div class="newsletter-input-group">
+                                    <span class="icon name"><i class="fa fa-user me-2"></i>Họ và tên:</span>
+                                    <div class="input_">
+                                        <input name="dataNewsletter[name]" type="text" required id="ten-newsletter" placeholder="Họ và tên:"/>
+                                        <div class="invalid-feedback"><?=vuilongnhaphoten?></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-block w-100 px-1">
+                            <div class="_iwrap">
+                            <div class="newsletter-input-group">
+                                <span class="icon phone"><i class="fa fa-phone me-2"></i>Số điện thoại:</span>
+                                <div class="input_">
+                                    <input name="dataNewsletter[phone]" type="text" required id="diachi-newsletter" placeholder="Số điện thoại:"/>
+                                    <div class="invalid-feedback"><?=vuilongnhapsodienthoai?></div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="d-block w-100 px-1">
+                            <div class="_iwrap">
+                            <div class="newsletter-input-group">
+                                <span class="icon email"><i class="fa fa-envelope me-2"></i>Email:</span>
+                                <div class="input_">
+                                    <input name="dataNewsletter[email]" type="text" required id="email-newsletter" placeholder="Email:"/>
+                                    <div class="invalid-feedback"><?=vuilongnhapdiachiemail?></div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="newsletter-button px-1">
+                            <button type="submit"  id="submit-newsletter" name="submit-newsletter" value="ĐĂNG KÝ">
+                                <span>
+                                    GỬI YÊU CẦU
+                                </span>
+                            </button>
+                        </div>
+
+                    </div>
+                    <input type="hidden" name="submit-newsletter" value="1">
+                    <input type="hidden" name="recaptcha_response_newsletter" id="recaptchaResponseNewsletter">
+                    <input type="hidden" name="type-newsletter" value="dangkynhantin">
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <footer id="footer" >
-        <footer class="text-white text-sm ">
+        <div class="text-white text-sm ">
             <div class="container text-center py-5">
                 <img src="/assets/images/logo.png" alt="Nhật Đông Á" class="mx-auto h-20 mb-4" />
-                <h2 class="text-lg font-semibold mb-6"><?=$setting["name$lang"]?></h2>
+                <h2 class="text-lg font-semibold mb-6">CÔNG TY TNHH MTV NHẤT ĐÔNG Á</h2>
             </div>
             <div class="container my-4">
                 <div class="d-flex justify-content-between align-baseline">
@@ -65,7 +133,7 @@
                </div>
            </div>
           </div>
-        </footer>
+        </div>
     </div>
     <div class="footer-powered">
         <div class="container">

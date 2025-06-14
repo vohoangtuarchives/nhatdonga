@@ -1,33 +1,17 @@
 <div class="dangkynhantin py-5" >
-
     <div>
-
     <div class="close-dknt"><span></span></div>
-
     <div class="wrapper">
-
         <div class="title-form">
-
         <div class="title-main reverse">
-
             <h2 class="text-uppercase">
-
                 Đặt lịch tư vấn
-
                 <span class="decoration"></span>
-
             </h2>
-
             <p class="title-main__desc">
-
                 <?=$txtDKNT["noidungvi"] ?? ''?>
-
                 </p>
-
-
-
         </div>
-
 
 
         </div>

@@ -40,17 +40,17 @@ $config['news']['dich-vu'] = array_merge(include "news/config-news-no-category.p
 
 // ]);
 
-// $config['news']['bac-si'] = array_merge(include "news/config-news-no-category.php", [
+ $config['news']['blog'] = array_merge(include "news/config-news-no-category.php", [
 
-//     'title_main' => 'Đội ngũ bác sĩ',
+     'title_main' => 'Blog',
 
-//     'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
+     'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
 
-//     'width' => 320,
+     'width' => 320,
 
-//     'height' => 240,
+     'height' => 240,
 
-// ]);
+ ]);
 
 // $config['news']['tuyen-dung'] = array_merge(include "news/config-news-no-category.php", [
 
@@ -100,49 +100,49 @@ $config['news']['dich-vu'] = array_merge(include "news/config-news-no-category.p
 
 // ]);
 
-
-
-$config['news']['tai-sao-chon'] = array_merge(include "news/config-news-no-category.php", [
-
-    'title_main' => 'Tại Sao Chọn',
-
-    'width' => 65,
-
-    'height' => 65,
-
-    'slug' => false,
-
-    'copy' => false,
-
-    'images' => true,
-
-    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
-
-]);
-
-
-
-$config['news']['khach-hang'] = array_merge(include "news/config-news-no-category.php", [
-
-    'title_main' => 'Khách Hàng',
-
-    'width' => 105,
-
-    'height' => 105,
-
-    'slug' => false,
-
-    'content' => false,
-
-    'copy' => TRUE,
-
-    'images' => true,
-
-    'career' => true,
-
-    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
-
-]);
+//
+//
+//$config['news']['tai-sao-chon'] = array_merge(include "news/config-news-no-category.php", [
+//
+//    'title_main' => 'Tại Sao Chọn',
+//
+//    'width' => 65,
+//
+//    'height' => 65,
+//
+//    'slug' => false,
+//
+//    'copy' => false,
+//
+//    'images' => true,
+//
+//    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
+//
+//]);
+//
+//
+//
+//$config['news']['khach-hang'] = array_merge(include "news/config-news-no-category.php", [
+//
+//    'title_main' => 'Khách Hàng',
+//
+//    'width' => 105,
+//
+//    'height' => 105,
+//
+//    'slug' => false,
+//
+//    'content' => false,
+//
+//    'copy' => TRUE,
+//
+//    'images' => true,
+//
+//    'career' => true,
+//
+//    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
+//
+//]);
 
 
 
