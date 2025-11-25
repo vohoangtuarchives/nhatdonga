@@ -1,22 +1,17 @@
-<?php	
-	if(!defined('SOURCES')) die("Error");
+<?php
 
-	switch($act)
-	{
-		case "delete":
-			delete();
-			break;
+if (!defined('SOURCES')) die("Error");
 
-		default:
-			$template = "404";
-	}
+switch($act) {
+	case "delete":
+		if ($cache->delete()) {
+			$func->transfer("Xóa cache thành công", "index.php");
+		} else {
+			$func->transfer("Xóa cache thất bại", "index.php", false);
+		}
+		break;
 
-	/* Delete cache */
-	function delete()
-	{
-		global $func, $cache;
+	default:
+		$template = "404";
+}
 
-		if($cache->delete()) $func->transfer("Xóa cache thành công", "index.php");
-		else $func->transfer("Xóa cache thất bại", "index.php", false);
-	}
-?>

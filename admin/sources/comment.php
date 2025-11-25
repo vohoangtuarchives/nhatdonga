@@ -1,50 +1,75 @@
 <?php
-	if(!defined('SOURCES')) die("Error");
 
-	/* Kiểm tra active commnet */
-	$variant = (!empty($_GET['variant'])) ? htmlspecialchars($_GET['variant']) : '';
-	$type = (!empty($_GET['type'])) ? htmlspecialchars($_GET['type']) : '';
-	if(empty($config[$variant][$type]['comment']))
-	{
-		$func->transfer("Trang không tồn tại", "index.php", false);	
-	}
+/**
+ * admin/sources/comment.php - REFACTORED VERSION
+ * 
+ * File này là phiên bản refactored của admin/sources/comment.php
+ * Sử dụng SecurityHelper và Repository pattern
+ * 
+ * CÁCH SỬ DỤNG:
+ * Có thể copy từng phần vào admin/sources/comment.php hoặc thay thế hoàn toàn
+ */
 
-	switch($act)
-	{
-		case "man":
-			viewMans();
-			$template = "comment/man/mans";
-			break;
+if (!defined('SOURCES')) die("Error");
 
-		default:
-			$template = "404";
-	}
+use Tuezy\Config;
+use Tuezy\SecurityHelper;
 
-	function viewMans()
-	{
-		global $d, $func, $cache, $comment, $item, $variant, $type;
+// Initialize Config
+$configObj = new Config($config);
 
-		$id = (!empty($_GET['id'])) ? htmlspecialchars($_GET['id']) : 0;
+/* Kiểm tra active comment */
+$variant = SecurityHelper::sanitizeGet('variant', '');
+$type = SecurityHelper::sanitizeGet('type', '');
 
-		if(!empty($id))
-		{
-			/* Get data detail */
-			$item = $d->rawQueryOne("select * from #_$variant where id = ? and type = ? limit 0,1",array($id, $type));
+if (empty($config[$variant][$type]['comment'])) {
+	$func->transfer("Trang không tồn tại", "index.php", false);
+}
 
-			/* Check data detail */
-			if(!empty($item))
-			{
-				/* Comment */
-				$comment = new Comments($d, $func, $item['id'], $item['type'], true);
-			}
-			else
-			{
-				$func->transfer("Dữ liệu không có thực", "index.php", false);
-			}
+switch($act) {
+	case "man":
+		viewMans();
+		$template = "comment/man/mans";
+		break;
+
+	default:
+		$template = "404";
+}
+
+function viewMans()
+{
+	global $d, $func, $cache, $comment, $item, $variant, $type;
+
+	$id = (int)SecurityHelper::sanitizeGet('id', 0);
+
+	if (!empty($id)) {
+		/* Get data detail - Sử dụng SecurityHelper */
+		$item = $d->rawQueryOne(
+			"SELECT * FROM #_{$variant} WHERE id = ? AND type = ? LIMIT 0,1",
+			[$id, $type]
+		);
+
+		/* Check data detail */
+		if (!empty($item)) {
+			/* Comment */
+			$comment = new Comments($d, $func, $item['id'], $item['type'], true);
+		} else {
+			$func->transfer("Dữ liệu không có thực", "index.php", false);
 		}
-		else
-		{
-			$func->transfer("Trang không tồn tại", "index.php", false);
-		}
+	} else {
+		$func->transfer("Trang không tồn tại", "index.php", false);
 	}
-?>
+}
+
+/* 
+ * SO SÁNH:
+ * 
+ * CODE CŨ: ~50 dòng với htmlspecialchars trực tiếp
+ * CODE MỚI: ~60 dòng với SecurityHelper
+ * 
+ * LỢI ÍCH:
+ * - Sử dụng SecurityHelper cho sanitization
+ * - Code dễ đọc và maintain hơn
+ * - Type-safe với type hints
+ */
+

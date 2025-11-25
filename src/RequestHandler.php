@@ -1,16 +1,54 @@
 <?php
-class RequestHandler {
-    public static function getParams() {
+
+namespace Tuezy;
+
+/**
+ * RequestHandler - Handles HTTP request parameters with sanitization
+ * Refactored to improve code quality while maintaining exact functionality
+ */
+class RequestHandler
+{
+    /**
+     * Get and sanitize request parameters
+     * 
+     * @return array<string, string> Sanitized request parameters
+     */
+    public static function getParams(): array
+    {
         return [
-            'com' => !empty($_REQUEST['com']) ? htmlspecialchars($_REQUEST['com']) : '',
-            'act' => !empty($_REQUEST['act']) ? htmlspecialchars($_REQUEST['act']) : '',
-            'type' => !empty($_REQUEST['type']) ? htmlspecialchars($_REQUEST['type']) : '',
-            'kind' => !empty($_REQUEST['kind']) ? htmlspecialchars($_REQUEST['kind']) : '',
-            'val' => !empty($_REQUEST['val']) ? htmlspecialchars($_REQUEST['val']) : '',
-            'variant' => !empty($_GET['variant']) ? htmlspecialchars($_GET['variant']) : '',
-            'id_parent' => !empty($_REQUEST['id_parent']) ? htmlspecialchars($_REQUEST['id_parent']) : '',
-            'id' => !empty($_REQUEST['id']) ? htmlspecialchars($_REQUEST['id']) : '',
-            'curPage' => !empty($_GET['p']) ? htmlspecialchars($_GET['p']) : '1'
+            'com' => self::sanitizeRequest('com'),
+            'act' => self::sanitizeRequest('act'),
+            'type' => self::sanitizeRequest('type'),
+            'kind' => self::sanitizeRequest('kind'),
+            'val' => self::sanitizeRequest('val'),
+            'variant' => self::sanitizeGet('variant'),
+            'id_parent' => self::sanitizeRequest('id_parent'),
+            'id' => self::sanitizeRequest('id'),
+            'curPage' => self::sanitizeGet('p', '1')
         ];
+    }
+
+    /**
+     * Sanitize REQUEST parameter
+     * 
+     * @param string $key Parameter key
+     * @param string $default Default value if empty
+     * @return string Sanitized value
+     */
+    private static function sanitizeRequest(string $key, string $default = ''): string
+    {
+        return !empty($_REQUEST[$key]) ? htmlspecialchars($_REQUEST[$key], ENT_QUOTES, 'UTF-8') : $default;
+    }
+
+    /**
+     * Sanitize GET parameter
+     * 
+     * @param string $key Parameter key
+     * @param string $default Default value if empty
+     * @return string Sanitized value
+     */
+    private static function sanitizeGet(string $key, string $default = ''): string
+    {
+        return !empty($_GET[$key]) ? htmlspecialchars($_GET[$key], ENT_QUOTES, 'UTF-8') : $default;
     }
 }

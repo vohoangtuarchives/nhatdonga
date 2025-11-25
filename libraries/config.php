@@ -38,7 +38,7 @@ $config = array(
 
 	'database' => array(
 
-		'server-name' => $_SERVER["SERVER_NAME"],
+		'server-name' => ($_SERVER["SERVER_NAME"] ?? 'localhost'),
 
 		'url' => '/',
 
