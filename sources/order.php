@@ -38,8 +38,10 @@ if (!empty($titleMain)) {
 }
 $breadcrumbs = $breadcrumbHelper->render();
 
-/* Tỉnh thành */
-$city = $d->rawQuery("select name, id from #_city order by id asc");
+/* Tỉnh thành - Sử dụng LocationRepository */
+use Tuezy\Repository\LocationRepository;
+$locationRepo = new LocationRepository($d, $cache);
+$city = $locationRepo->getCities();
 
 /* Hình thức thanh toán */
 $payments_info = $newsRepo->getNewsItems('hinh-thuc-thanh-toan', [], 0, 0);

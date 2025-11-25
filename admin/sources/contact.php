@@ -44,23 +44,15 @@ switch($act) {
 		if (!empty($_REQUEST['keyword'])) {
 			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
 		}
-
-		// Custom query for contact (không có type)
-		$where = "id<>0";
-		$params = [];
-		if (!empty($filters['keyword'])) {
-			$where .= " and fullname LIKE ?";
-			$params[] = "%{$filters['keyword']}%";
+		if (!empty($_REQUEST['status'])) {
+			$filters['status'] = SecurityHelper::sanitize($_REQUEST['status']);
 		}
 
+		// Get contacts using ContactRepository
 		$perPage = 10;
 		$start = ($curPage - 1) * $perPage;
-		$sql = "select * from #_contact where {$where} order by numb,id desc limit {$start},{$perPage}";
-		$items = $d->rawQuery($sql, $params);
-		
-		$countSql = "select count(*) as total from #_contact where {$where}";
-		$total = $d->rawQueryOne($countSql, $params);
-		$totalItems = (int)($total['total'] ?? 0);
+		$items = $contactRepo->getAll($filters, $start, $perPage);
+		$totalItems = $contactRepo->count($filters);
 		
 		$url = "index.php?com=contact&act=man";
 		$paging = $func->pagination($totalItems, $perPage, $curPage, $url);
