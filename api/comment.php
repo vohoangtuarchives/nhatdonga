@@ -3,50 +3,54 @@
 /**
  * api/comment.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của api/comment.php
- * Sử dụng SecurityHelper
- * 
- * CÁCH SỬ DỤNG:
- * 1. Backup file gốc: cp api/comment.php api/comment.php.backup
- * 2. Copy file này: cp api/comment-refactored.php api/comment.php
- * 3. Test kỹ trước khi deploy
+ * Sử dụng CommentAPIController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 include "config.php";
 
+use Tuezy\API\Controller\CommentAPIController;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
 // Initialize Config
 $configObj = new Config($config);
 
-// Define routes
-$routes = [
-	'limitLists' => ['limitLists', 'GET'],
-	'limitReplies' => ['limitReplies', 'GET'],
-	'add' => ['add', 'POST']
-];
+// Initialize Controller
+$controller = new CommentAPIController($d, $cache, $func, $configObj, $lang, $sluglang);
 
-// Get route - Sử dụng SecurityHelper
+// Get route
 $route = SecurityHelper::sanitizeGet('get', '');
-$route = (!empty($route) && !empty($routes[$route])) ? $route : false;
 
-if (!empty($route)) {
-	$comment = new Comments($d, $func);
-	$method = $routes[$route][0];
-	$requestType = $routes[$route][1];
-	
-	if (method_exists($comment, $method) && $_SERVER['REQUEST_METHOD'] == $requestType) {
-		print $comment->$method();
-	} else {
-		// Error handling
-		header('Content-Type: application/json');
-		echo json_encode(['error' => 'Method not allowed or not found']);
-	}
-} else {
-	// Error handling
-	header('Content-Type: application/json');
-	echo json_encode(['error' => 'Invalid route']);
+// Route to appropriate method
+switch ($route) {
+	case 'limitLists':
+		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+			$controller->limitLists();
+		} else {
+			$controller->error('Method not allowed', 405);
+		}
+		break;
+		
+	case 'limitReplies':
+		if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+			$controller->limitReplies();
+		} else {
+			$controller->error('Method not allowed', 405);
+		}
+		break;
+		
+	case 'add':
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$controller->add();
+		} else {
+			$controller->error('Method not allowed', 405);
+		}
+		break;
+		
+	default:
+		$controller->error('Invalid route', 404);
+		break;
 }
 
 /* 

@@ -1,34 +1,25 @@
 <?php
 
 /**
- * admin/sources/user.php - REFACTORED VERSION (Partial)
+ * admin/sources/user.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của admin/sources/user.php
- * Sử dụng AdminAuthHelper và AdminPermissionHelper
- * 
- * CÁCH SỬ DỤNG:
- * Có thể copy từng phần vào admin/sources/user.php hoặc thay thế hoàn toàn
+ * Sử dụng UserAdminController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
+use Tuezy\Admin\Controller\UserAdminController;
 use Tuezy\Admin\AdminAuthHelper;
 use Tuezy\Admin\AdminPermissionHelper;
-use Tuezy\Repository\UserRepository;
-use Tuezy\Service\UserService;
-use Tuezy\Config;
 use Tuezy\SecurityHelper;
-
-// Initialize Config
-$configObj = new Config($config);
 
 // Initialize Helpers
 $adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
 $adminPermissionHelper = new AdminPermissionHelper($func, $config);
 
-// Initialize UserService for member management
-$userRepo = new UserRepository($d, $cache);
-$userService = new UserService($userRepo, $d);
+// Initialize Controller
+$controller = new UserAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper, $loginAdmin);
 
 /* Check access user - Sử dụng AdminPermissionHelper */
 $restrictedActions = ['man_admin', 'add_admin', 'edit_admin', 'delete_admin', 'man_member', 'add_member', 'edit_member', 'delete_member', 'permission_group', 'add_permission_group', 'edit_permission_group', 'delete_permission_group'];
@@ -53,8 +44,15 @@ switch($act) {
 		break;
 		
 	case "man_admin":
-		// View admins - có thể tạo AdminRepository sau
-		viewAdmins();
+		// Get filters
+		$filters = [];
+		if (!empty($_REQUEST['keyword'])) {
+			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
+		}
+		
+		$viewData = $controller->manAdmin($filters, $curPage, 20);
+		$items = $viewData['items'];
+		$paging = $viewData['paging'];
 		$template = "user/man_admin/mans";
 		break;
 		
@@ -63,24 +61,51 @@ switch($act) {
 		break;
 		
 	case "edit_admin":
-		editAdmin();
+		$id = (int)($_GET['id'] ?? 0);
+		if ($id) {
+			$item = $controller->getUser($id);
+			if (!$item) {
+				$func->transfer("Dữ liệu không có thực", "index.php?com=user&act=man_admin", false);
+			}
+		} else {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=user&act=man_admin", false);
+		}
 		$template = "user/man_admin/man_add";
 		break;
 		
 	case "info_admin":
-		infoAdmin();
+		if (function_exists('infoAdmin')) {
+			infoAdmin();
+		}
 		$template = "user/man_admin/info";
 		break;
 		
 	case "save_admin":
-		saveAdmin();
+		if (empty($_POST)) {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=user&act=man_admin", false);
+		}
+		
+		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
+		$data = $_POST['data'] ?? [];
+		
+		if ($controller->save($data, $id, 'admin')) {
+			$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+			$func->transfer($message, "index.php?com=user&act=man_admin");
+		} else {
+			$func->transfer("Có lỗi xảy ra khi lưu dữ liệu", "index.php?com=user&act=man_admin", false);
+		}
 		break;
 		
 	case "delete_admin":
-		deleteAdmin();
+		$id = (int)($_GET['id'] ?? 0);
+		if ($id && $controller->delete($id, 'admin')) {
+			$func->transfer("Xóa dữ liệu thành công", "index.php?com=user&act=man_admin");
+		} else {
+			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=user&act=man_admin", false);
+		}
 		break;
 
-	/* Members - Sử dụng UserService */
+	/* Members - Sử dụng UserAdminController */
 	case "man_member":
 		// Get filters
 		$filters = [];
@@ -91,12 +116,9 @@ switch($act) {
 			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
 		}
 
-		// Get members using UserService
-		$perPage = 20;
-		$listing = $userService->getListing($filters, $curPage, $perPage);
-		$items = $listing['items'];
-		$totalItems = $listing['total'];
-		$paging = $func->paging($totalItems, $perPage, $curPage, "index.php?com=user&act=man_member");
+		$viewData = $controller->manMember($filters, $curPage, 20);
+		$items = $viewData['items'];
+		$paging = $viewData['paging'];
 		$template = "user/man_member/mans";
 		break;
 		
@@ -107,7 +129,7 @@ switch($act) {
 	case "edit_member":
 		$id = (int)($_GET['id'] ?? 0);
 		if ($id) {
-			$item = $userRepo->getById($id);
+			$item = $controller->getUser($id);
 			if (!$item) {
 				$func->transfer("Dữ liệu không có thực", "index.php?com=user&act=man_member", false);
 			}
@@ -124,40 +146,18 @@ switch($act) {
 
 		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
 		$data = $_POST['data'] ?? [];
-		
-		// Sanitize data
-		foreach ($data as $key => $value) {
-			if (is_string($value)) {
-				$data[$key] = SecurityHelper::sanitize($value);
-			}
-		}
 
-		if ($id) {
-			// Update existing member
-			if ($userService->updateProfile($id, $data)) {
-				// Update password if provided
-				if (!empty($_POST['data']['password'])) {
-					$oldPassword = $_POST['data']['old_password'] ?? '';
-					$newPassword = $_POST['data']['password'];
-					$userService->updatePassword($id, $oldPassword, $newPassword);
-				}
-				$func->transfer("Cập nhật dữ liệu thành công", "index.php?com=user&act=man_member");
-			} else {
-				$func->transfer("Cập nhật dữ liệu thất bại", "index.php?com=user&act=man_member", false);
-			}
+		if ($controller->save($data, $id, 'member')) {
+			$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+			$func->transfer($message, "index.php?com=user&act=man_member");
 		} else {
-			// Create new member
-			if ($userService->register($data)) {
-				$func->transfer("Thêm dữ liệu thành công", "index.php?com=user&act=man_member");
-			} else {
-				$func->transfer("Thêm dữ liệu thất bại. Email có thể đã tồn tại.", "index.php?com=user&act=man_member", false);
-			}
+			$func->transfer("Có lỗi xảy ra khi lưu dữ liệu", "index.php?com=user&act=man_member", false);
 		}
 		break;
 		
 	case "delete_member":
 		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $userRepo->delete($id)) {
+		if ($id && $controller->delete($id, 'member')) {
 			$func->transfer("Xóa dữ liệu thành công", "index.php?com=user&act=man_member");
 		} else {
 			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=user&act=man_member", false);

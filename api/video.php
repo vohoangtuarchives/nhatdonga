@@ -1,31 +1,27 @@
 <?php
 
+/**
+ * api/video.php - REFACTORED VERSION
+ * 
+ * Sử dụng VideoAPIController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
+ */
 
 include "config.php";
 
-use Tuezy\Repository\PhotoRepository;
-use Tuezy\Service\VideoService;
+use Tuezy\API\Controller\VideoAPIController;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
 // Initialize Config
 $configObj = new Config($config);
 
-// Initialize Repositories & Service
-$photoRepo = new PhotoRepository($d, $cache, $lang, $sluglang);
-$videoService = new VideoService($photoRepo, $d);
+// Initialize Controller
+$controller = new VideoAPIController($d, $cache, $func, $configObj, $lang, $sluglang);
 
 // Get video ID
 $id = (int)SecurityHelper::sanitizePost('id', 0);
 
-if ($id) {
-	// Get video - Sử dụng VideoService
-	$video = $videoService->getVideoDetail($id);
-	
-	if (!empty($video['link_video'])) {
-		$youtubeId = $func->getYoutube($video['link_video']);
-		?>
-		<iframe width="100%" height="100%" src="//www.youtube.com/embed/<?=$youtubeId?>" frameborder="0" allowfullscreen></iframe>
-		<?php
-	}
+if ($id > 0) {
+	$controller->getVideoEmbed($id);
 }

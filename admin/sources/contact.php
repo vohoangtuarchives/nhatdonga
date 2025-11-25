@@ -1,41 +1,31 @@
 <?php
 
 /**
- * admin/sources/contact.php - REFACTORED VERSION (Partial)
+ * admin/sources/contact.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của admin/sources/contact.php
- * Sử dụng AdminCRUDHelper và ContactRepository
- * 
- * CÁCH SỬ DỤNG:
- * Có thể copy từng phần vào admin/sources/contact.php hoặc thay thế hoàn toàn
+ * Sử dụng ContactAdminController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\Admin\AdminCRUDHelper;
-use Tuezy\Repository\ContactRepository;
-use Tuezy\Config;
+use Tuezy\Admin\Controller\ContactAdminController;
+use Tuezy\Admin\AdminAuthHelper;
+use Tuezy\Admin\AdminPermissionHelper;
 use Tuezy\SecurityHelper;
 
-// Initialize Config
-$configObj = new Config($config);
+// Initialize language variables
+if (!isset($lang)) {
+	$lang = $_SESSION['lang'] ?? 'vi';
+}
+if (!isset($sluglang)) {
+	$sluglang = 'slugvi';
+}
 
-// Initialize ContactRepository
-$contactRepo = new ContactRepository($d, $cache);
-
-// Initialize AdminCRUDHelper for contact
-// Note: Contact không có type, nên cần custom một chút
-$adminCRUD = new AdminCRUDHelper(
-	$d, 
-	$func, 
-	$flash, 
-	'contact', 
-	'', 
-	'contact', 
-	UPLOAD_FILE_L, 
-	$lang, 
-	$sluglang
-);
+// Initialize Controller
+$adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
+$adminPermissionHelper = new AdminPermissionHelper($func, $config);
+$controller = new ContactAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper);
 
 switch($act) {
 	case "man":
@@ -48,21 +38,16 @@ switch($act) {
 			$filters['status'] = SecurityHelper::sanitize($_REQUEST['status']);
 		}
 
-		// Get contacts using ContactRepository
-		$perPage = 10;
-		$start = ($curPage - 1) * $perPage;
-		$items = $contactRepo->getAll($filters, $start, $perPage);
-		$totalItems = $contactRepo->count($filters);
-		
-		$url = "index.php?com=contact&act=man";
-		$paging = $func->pagination($totalItems, $perPage, $curPage, $url);
+		$viewData = $controller->man($filters, $curPage, 10);
+		$items = $viewData['items'];
+		$paging = $viewData['paging'];
 		$template = "contact/man/mans";
 		break;
 		
 	case "edit":
 		$id = (int)($_GET['id'] ?? 0);
 		if ($id) {
-			$item = $contactRepo->getById($id);
+			$item = $controller->getContact($id);
 			if (!$item) {
 				$func->transfer("Dữ liệu không có thực", "index.php?com=contact&act=man", false);
 			}
@@ -73,14 +58,15 @@ switch($act) {
 		break;
 		
 	case "save":
-		// Save logic - có thể sử dụng ContactRepository->update()
-		// Giữ nguyên logic cũ cho phần này vì phức tạp
-		saveMan();
+		// Save logic - giữ nguyên logic cũ vì phức tạp (file upload, etc.)
+		if (function_exists('saveMan')) {
+			saveMan();
+		}
 		break;
 		
 	case "delete":
 		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $contactRepo->delete($id)) {
+		if ($id && $controller->delete($id)) {
 			$func->transfer("Xóa dữ liệu thành công", "index.php?com=contact&act=man");
 		} else {
 			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=contact&act=man", false);

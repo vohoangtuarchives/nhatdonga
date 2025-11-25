@@ -65,7 +65,7 @@ class AdminCRUDHelper
         $totalItems = (int)($total['total'] ?? 0);
 
         // Generate pagination
-        $paging = $this->func->paging($totalItems, $perPage, $curPage, "index.php?com={$this->table}&act=man&type={$this->type}");
+        $paging = $this->func->pagination($totalItems, $perPage, $curPage, "index.php?com={$this->table}&act=man&type={$this->type}");
 
         return [
             'items' => $items,
@@ -103,6 +103,9 @@ class AdminCRUDHelper
         // Set type
         $data['type'] = $this->type;
 
+        // Check slug uniqueness before saving
+        $this->validateSlug($data, $id);
+
         // Handle file uploads
         $this->handleFileUploads($data, $id);
 
@@ -119,6 +122,48 @@ class AdminCRUDHelper
                 $data['numb'] = 0;
             }
             return $this->d->insert($this->table, $data);
+        }
+    }
+
+    /**
+     * Validate slug uniqueness
+     * 
+     * @param array $data Item data
+     * @param int|null $id Item ID (for edit)
+     * @throws \Exception If slug already exists
+     */
+    private function validateSlug(array $data, ?int $id = null): void
+    {
+        // Check if slug fields exist in data
+        $slugFields = ['slugvi', 'slugen'];
+        $hasSlug = false;
+        $slugToCheck = '';
+
+        foreach ($slugFields as $field) {
+            if (isset($data[$field]) && !empty($data[$field])) {
+                $hasSlug = true;
+                $slugToCheck = $data[$field];
+                break;
+            }
+        }
+
+        if (!$hasSlug) {
+            return; // No slug to validate
+        }
+
+        // Prepare checkSlug data
+        $checkSlugData = [
+            'slug' => $slugToCheck,
+            'id' => $id ?? 0,
+            'table' => $this->table,
+            'type' => $this->type,
+        ];
+
+        // Check slug uniqueness
+        $result = $this->func->checkSlug($checkSlugData);
+
+        if ($result === 'exist') {
+            throw new \Exception("Đường dẫn đã tồn tại. Đường dẫn truy cập mục này có thể bị trùng lặp.");
         }
     }
 

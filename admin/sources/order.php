@@ -1,28 +1,18 @@
 <?php
 
 /**
- * admin/sources/order.php - REFACTORED VERSION (Partial)
+ * admin/sources/order.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của admin/sources/order.php
- * Sử dụng OrderRepository và FilterHelper
- * 
- * CÁCH SỬ DỤNG:
- * Có thể copy từng phần vào admin/sources/order.php hoặc thay thế hoàn toàn
+ * Sử dụng OrderAdminController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\Repository\OrderRepository;
-use Tuezy\Service\OrderService;
-use Tuezy\Config;
+use Tuezy\Admin\Controller\OrderAdminController;
+use Tuezy\Admin\AdminAuthHelper;
+use Tuezy\Admin\AdminPermissionHelper;
 use Tuezy\SecurityHelper;
-
-// Initialize Config
-$configObj = new Config($config);
-
-// Initialize Repositories & Service
-$orderRepo = new OrderRepository($d, $cache);
-$orderService = new OrderService($orderRepo, $d);
 
 /* Kiểm tra active đơn hàng */
 if (!isset($config['order']['active']) || $config['order']['active'] == false) {
@@ -38,6 +28,11 @@ foreach ($urlParams as $param) {
 	}
 }
 
+// Initialize Controller
+$adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
+$adminPermissionHelper = new AdminPermissionHelper($func, $config);
+$controller = new OrderAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper);
+
 switch($act) {
 	case "man":
 		// Get filters
@@ -48,43 +43,21 @@ switch($act) {
 		if (!empty($_REQUEST['order_payment'])) {
 			$filters['order_payment'] = (int)$_REQUEST['order_payment'];
 		}
-		if (!empty($_REQUEST['order_date'])) {
-			$filters['order_date'] = SecurityHelper::sanitize($_REQUEST['order_date']);
-		}
-		if (!empty($_REQUEST['range_price'])) {
-			$filters['range_price'] = SecurityHelper::sanitize($_REQUEST['range_price']);
-		}
-		if (!empty($_REQUEST['id_city'])) {
-			$filters['city'] = (int)$_REQUEST['id_city'];
-		}
-		if (!empty($_REQUEST['id_district'])) {
-			$filters['district'] = (int)$_REQUEST['id_district'];
-		}
-		if (!empty($_REQUEST['id_ward'])) {
-			$filters['ward'] = (int)$_REQUEST['id_ward'];
-		}
 		if (!empty($_REQUEST['keyword'])) {
 			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
 		}
 
-		// Get orders - Sử dụng OrderService
-		$perPage = 10;
-		$listing = $orderService->getListing($filters, $curPage, $perPage);
-		$items = $listing['items'];
-		$totalItems = $listing['total'];
+		$viewData = $controller->man($filters, $curPage, 10);
+		$items = $viewData['items'];
+		$paging = $viewData['paging'];
 		
-		// Extract min/max from filters if needed
-		$price_from = $filters['range_price'] ? explode(";", $filters['range_price'])[0] : null;
-		$price_to = $filters['range_price'] ? explode(";", $filters['range_price'])[1] : null;
-		
-		$url = "index.php?com=order&act=man" . $strUrl;
-		$paging = $func->paging($totalItems, $perPage, $curPage, $url);
-
 		/* Lấy tổng giá min/max - Sử dụng OrderRepository */
+		$orderRepo = new \Tuezy\Repository\OrderRepository($d, $cache);
 		$minTotal = $orderRepo->getMinTotalPrice();
 		$maxTotal = $orderRepo->getMaxTotalPrice();
 
 		/* Lấy số đơn hàng theo status - Sử dụng OrderService */
+		$orderService = new \Tuezy\Service\OrderService($orderRepo, $d);
 		$stats = $orderService->getStatistics();
 		$totalNewOrder = $stats['total_new'];
 		$totalConfirmOrder = $stats['total_confirm'];
@@ -97,10 +70,10 @@ switch($act) {
 	case "edit":
 		$id = (int)($_GET['id'] ?? 0);
 		if ($id) {
-			$detailContext = $orderService->getDetailContext($id);
-			if ($detailContext) {
-				$item = $detailContext['order'];
-				$orderDetails = $detailContext['details'];
+			$viewData = $controller->detail($id);
+			if ($viewData) {
+				$item = $viewData['order'];
+				$orderDetails = $viewData['items'];
 			} else {
 				$func->transfer("Dữ liệu không có thực", "index.php?com=order&act=man" . $strUrl, false);
 			}
@@ -113,12 +86,14 @@ switch($act) {
 	case "save":
 		// Save logic - có thể sử dụng OrderRepository->update()
 		// Giữ nguyên logic cũ cho phần này vì phức tạp
-		saveMan();
+		if (function_exists('saveMan')) {
+			saveMan();
+		}
 		break;
 		
 	case "delete":
 		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $orderRepo->delete($id)) {
+		if ($id && $controller->delete($id)) {
 			$func->transfer("Xóa dữ liệu thành công", "index.php?com=order&act=man" . $strUrl);
 		} else {
 			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=order&act=man" . $strUrl, false);

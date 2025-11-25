@@ -7,6 +7,22 @@
 		'watermark' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'watermark',
 	]);
 
+	/* Ensure variables are available */
+	if (!isset($http)) {
+		$http = ((isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ||
+			(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'))
+			? 'https://' : 'http://';
+	}
+	if (!isset($configUrl)) {
+		$configUrl = $config['database']['server-name'] . $config['database']['url'];
+	}
+	if (!isset($configBase)) {
+		$configBase = $http . $configUrl;
+	}
+	if (!isset($loginAdmin)) {
+		$loginAdmin = $config['login']['admin'] ?? 'LoginAdmin' . ($config['metadata']['contract'] ?? '788922w');
+	}
+
 	/* Check HTTP */
 	$func->checkHTTP($http, $config['arrayDomainSSL'], $configBase, $configUrl);
 

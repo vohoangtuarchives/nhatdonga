@@ -1,28 +1,26 @@
 <?php
 
 /**
- * admin/sources/static.php - REFACTORED VERSION (Partial)
+ * admin/sources/static.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của admin/sources/static.php
- * Sử dụng StaticRepository và SecurityHelper
- * 
- * CÁCH SỬ DỤNG:
- * Có thể copy từng phần vào admin/sources/static.php hoặc thay thế hoàn toàn
+ * Sử dụng StaticAdminController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\Repository\StaticRepository;
-use Tuezy\Service\StaticService;
-use Tuezy\Config;
+use Tuezy\Admin\Controller\StaticAdminController;
+use Tuezy\Admin\AdminAuthHelper;
+use Tuezy\Admin\AdminPermissionHelper;
 use Tuezy\SecurityHelper;
 
-// Initialize Config
-$configObj = new Config($config);
-
-// Initialize Repositories & Service
-$staticRepo = new StaticRepository($d, $cache, $lang, $sluglang);
-$staticService = new StaticService($staticRepo);
+// Initialize language variables
+if (!isset($lang)) {
+	$lang = $_SESSION['lang'] ?? 'vi';
+}
+if (!isset($sluglang)) {
+	$sluglang = 'slugvi';
+}
 
 /* Kiểm tra active static */
 if (isset($config['static'])) {
@@ -35,18 +33,22 @@ if (isset($config['static'])) {
 	$func->transfer("Trang không tồn tại", "index.php", false);
 }
 
+// Initialize Controller
+$adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
+$adminPermissionHelper = new AdminPermissionHelper($func, $config);
+$controller = new StaticAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper, $type);
+
 switch($act) {
 	case "update":
-		// Get static content - Sử dụng StaticService
-		$item = $staticService->getByType($type);
+		$item = $controller->getByType();
 		$template = "static/man/man_add";
 		break;
 		
 	case "save":
-		// Save static - có thể sử dụng StaticRepository->update()
-		// Nhưng cần xử lý thêm SEO, file upload, etc.
-		// Giữ nguyên logic cũ cho phần này vì phức tạp
-		saveStatic();
+		// Save logic - giữ nguyên logic cũ vì phức tạp (file upload, SEO, etc.)
+		if (function_exists('saveStatic')) {
+			saveStatic();
+		}
 		break;
 
 	default:

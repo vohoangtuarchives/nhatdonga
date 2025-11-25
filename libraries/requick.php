@@ -39,8 +39,10 @@ if ($adminAuth->isLoggedIn()) {
 	}
 }
 
-/* Kiểm tra phân quyền */
-if (!empty($config['permission']['active']) && $adminAuth->isLoggedIn()) {
+/* Kiểm tra phân quyền - Sử dụng AdminPermissionHelper */
+$adminPermission = new AdminPermissionHelper($func, $config);
+
+if ($adminPermission->isActive() && $adminAuth->isLoggedIn()) {
 	/* Lấy quyền */
 	$_SESSION[$loginAdmin]['permissions'] = [];
 	$userId = $adminAuth->getUserId();
@@ -59,11 +61,15 @@ if (!empty($config['permission']['active']) && $adminAuth->isLoggedIn()) {
 		}
 	}
 	
-	/* Kiểm tra quyền */
-	if ($func->checkRole()) {
+	/* Kiểm tra quyền - Sử dụng AdminPermissionHelper */
+	if ($adminPermission->hasRole()) {
 		$is_permission = true;
 		
-		if (!empty($com) && !in_array($com, ['user', 'index']) && !empty($act) && !in_array($act, ['save', 'save_list', 'save_cat', 'save_item', 'save_sub', 'save_brand', 'save_color', 'save_size', 'saveImages', 'uploadExcel', 'save_static', 'save_photo'])) {
+		// Actions không cần kiểm tra quyền
+		$excludedActions = ['save', 'save_list', 'save_cat', 'save_item', 'save_sub', 'save_brand', 'save_color', 'save_size', 'saveImages', 'uploadExcel', 'save_static', 'save_photo'];
+		$excludedComs = ['user', 'index'];
+		
+		if (!empty($com) && !in_array($com, $excludedComs) && !empty($act) && !in_array($act, $excludedActions)) {
 			$sum_permission = $com . '_' . $act;
 			$sum_permission .= (!empty($variant)) ? '_' . $variant : '';
 			$sum_permission .= (!empty($type)) ? '_' . $type : '';

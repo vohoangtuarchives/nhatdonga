@@ -13,19 +13,20 @@
 if (!defined('SOURCES')) die("Error");
 
 use Tuezy\Admin\AdminCRUDHelper;
-use Tuezy\Admin\AdminController;
+use Tuezy\Admin\AdminURLHelper;
 use Tuezy\Repository\ProductRepository;
 use Tuezy\Repository\CategoryRepository;
 use Tuezy\Repository\TagsRepository;
 use Tuezy\Service\ProductService;
-use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
-// Initialize Config
-$configObj = new Config($config);
-
-// Initialize AdminController
-$adminController = new AdminController($d, $func, $flash, $config);
+// Initialize language variables (default to Vietnamese for admin)
+if (!isset($lang)) {
+	$lang = $_SESSION['lang'] ?? 'vi';
+}
+if (!isset($sluglang)) {
+	$sluglang = 'slugvi';
+}
 
 // Initialize repositories & service
 $productRepo = new ProductRepository($d, $cache, $lang, $sluglang, $type);
@@ -44,31 +45,17 @@ if (isset($config['product'])) {
 	$func->transfer("Trang không tồn tại", "index.php", false);
 }
 
-/* Cấu hình đường dẫn trả về */
-$strUrl = "";
-$arrUrl = array('id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand');
-if (isset($_POST['data'])) {
-	$dataUrl = isset($_POST['data']) ? $_POST['data'] : null;
-	if ($dataUrl) {
-		foreach ($arrUrl as $k => $v) {
-			if (isset($dataUrl[$arrUrl[$k]])) {
-				$strUrl .= "&" . $arrUrl[$k] . "=" . SecurityHelper::sanitize($dataUrl[$arrUrl[$k]]);
-			}
-		}
-	}
-} else {
-	foreach ($arrUrl as $k => $v) {
-		if (isset($_REQUEST[$arrUrl[$k]])) {
-			$strUrl .= "&" . $arrUrl[$k] . "=" . SecurityHelper::sanitize($_REQUEST[$arrUrl[$k]]);
-		}
-	}
+// Initialize AdminURLHelper for URL building
+$urlHelper = new AdminURLHelper('index.php');
 
-	if (!empty($_REQUEST['comment_status'])) {
-		$strUrl .= "&comment_status=" . SecurityHelper::sanitize($_REQUEST['comment_status']);
-	}
-	if (isset($_REQUEST['keyword'])) {
-		$strUrl .= "&keyword=" . SecurityHelper::sanitize($_REQUEST['keyword']);
-	}
+/* Cấu hình đường dẫn trả về - Sử dụng AdminURLHelper */
+if (isset($_POST['data'])) {
+	$strUrl = $urlHelper->buildFromPost($_POST['data'] ?? []);
+} else {
+	$strUrl = $urlHelper->buildFromRequest(
+		['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'],
+		['comment_status', 'keyword']
+	);
 }
 
 // Initialize AdminCRUDHelper for products
@@ -77,6 +64,15 @@ $adminCRUD = new AdminCRUDHelper(
 	$func, 
 	'product', 
 	$type, 
+	$config['product'][$type] ?? []
+);
+
+// Initialize AdminCRUDHelper for product_list
+$listCRUD = new AdminCRUDHelper(
+	$d,
+	$func,
+	'product_list',
+	$type,
 	$config['product'][$type] ?? []
 );
 
@@ -96,7 +92,12 @@ switch ($act) {
 		$listing = $productService->getListing($type, $filters, $curPage, 10);
 		$items = $listing['items'];
 		$totalItems = $listing['total'];
-		$paging = $func->paging($totalItems, 10, $curPage, "index.php?com=product&act=man&type={$type}{$strUrl}");
+		
+		// Build URL using AdminURLHelper
+		$urlHelper->reset();
+		$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
+		$url = $urlHelper->getUrl('product', 'man', $type);
+		$paging = $func->pagination($totalItems, 10, $curPage, $url);
 		
 		/* Comment */
 		$comment = new Comments($d, $func);
@@ -132,7 +133,12 @@ switch ($act) {
 	case "save_copy":
 		// Save product với đầy đủ dữ liệu liên quan - Sử dụng ProductService
 		if (empty($_POST)) {
-			$func->transfer("Không nhận được dữ liệu", "index.php?com=product&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+			// Build return URL using AdminURLHelper
+			$urlHelper->reset();
+			$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
+			$urlHelper->addParam('p', $curPage);
+			$returnUrl = $urlHelper->getUrl('product', 'man', $type);
+			$func->transfer("Không nhận được dữ liệu", $returnUrl, false);
 		}
 
 		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
@@ -165,49 +171,135 @@ switch ($act) {
 		$dataTags = array_filter($dataTags, function($v) { return $v > 0; });
 
 		// Save product using ProductService
-		$productId = $productService->saveProduct($data, $id, $dataSC, $dataTags, $type);
+		try {
+			$productId = $productService->saveProduct($data, $id, $dataSC, $dataTags, $type, $func);
 
-		if ($productId) {
-			$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
-			$func->transfer($message, "index.php?com=product&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
-		} else {
-			$func->transfer("Có lỗi xảy ra khi lưu dữ liệu", "index.php?com=product&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+			if ($productId) {
+				$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+				// Build return URL using AdminURLHelper
+				$urlHelper->reset();
+				$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
+				$urlHelper->addParam('p', $curPage);
+				$returnUrl = $urlHelper->getUrl('product', 'man', $type);
+				$func->transfer($message, $returnUrl);
+			} else {
+				$urlHelper->reset();
+				$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
+				$urlHelper->addParam('p', $curPage);
+				$returnUrl = $urlHelper->getUrl('product', 'man', $type);
+				$func->transfer("Có lỗi xảy ra khi lưu dữ liệu", $returnUrl, false);
+			}
+		} catch (\Exception $e) {
+			// Handle slug validation error
+			$urlHelper->reset();
+			$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
+			$urlHelper->addParam('p', $curPage);
+			$returnUrl = $urlHelper->getUrl('product', 'man', $type);
+			$func->transfer($e->getMessage(), $returnUrl, false);
 		}
 		break;
 
 	case "delete":
 		$id = (int)($_GET['id'] ?? 0);
+		// Build return URL using AdminURLHelper
+		$urlHelper->reset();
+		$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
+		$urlHelper->addParam('p', $curPage);
+		$returnUrl = $urlHelper->getUrl('product', 'man', $type);
+		
 		if ($id && $adminCRUD->delete($id)) {
-			$func->transfer("Xóa dữ liệu thành công", "index.php?com=product&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
+			$func->transfer("Xóa dữ liệu thành công", $returnUrl);
 		} else {
-			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=product&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+			$func->transfer("Xóa dữ liệu thất bại", $returnUrl, false);
 		}
 		break;
 
-	// Các case khác (size, color, brand, list, cat, item, sub, gallery) giữ nguyên
+	/* List management (Danh mục cấp 1) - Sử dụng AdminCRUDHelper */
+	case "man_list":
+		// Get filters
+		$filters = [];
+		if (!empty($_REQUEST['keyword'])) {
+			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
+		}
+		
+		// Build WHERE conditions for AdminCRUDHelper
+		$where = [];
+		if (!empty($filters['keyword'])) {
+			$where[] = [
+				'clause' => '(tenvi LIKE ? OR tenen LIKE ?)',
+				'params' => ["%{$filters['keyword']}%", "%{$filters['keyword']}%"]
+			];
+		}
+		
+		// Get items using AdminCRUDHelper
+		$perPage = 10;
+		$result = $listCRUD->getList($curPage, $perPage, $where);
+		$items = $result['items'];
+		$totalItems = $result['total'];
+		
+		// Build URL for pagination
+		$urlHelper->reset();
+		if (!empty($filters['keyword'])) {
+			$urlHelper->addParam('keyword', $filters['keyword']);
+		}
+		$url = $urlHelper->getUrl('product', 'man_list', $type);
+		$paging = $func->pagination($totalItems, $perPage, $curPage, $url);
+		$template = "product/list/lists";
+		break;
+
+	case "add_list":
+		$template = "product/list/list_add";
+		break;
+
+	case "edit_list":
+		$id = (int)($_GET['id'] ?? 0);
+		if ($id) {
+			$item = $listCRUD->getItem($id);
+			if (!$item) {
+				$func->transfer("Dữ liệu không có thực", "index.php?com=product&act=man_list&type=" . $type, false);
+			}
+		} else {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=product&act=man_list&type=" . $type, false);
+		}
+		$template = "product/list/list_add";
+		break;
+
+	case "save_list":
+		if (empty($_POST)) {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=product&act=man_list&type=" . $type, false);
+		}
+		
+		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
+		$data = $_POST['data'] ?? [];
+		
+		// Save using AdminCRUDHelper
+		try {
+			if ($listCRUD->save($data, $id)) {
+				$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+				$func->transfer($message, "index.php?com=product&act=man_list&type=" . $type);
+			} else {
+				$func->transfer("Có lỗi xảy ra khi lưu dữ liệu", "index.php?com=product&act=man_list&type=" . $type, false);
+			}
+		} catch (\Exception $e) {
+			// Handle slug validation error
+			$func->transfer($e->getMessage(), "index.php?com=product&act=man_list&type=" . $type, false);
+		}
+		break;
+
+	case "delete_list":
+		$id = (int)($_GET['id'] ?? 0);
+		if ($id && $listCRUD->delete($id)) {
+			$func->transfer("Xóa dữ liệu thành công", "index.php?com=product&act=man_list&type=" . $type);
+		} else {
+			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=product&act=man_list&type=" . $type, false);
+		}
+		break;
+
+	// Các case khác (size, color, brand, cat, item, sub, gallery) giữ nguyên
 	// vì có logic riêng phức tạp
 	
 	default:
 		$template = "404";
 }
 
-/* 
- * SO SÁNH:
- * 
- * CODE CŨ: ~2816 dòng với nhiều functions và logic
- * CODE MỚI: ~170 dòng với AdminCRUDHelper + ProductService (cho phần man)
- * 
- * GIẢM: ~95% code cho phần man
- * 
- * LỢI ÍCH:
- * - Sử dụng AdminCRUDHelper cho CRUD operations
- * - Sử dụng ProductService và ProductRepository cho data access
- * - Sử dụng SecurityHelper cho sanitization
- * - Code dễ đọc và maintain hơn
- * - Type-safe với type hints
- * 
- * LƯU Ý:
- * - Phần save vẫn giữ nguyên logic cũ vì phức tạp (dataSC, dataTags, etc.)
- * - Các phần khác (size, color, brand, etc.) có thể refactor tương tự
- */
 

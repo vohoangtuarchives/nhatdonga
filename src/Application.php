@@ -2,6 +2,10 @@
 
 namespace Tuezy;
 
+use Tuezy\Router\RouterManager;
+use Tuezy\Middleware\MiddlewareStack;
+use Tuezy\Helper\LanguageHelper;
+
 /**
  * Application - Bootstrap class to initialize application
  * Refactors index.php to reduce global variables and improve structure
@@ -11,11 +15,14 @@ class Application
     private ServiceContainer $container;
     private Config $config;
     private array $services = [];
+    private ?RouterManager $routerManager = null;
+    private MiddlewareStack $middlewareStack;
 
     public function __construct(array $config)
     {
         $this->config = new Config($config);
         $this->container = new ServiceContainer();
+        $this->middlewareStack = new MiddlewareStack();
         $this->bootstrap();
     }
 
@@ -121,6 +128,81 @@ class Application
     public function getConfig(): Config
     {
         return $this->config;
+    }
+
+    /**
+     * Register router and initialize RouterManager
+     * 
+     * @return RouterManager
+     */
+    public function registerRouter(): RouterManager
+    {
+        if ($this->routerManager === null) {
+            $router = $this->get('router');
+            $config = $this->config->all();
+            $func = $this->get('func');
+            $cache = $this->get('cache');
+            $db = $this->get('db');
+
+            $this->routerManager = new RouterManager($router, $config, $func, $cache, $db);
+            $this->routerManager->setBasePath($config['database']['url']);
+            $this->routerManager->registerDefaultRoutes();
+        }
+
+        return $this->routerManager;
+    }
+
+    /**
+     * Register middleware
+     * 
+     * @param object $middleware Middleware instance
+     * @return self
+     */
+    public function registerMiddleware(object $middleware): self
+    {
+        $this->middlewareStack->add($middleware);
+        return $this;
+    }
+
+    /**
+     * Handle request lifecycle
+     * Processes routing, middleware, and executes the matched route
+     * 
+     * @return array|null Route match result
+     */
+    public function handleRequest(): ?array
+    {
+        // Initialize router if not already done
+        $routerManager = $this->registerRouter();
+
+        // Execute middleware stack
+        $handler = function () use ($routerManager) {
+            return $routerManager->match();
+        };
+
+        $match = $this->middlewareStack->execute($handler);
+
+        return $match;
+    }
+
+    /**
+     * Get router manager
+     * 
+     * @return RouterManager|null
+     */
+    public function getRouterManager(): ?RouterManager
+    {
+        return $this->routerManager;
+    }
+
+    /**
+     * Get middleware stack
+     * 
+     * @return MiddlewareStack
+     */
+    public function getMiddlewareStack(): MiddlewareStack
+    {
+        return $this->middlewareStack;
     }
 
     /**

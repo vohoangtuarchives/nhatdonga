@@ -1,75 +1,39 @@
 <?php
 
 /**
- * sources/user.php - REFACTORED VERSION (Partial)
+ * sources/user.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của sources/user.php
- * Sử dụng UserHandler và RequestHandler
- * 
- * CÁCH SỬ DỤNG:
- * Có thể copy từng phần vào sources/user.php hoặc thay thế hoàn toàn
+ * Sử dụng UserController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\RequestHandler;
-use Tuezy\UserHandler;
-use Tuezy\ValidationHelper;
-use Tuezy\Config;
+use Tuezy\Controller\UserController;
 use Tuezy\SecurityHelper;
 
-// Initialize Config
-$configObj = new Config($config);
-
-// Initialize RequestHandler
-$params = RequestHandler::getParams();
+// Get action from route match
 $action = SecurityHelper::sanitize($match['params']['action'] ?? '');
 
-// Initialize Handlers
-$validator = new ValidationHelper($func, $config);
-$userHandler = new UserHandler($d, $func, $flash, $validator, $configBase, $loginMember, $config, $cache ?? null);
+// Initialize Controller
+$controller = new UserController($d, $cache, $func, $seo, $config, $flash, $loginMember ?? 'LoginMember' . ($config['metadata']['contract'] ?? ''));
 
+// Route to appropriate controller method
 switch ($action) {
 	case 'dang-nhap':
-		$titleMain = dangnhap;
+		$viewData = $controller->login();
+		$titleMain = $viewData['titleMain'] ?? 'dangnhap';
 		$template = "account/login";
-		
-		if (!empty($_SESSION[$loginMember]['active'])) {
-			$func->transfer("Trang không tồn tại", $configBase, false);
-		}
-		
-		if (!empty($_POST['login-user'])) {
-			$username = SecurityHelper::sanitizePost('username');
-			$password = $_POST['password'] ?? '';
-			$remember = !empty($_POST['remember']);
-			
-			if ($userHandler->login($username, $password, $remember)) {
-				$func->redirect($configBase);
-			} else {
-				$func->redirect($configBase . "account/dang-nhap");
-			}
-		}
 		break;
 
 	case 'dang-ky':
-		$titleMain = dangky;
+		$viewData = $controller->register();
+		$titleMain = $viewData['titleMain'] ?? 'dangky';
 		$template = "account/registration";
-		
-		if (!empty($_SESSION[$loginMember]['active'])) {
-			$func->transfer("Trang không tồn tại", $configBase, false);
-		}
-		
-		if (!empty($_POST['registration-user'])) {
-			$data = $_POST['dataMember'] ?? [];
-			if ($userHandler->register($data)) {
-				$func->transfer("Đăng ký thành công", $configBase . "account/dang-nhap");
-			} else {
-				$func->redirect($configBase . "account/dang-ky");
-			}
-		}
 		break;
 
 	case 'quen-mat-khau':
+		// TODO: Implement forgotPassword in UserController
 		$titleMain = quenmatkhau;
 		$template = "account/forgot_password";
 		
@@ -79,6 +43,8 @@ switch ($action) {
 		
 		if (!empty($_POST['forgot-password-user'])) {
 			$email = SecurityHelper::sanitizePost('email');
+			// Use UserHandler directly for now
+			$userHandler = new \Tuezy\UserHandler($d, $func, $flash, new \Tuezy\ValidationHelper($func, $config), $configBase, $loginMember, $config, $cache ?? null);
 			if ($userHandler->forgotPassword($email)) {
 				$func->transfer("Mật khẩu mới đã được gửi đến email của bạn", $configBase . "account/dang-nhap");
 			} else {
@@ -88,6 +54,7 @@ switch ($action) {
 		break;
 
 	case 'kich-hoat':
+		// TODO: Implement activation in UserController
 		$titleMain = kichhoat;
 		$template = "account/activation";
 		
@@ -96,28 +63,20 @@ switch ($action) {
 		}
 		
 		// checkActivationMember() - giữ nguyên function cũ
-		checkActivationMember();
+		if (function_exists('checkActivationMember')) {
+			checkActivationMember();
+		}
 		break;
 
 	case 'thong-tin':
-		$titleMain = capnhatthongtin;
+		$viewData = $controller->profile();
+		$titleMain = $viewData['titleMain'] ?? 'capnhatthongtin';
+		$user = $viewData['user'] ?? null;
 		$template = "account/info";
-		
-		if (empty($_SESSION[$loginMember]['active'])) {
-			$func->transfer("Trang không tồn tại", $configBase, false);
-		}
-		
-		// infoMember() - có thể refactor sau
-		infoMember();
 		break;
 
 	case 'dang-xuat':
-		if (empty($_SESSION[$loginMember]['active'])) {
-			$func->transfer("Trang không tồn tại", $configBase, false);
-		}
-		
-		$userHandler->logout();
-		$func->redirect($configBase);
+		$controller->logout();
 		break;
 
 	default:

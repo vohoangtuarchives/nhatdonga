@@ -1,30 +1,18 @@
 <?php
 
 /**
- * admin/sources/news.php - REFACTORED VERSION (Partial)
+ * admin/sources/news.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của admin/sources/news.php
- * Sử dụng AdminCRUDHelper và các helpers
- * 
- * CÁCH SỬ DỤNG:
- * Có thể copy từng phần vào admin/sources/news.php hoặc thay thế hoàn toàn
+ * Sử dụng NewsAdminController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\Admin\AdminCRUDHelper;
-use Tuezy\Admin\AdminController;
-use Tuezy\Repository\NewsRepository;
-use Tuezy\Repository\CategoryRepository;
-use Tuezy\Service\NewsService;
-use Tuezy\Config;
+use Tuezy\Admin\Controller\NewsAdminController;
+use Tuezy\Admin\AdminAuthHelper;
+use Tuezy\Admin\AdminPermissionHelper;
 use Tuezy\SecurityHelper;
-
-// Initialize Config
-$configObj = new Config($config);
-
-// Initialize AdminController
-$adminController = new AdminController($d, $func, $flash, $config);
 
 /* Kiểm tra active news */
 if (isset($config['news'])) {
@@ -37,7 +25,20 @@ if (isset($config['news'])) {
 	$func->transfer("Trang không tồn tại", "index.php", false);
 }
 
-/* Cấu hình đường dẫn trả về */
+// Initialize language variables
+if (!isset($lang)) {
+	$lang = $_SESSION['lang'] ?? 'vi';
+}
+if (!isset($sluglang)) {
+	$sluglang = 'slugvi';
+}
+
+// Initialize Controller
+$adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
+$adminPermissionHelper = new AdminPermissionHelper($func, $config);
+$controller = new NewsAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper, $type ?? 'tin-tuc');
+
+// Build URL parameters
 $strUrl = "";
 $arrUrl = array('id_list', 'id_cat', 'id_item', 'id_sub');
 if (isset($_POST['data'])) {
@@ -64,24 +65,8 @@ if (isset($_POST['data'])) {
 	}
 }
 
-// Initialize Repositories
-$newsRepo = new NewsRepository($d, $lang, $type);
-$categoryRepo = new CategoryRepository($d, $cache, $lang, $sluglang, 'news');
-
-// Initialize Service
-$newsService = new NewsService($newsRepo, $categoryRepo, $d, $lang, $sluglang);
-
-// Initialize AdminCRUDHelper for news
-$adminCRUD = new AdminCRUDHelper(
-	$d, 
-	$func, 
-	'news', 
-	$type, 
-	$config['news'][$type] ?? []
-);
-
 switch ($act) {
-	/* Man - Sử dụng AdminCRUDHelper */
+	/* Man - Sử dụng NewsAdminController */
 	case "man":
 		// Get filters
 		$filters = [];
@@ -92,14 +77,9 @@ switch ($act) {
 		if (!empty($_REQUEST['keyword'])) $filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
 		if (!empty($_REQUEST['comment_status'])) $filters['comment_status'] = SecurityHelper::sanitize($_REQUEST['comment_status']);
 
-		// Sử dụng NewsService để lấy danh sách
-		$listing = $newsService->getListing($type, $filters, $curPage, 10);
-		$items = $listing['items'];
-		$totalItems = $listing['total'];
-		
-		// Generate pagination
-		$url = "index.php?com=news&act=man&type={$type}" . $strUrl;
-		$paging = $func->paging($totalItems, 10, $curPage, $url);
+		$viewData = $controller->man($filters, $curPage, 10);
+		$items = $viewData['items'];
+		$paging = $viewData['paging'];
 		
 		/* Comment */
 		$comment = new Comments($d, $func);
@@ -145,7 +125,62 @@ switch ($act) {
 		}
 		break;
 
-	// Các case khác (list, cat, item, sub, gallery) giữ nguyên
+	/* List management (Danh mục cấp 1) - Sử dụng NewsAdminController */
+	case "man_list":
+		$filters = [];
+		if (!empty($_REQUEST['keyword'])) {
+			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
+		}
+		
+		$viewData = $controller->manList($filters, $curPage, 10);
+		$items = $viewData['items'];
+		$paging = $viewData['paging'];
+		$template = "news/list/lists";
+		break;
+
+	case "add_list":
+		$viewData = $controller->addList();
+		$item = $viewData['item'];
+		$template = "news/list/list_add";
+		break;
+
+	case "edit_list":
+		$id = (int)($_GET['id'] ?? 0);
+		if ($id) {
+			$viewData = $controller->editList($id);
+			$item = $viewData['item'];
+		} else {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=news&act=man_list&type=" . $type, false);
+		}
+		$template = "news/list/list_add";
+		break;
+
+	case "save_list":
+		if (empty($_POST)) {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=news&act=man_list&type=" . $type, false);
+		}
+		
+		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
+		$data = $_POST['data'] ?? [];
+		
+		if ($controller->saveList($data, $id)) {
+			$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+			$func->transfer($message, "index.php?com=news&act=man_list&type=" . $type);
+		} else {
+			$func->transfer("Có lỗi xảy ra khi lưu dữ liệu", "index.php?com=news&act=man_list&type=" . $type, false);
+		}
+		break;
+
+	case "delete_list":
+		$id = (int)($_GET['id'] ?? 0);
+		if ($id && $controller->deleteList($id)) {
+			$func->transfer("Xóa dữ liệu thành công", "index.php?com=news&act=man_list&type=" . $type);
+		} else {
+			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=news&act=man_list&type=" . $type, false);
+		}
+		break;
+
+	// Các case khác (cat, item, sub, gallery) giữ nguyên
 	// vì có logic riêng phức tạp
 	
 	default:

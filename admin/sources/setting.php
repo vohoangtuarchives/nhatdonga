@@ -1,38 +1,54 @@
 <?php
 
 /**
- * admin/sources/setting.php - REFACTORED VERSION (Partial)
+ * admin/sources/setting.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của admin/sources/setting.php
- * Sử dụng SettingRepository và SecurityHelper
- * 
- * CÁCH SỬ DỤNG:
- * Có thể copy từng phần vào admin/sources/setting.php hoặc thay thế hoàn toàn
+ * Sử dụng SettingAdminController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\Repository\SettingRepository;
-use Tuezy\Config;
+use Tuezy\Admin\Controller\SettingAdminController;
+use Tuezy\Admin\AdminAuthHelper;
+use Tuezy\Admin\AdminPermissionHelper;
 use Tuezy\SecurityHelper;
-use Tuezy\ValidationHelper;
 
-// Initialize Config
-$configObj = new Config($config);
+// Initialize language variables
+if (!isset($lang)) {
+	$lang = $_SESSION['lang'] ?? 'vi';
+}
+if (!isset($sluglang)) {
+	$sluglang = 'slugvi';
+}
 
-// Initialize Repositories
-$settingRepo = new SettingRepository($d, $cache);
+// Initialize Controller
+$adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
+$adminPermissionHelper = new AdminPermissionHelper($func, $config);
+$controller = new SettingAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper);
 
 switch($act) {
 	case "update":
-		// Get setting - Sử dụng SettingRepository
-		$item = $settingRepo->getFirst();
+		$item = $controller->getFirst();
 		$template = "setting/man/man_add";
 		break;
 		
 	case "save":
-		// Save setting - Sử dụng SettingRepository
-		saveSetting();
+		if (empty($_POST)) {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=setting&act=update", false);
+		}
+		
+		$id = (int)SecurityHelper::sanitizePost('id', 0);
+		$data = $_POST['data'] ?? [];
+		$dataSeo = $_POST['dataSeo'] ?? null;
+		
+		$result = $controller->save($data, $dataSeo, $id);
+		
+		if ($result['success']) {
+			$func->transfer($result['messages'][0], "index.php?com=setting&act=update");
+		} else {
+			$func->transfer(implode('<br>', $result['messages']), "index.php?com=setting&act=update", false);
+		}
 		break;
 		
 	default:

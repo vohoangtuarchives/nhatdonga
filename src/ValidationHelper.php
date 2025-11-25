@@ -50,6 +50,20 @@ class ValidationHelper
     }
 
     /**
+     * Check if email is valid (static method for convenience)
+     * 
+     * @param string $email Email address
+     * @return bool
+     */
+    public static function isEmail(string $email): bool
+    {
+        if (empty($email)) {
+            return false;
+        }
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    }
+
+    /**
      * Validate phone
      * 
      * @param string $phone Phone number

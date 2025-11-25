@@ -199,12 +199,19 @@ class ProductService
      * @param array $dataSC Size/Color combinations
      * @param array $dataTags Tag IDs
      * @param string $type Product type
+     * @param object|null $func Functions instance for slug validation (optional)
      * @return int|false Product ID on success, false on failure
+     * @throws \Exception If slug validation fails
      */
-    public function saveProduct(array $data, ?int $id, array $dataSC = [], array $dataTags = [], string $type = 'san-pham'): int|false
+    public function saveProduct(array $data, ?int $id, array $dataSC = [], array $dataTags = [], string $type = 'san-pham', ?object $func = null): int|false
     {
         // Set type
         $data['type'] = $type;
+
+        // Validate slug if func is provided
+        if ($func) {
+            $this->validateProductSlug($data, $func, $id, $type);
+        }
 
         // Save main product
         if ($id) {
@@ -241,6 +248,50 @@ class ProductService
         }
 
         return $productId;
+    }
+
+    /**
+     * Validate product slug uniqueness
+     * 
+     * @param array $data Product data
+     * @param object $func Functions instance
+     * @param int|null $id Product ID (for edit)
+     * @param string $type Product type
+     * @throws \Exception If slug already exists
+     */
+    private function validateProductSlug(array $data, object $func, ?int $id = null, string $type = 'san-pham'): void
+    {
+        // Check if slug fields exist in data
+        $slugFields = ['slugvi', 'slugen'];
+        $hasSlug = false;
+        $slugToCheck = '';
+
+        foreach ($slugFields as $field) {
+            if (isset($data[$field]) && !empty($data[$field])) {
+                $hasSlug = true;
+                $slugToCheck = $data[$field];
+                break;
+            }
+        }
+
+        if (!$hasSlug) {
+            return; // No slug to validate
+        }
+
+        // Prepare checkSlug data
+        $checkSlugData = [
+            'slug' => $slugToCheck,
+            'id' => $id ?? 0,
+            'table' => 'product', // Check in product table
+            'type' => $type,
+        ];
+
+        // Check slug uniqueness
+        $result = $func->checkSlug($checkSlugData);
+
+        if ($result === 'exist') {
+            throw new \Exception("Đường dẫn đã tồn tại. Đường dẫn truy cập mục này có thể bị trùng lặp.");
+        }
     }
 }
 

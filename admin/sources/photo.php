@@ -1,29 +1,26 @@
 <?php
 
 /**
- * admin/sources/photo.php - REFACTORED VERSION (Partial)
+ * admin/sources/photo.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của admin/sources/photo.php
- * Sử dụng PhotoRepository và AdminCRUDHelper
- * 
- * CÁCH SỬ DỤNG:
- * Có thể copy từng phần vào admin/sources/photo.php hoặc thay thế hoàn toàn
+ * Sử dụng PhotoAdminController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\Admin\AdminCRUDHelper;
-use Tuezy\Repository\PhotoRepository;
-use Tuezy\Service\PhotoService;
-use Tuezy\Config;
+use Tuezy\Admin\Controller\PhotoAdminController;
+use Tuezy\Admin\AdminAuthHelper;
+use Tuezy\Admin\AdminPermissionHelper;
 use Tuezy\SecurityHelper;
 
-// Initialize Config
-$configObj = new Config($config);
-
-// Initialize Repositories & Service
-$photoRepo = new PhotoRepository($d, $cache, $lang, $sluglang);
-$photoService = new PhotoService($photoRepo, $d);
+// Initialize language variables
+if (!isset($lang)) {
+	$lang = $_SESSION['lang'] ?? 'vi';
+}
+if (!isset($sluglang)) {
+	$sluglang = 'slugvi';
+}
 
 /* Kiểm tra active photo */
 if (isset($config['photo'])) {
@@ -42,25 +39,17 @@ if (isset($config['photo'])) {
 	$func->transfer("Trang không tồn tại", "index.php", false);
 }
 
-// Initialize AdminCRUDHelper for photos
-$adminCRUD = new AdminCRUDHelper(
-	$d, 
-	$func, 
-	$flash, 
-	'photo', 
-	$type, 
-	'photo', 
-	UPLOAD_PHOTO_L, 
-	$lang, 
-	$sluglang
-);
+// Initialize Controller
+$adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
+$adminPermissionHelper = new AdminPermissionHelper($func, $config);
+$controller = new PhotoAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper, $type ?? 'photo');
 
 switch($act) {
 	/* Photo static */
 	case "photo_static":
-		// Get static photos - Sử dụng PhotoService
-		$item = $photoService->getWatermarkConfig();
+		$item = $controller->getWatermarkConfig();
 		if (!$item) {
+			$photoRepo = new \Tuezy\Repository\PhotoRepository($d, $cache, $lang, $sluglang);
 			$item = $photoRepo->getByTypeAndAct($type, 'photo_static');
 		}
 		$template = "photo/static/photo_static";
@@ -68,16 +57,22 @@ switch($act) {
 		
 	case "save_static":
 		// Save static - giữ nguyên logic cũ vì phức tạp
-		savePhotoStatic();
+		if (function_exists('savePhotoStatic')) {
+			savePhotoStatic();
+		}
 		break;
 
 	/* Watermark */
 	case "save-watermark":
-		saveWatermark();
+		if (function_exists('saveWatermark')) {
+			saveWatermark();
+		}
 		break;
 		
 	case "preview-watermark":
-		previewWatermark();
+		if (function_exists('previewWatermark')) {
+			previewWatermark();
+		}
 		break;
 
 	/* Photos */
@@ -88,9 +83,9 @@ switch($act) {
 			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
 		}
 
-		$result = $adminCRUD->getItems($filters, 10, $curPage);
-		$items = $result['items'];
-		$paging = $result['paging'];
+		$viewData = $controller->manPhoto($filters, $curPage, 10);
+		$items = $viewData['items'];
+		$paging = $viewData['paging'];
 		$template = "photo/man/photos";
 		break;
 		
@@ -101,7 +96,7 @@ switch($act) {
 	case "edit_photo":
 		$id = (int)($_GET['id'] ?? 0);
 		if ($id) {
-			$item = $adminCRUD->getItem($id);
+			$item = $controller->getPhoto($id);
 			if (!$item) {
 				$func->transfer("Dữ liệu không có thực", "index.php?com=photo&act=man_photo&type=" . $type, false);
 			}
@@ -112,14 +107,28 @@ switch($act) {
 		break;
 		
 	case "save_photo":
-		// Save logic - có thể sử dụng AdminCRUDHelper->saveItem()
-		// Giữ nguyên logic cũ cho phần này vì phức tạp
-		savePhoto();
+		if (empty($_POST)) {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=photo&act=man_photo&type=" . $type, false);
+		}
+		
+		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
+		$data = $_POST['data'] ?? [];
+		
+		try {
+			if ($controller->savePhoto($data, $id)) {
+				$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+				$func->transfer($message, "index.php?com=photo&act=man_photo&type=" . $type);
+			} else {
+				$func->transfer("Có lỗi xảy ra khi lưu dữ liệu", "index.php?com=photo&act=man_photo&type=" . $type, false);
+			}
+		} catch (\Exception $e) {
+			$func->transfer($e->getMessage(), "index.php?com=photo&act=man_photo&type=" . $type, false);
+		}
 		break;
 		
 	case "delete_photo":
 		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $adminCRUD->deleteItem($id)) {
+		if ($id && $controller->deletePhoto($id)) {
 			$func->transfer("Xóa dữ liệu thành công", "index.php?com=photo&act=man_photo&type=" . $type);
 		} else {
 			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=photo&act=man_photo&type=" . $type, false);

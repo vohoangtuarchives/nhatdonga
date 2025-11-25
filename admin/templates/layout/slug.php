@@ -14,8 +14,33 @@
             </div>
         <?php } ?>
 
-        <input type="hidden" class="slug-id" value="<?=isset($id) ? $id : ''?>">
+        <?php
+        // Determine table name from act
+        $tableName = '';
+        if (isset($act) && isset($com)) {
+            // Map act to table name
+            if (strpos($act, '_list') !== false) {
+                $tableName = $com . '_list';
+            } elseif (strpos($act, '_cat') !== false) {
+                $tableName = $com . '_cat';
+            } elseif (strpos($act, '_item') !== false) {
+                $tableName = $com . '_item';
+            } elseif (strpos($act, '_sub') !== false) {
+                $tableName = $com . '_sub';
+            } elseif (strpos($act, '_brand') !== false) {
+                $tableName = $com . '_brand';
+            } else {
+                // Default to main table (product, news, etc.)
+                $tableName = $com;
+            }
+        } else {
+            $tableName = isset($com) ? $com : '';
+        }
+        ?>
+        <input type="hidden" class="slug-id" value="<?=(isset($id) && $id > 0) ? $id : (isset($item['id']) && $item['id'] > 0 ? $item['id'] : '')?>">
         <input type="hidden" class="slug-copy" value="<?=(isset($copy) && $copy == true) ? 1 : 0?>">
+        <input type="hidden" class="slug-table" value="<?=$tableName?>">
+        <input type="hidden" class="slug-type" value="<?=isset($type) ? $type : ''?>">
 
         <div class="card card-primary card-outline card-outline-tabs">
             <div class="card-header p-0 border-bottom-0">

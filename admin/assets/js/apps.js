@@ -891,6 +891,8 @@ function slugCheck()
 	var slugInput = $('.slug-input');
 	var id = $('.slug-id').val();
 	var copy = $('.slug-copy').val();
+	var table = $('.slug-table').val();
+	var type = $('.slug-type').val();
 
 	slugInput.each(function(index){
 		var slugId = $(this).attr('id');
@@ -908,7 +910,9 @@ function slugCheck()
 					data: {
 						slug: slug,
 						id: id,
-						copy: copy
+						copy: copy,
+						table: table,
+						type: type
 					},
 					success: function(result){
 						slugAlert(result,lang);

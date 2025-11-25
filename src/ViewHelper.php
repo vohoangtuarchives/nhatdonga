@@ -21,12 +21,16 @@ class ViewHelper
      * 
      * @param string $view View name (e.g., 'product/product_detail')
      * @param array $data Data to pass to view
+     * @param string|null $layout Layout name (null = no layout)
      * @return string Rendered HTML
      */
-    public function render(string $view, array $data = []): string
+    public function render(string $view, array $data = [], ?string $layout = null): string
     {
+        // Merge shared data with view data
+        $data = array_merge($this->sharedData, $data);
+
         // Extract data to variables
-        extract(array_merge($this->sharedData, $data));
+        extract($data);
 
         // Start output buffering
         ob_start();
@@ -39,8 +43,23 @@ class ViewHelper
             throw new \RuntimeException("View not found: $view");
         }
 
-        // Get buffered content
-        return ob_get_clean();
+        $content = ob_get_clean();
+
+        // If layout is specified, wrap content in layout
+        if ($layout !== null) {
+            $layoutPath = defined('LAYOUT') ? LAYOUT : 'layout/';
+            $layoutFile = $this->templatePath . $layoutPath . $layout . '.php';
+            if (file_exists($layoutFile)) {
+                // Extract data again for layout
+                extract($data);
+                // $content variable is available in layout
+                ob_start();
+                include $layoutFile;
+                return ob_get_clean();
+            }
+        }
+
+        return $content;
     }
 
     /**

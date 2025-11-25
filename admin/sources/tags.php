@@ -1,24 +1,26 @@
 <?php
 
 /**
- * admin/sources/tags.php - REFACTORED VERSION (Partial)
+ * admin/sources/tags.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của admin/sources/tags.php
- * Sử dụng AdminCRUDHelper và TagsRepository
- * 
- * CÁCH SỬ DỤNG:
- * Có thể copy từng phần vào admin/sources/tags.php hoặc thay thế hoàn toàn
+ * Sử dụng TagsAdminController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\Admin\AdminCRUDHelper;
-use Tuezy\Repository\TagsRepository;
-use Tuezy\Config;
+use Tuezy\Admin\Controller\TagsAdminController;
+use Tuezy\Admin\AdminAuthHelper;
+use Tuezy\Admin\AdminPermissionHelper;
 use Tuezy\SecurityHelper;
 
-// Initialize Config
-$configObj = new Config($config);
+// Initialize language variables
+if (!isset($lang)) {
+	$lang = $_SESSION['lang'] ?? 'vi';
+}
+if (!isset($sluglang)) {
+	$sluglang = 'slugvi';
+}
 
 /* Kiểm tra active tags */
 if (isset($config['tags'])) {
@@ -31,18 +33,10 @@ if (isset($config['tags'])) {
 	$func->transfer("Trang không tồn tại", "index.php", false);
 }
 
-// Initialize AdminCRUDHelper for tags
-$adminCRUD = new AdminCRUDHelper(
-	$d, 
-	$func, 
-	$flash, 
-	'tags', 
-	$type, 
-	'tags', 
-	UPLOAD_TAGS_L, 
-	$lang, 
-	$sluglang
-);
+// Initialize Controller
+$adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
+$adminPermissionHelper = new AdminPermissionHelper($func, $config);
+$controller = new TagsAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper, $type);
 
 switch($act) {
 	case "man":
@@ -52,9 +46,9 @@ switch($act) {
 			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
 		}
 
-		$result = $adminCRUD->getItems($filters, 10, $curPage);
-		$items = $result['items'];
-		$paging = $result['paging'];
+		$viewData = $controller->man($filters, $curPage, 10);
+		$items = $viewData['items'];
+		$paging = $viewData['paging'];
 		$template = "tags/man/mans";
 		break;
 		
@@ -65,7 +59,7 @@ switch($act) {
 	case "edit":
 		$id = (int)($_GET['id'] ?? 0);
 		if ($id) {
-			$item = $adminCRUD->getItem($id);
+			$item = $controller->getTag($id);
 			if (!$item) {
 				$func->transfer("Dữ liệu không có thực", "index.php?com=tags&act=man&type=" . $type, false);
 			}
@@ -76,15 +70,28 @@ switch($act) {
 		break;
 		
 	case "save":
-		// Save logic - có thể sử dụng AdminCRUDHelper->saveItem()
-		// Nhưng cần xử lý thêm file upload, SEO, etc.
-		// Giữ nguyên logic cũ cho phần này vì phức tạp
-		saveMan();
+		if (empty($_POST)) {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=tags&act=man&type=" . $type, false);
+		}
+		
+		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
+		$data = $_POST['data'] ?? [];
+		
+		try {
+			if ($controller->save($data, $id)) {
+				$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+				$func->transfer($message, "index.php?com=tags&act=man&type=" . $type);
+			} else {
+				$func->transfer("Có lỗi xảy ra khi lưu dữ liệu", "index.php?com=tags&act=man&type=" . $type, false);
+			}
+		} catch (\Exception $e) {
+			$func->transfer($e->getMessage(), "index.php?com=tags&act=man&type=" . $type, false);
+		}
 		break;
 		
 	case "delete":
 		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $adminCRUD->deleteItem($id)) {
+		if ($id && $controller->delete($id)) {
 			$func->transfer("Xóa dữ liệu thành công", "index.php?com=tags&act=man&type=" . $type);
 		} else {
 			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=tags&act=man&type=" . $type, false);

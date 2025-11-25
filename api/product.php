@@ -3,83 +3,107 @@
 /**
  * api/product.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của api/product.php
- * Sử dụng ProductRepository và PaginationHelper
- * 
- * CÁCH SỬ DỤNG:
- * 1. Backup file gốc: cp api/product.php api/product.php.backup
- * 2. Copy file này: cp api/product-refactored.php api/product.php
- * 3. Test kỹ trước khi deploy
+ * Sử dụng ProductAPIController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 include "config.php";
 
-use Tuezy\Repository\ProductRepository;
-use Tuezy\Repository\CategoryRepository;
-use Tuezy\Repository\TagsRepository;
-use Tuezy\PaginationHelper;
+use Tuezy\API\Controller\ProductAPIController;
 use Tuezy\Config;
-use Tuezy\SecurityHelper;
-use Tuezy\Service\ProductService;
 
 // Initialize Config
 $configObj = new Config($config);
 
-// Initialize PaginationsAjax
-include LIBRARIES . "class/class.PaginationsAjax.php";
-$pagingAjax = new PaginationsAjax();
+// Initialize Controller
+$controller = new ProductAPIController($d, $cache, $func, $configObj, $lang, $sluglang);
 
-// Initialize Repositories and Helpers
-$productRepo = new ProductRepository($d, $cache, $lang, $sluglang);
-$categoryRepo = new CategoryRepository($d, $cache, $lang, $sluglang, 'product');
-$tagsRepo = new TagsRepository($d, $cache, $lang, $sluglang);
-$productService = new ProductService($productRepo, $categoryRepo, $tagsRepo, $d, $lang);
-$paginationHelper = new PaginationHelper($pagingAjax, $func);
+// Determine action
+$action = $_GET['action'] ?? 'list';
+$id = (int)($_GET['id'] ?? 0);
 
-// Get parameters
-$perPage = (int)($_GET['perpage'] ?? 12);
-$eShow = SecurityHelper::sanitizeGet('eShow', '');
-$idList = (int)($_GET['idList'] ?? 0);
-$pNoibat = SecurityHelper::sanitizeGet('noibat', 'all');
-$p = (int)($_GET['p'] ?? 1);
+// Determine action - backward compatibility với code cũ
+$action = $_GET['action'] ?? 'list';
+$id = (int)($_GET['id'] ?? 0);
 
-$pagingAjax->perpage = $perPage;
-$start = $paginationHelper->getStartPoint($p, $perPage);
+// Nếu không có action nhưng có các params cũ, xử lý như list
+if ($action === 'list' && (isset($_GET['perpage']) || isset($_GET['idList']) || isset($_GET['noibat']))) {
+	// Backward compatibility - giữ nguyên logic cũ
+	$perPage = (int)($_GET['perpage'] ?? 12);
+	$p = (int)($_GET['p'] ?? 1);
+	$idList = (int)($_GET['idList'] ?? 0);
+	$pNoibat = $_GET['noibat'] ?? 'all';
+	$eShow = $_GET['eShow'] ?? '';
 
-// Build filters
-$filters = [];
-if ($idList) {
-	$filters['id_list'] = $idList;
-}
-if ($pNoibat != 'all') {
-	$filters['status'] = $pNoibat;
-}
+	// Build filters
+	$filters = [];
+	if ($idList) {
+		$filters['id_list'] = $idList;
+	}
+	if ($pNoibat != 'all') {
+		$filters['status'] = $pNoibat;
+	}
 
-// Build page link
-$pageLink = "api/product.php?perpage=" . $perPage;
-$tempLink = "";
-if ($idList) {
-	$tempLink .= "&idList=" . $idList;
-}
-if ($pNoibat != 'all') {
-	$tempLink .= "&noibat=" . $pNoibat;
-}
-$pageLink .= $tempLink;
+	// Build page link
+	$pageLink = "api/product.php?perpage=" . $perPage;
+	$tempLink = "";
+	if ($idList) {
+		$tempLink .= "&idList=" . $idList;
+	}
+	if ($pNoibat != 'all') {
+		$tempLink .= "&noibat=" . $pNoibat;
+	}
+	$pageLink .= $tempLink;
 
-// Get products thông qua ProductService
-$filters['status'] = 'noibat';
-$listResult = $productService->getListing('san-pham', $filters, $p, $perPage);
-$products = $listResult['items'];
-$totalItems = $listResult['total'];
+	// Get products thông qua ProductService
+	$productRepo = new \Tuezy\Repository\ProductRepository($d, $cache, $lang, $sluglang, 'san-pham');
+	$categoryRepo = new \Tuezy\Repository\CategoryRepository($d, $cache, $lang, $sluglang, 'product');
+	$tagsRepo = new \Tuezy\Repository\TagsRepository($d, $cache, $lang, $sluglang);
+	$productService = new \Tuezy\Service\ProductService($productRepo, $categoryRepo, $tagsRepo, $d, $lang);
+	
+	$listResult = $productService->getListing('san-pham', $filters, $p, $perPage);
+	$products = $listResult['items'];
+	$totalItems = $listResult['total'];
 
-// Pagination
-$paging = $pagingAjax->getAllPageLinks($totalItems, $pageLink, $eShow);
+	// Pagination
+	$pagingAjax = new \PaginationsAjax();
+	$pagingAjax->perpage = $perPage;
+	$paging = $pagingAjax->getAllPageLinks($totalItems, $pageLink, $eShow);
 
-// Output HTML (giữ nguyên format cũ)
-if ($totalItems) {
-	$productItems = $products;
-	$paginationHtml = $paging;
-	include TEMPLATE . 'components/product-grid.php';
+	// Output HTML (giữ nguyên format cũ)
+	if ($totalItems) {
+		$productItems = $products;
+		$paginationHtml = $paging;
+		include TEMPLATE . 'components/product-grid.php';
+	}
+} else {
+	// Sử dụng Controller cho các action mới
+	switch ($action) {
+		case 'list':
+			$controller->getList();
+			break;
+			
+		case 'detail':
+			if ($id > 0) {
+				$controller->getDetail($id);
+			} else {
+				$controller->error('Product ID required');
+			}
+			break;
+			
+		case 'quickview':
+			if ($id > 0) {
+				$controller->quickView($id);
+			} else {
+				$controller->error('Product ID required');
+			}
+			break;
+			
+		default:
+			// Fallback to old behavior for backward compatibility
+			$controller->getList();
+			break;
+	}
 }
 
 /* 

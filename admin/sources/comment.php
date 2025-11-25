@@ -3,20 +3,21 @@
 /**
  * admin/sources/comment.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của admin/sources/comment.php
- * Sử dụng SecurityHelper và Repository pattern
- * 
- * CÁCH SỬ DỤNG:
- * Có thể copy từng phần vào admin/sources/comment.php hoặc thay thế hoàn toàn
+ * Sử dụng CommentAdminController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\Config;
+use Tuezy\Admin\Controller\CommentAdminController;
+use Tuezy\Admin\AdminAuthHelper;
+use Tuezy\Admin\AdminPermissionHelper;
 use Tuezy\SecurityHelper;
 
-// Initialize Config
-$configObj = new Config($config);
+// Initialize Controller
+$adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
+$adminPermissionHelper = new AdminPermissionHelper($func, $config);
+$controller = new CommentAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper);
 
 /* Kiểm tra active comment */
 $variant = SecurityHelper::sanitizeGet('variant', '');
@@ -28,37 +29,31 @@ if (empty($config[$variant][$type]['comment'])) {
 
 switch($act) {
 	case "man":
-		viewMans();
-		$template = "comment/man/mans";
-		break;
-
-	default:
-		$template = "404";
-}
-
-function viewMans()
-{
-	global $d, $func, $cache, $comment, $item, $variant, $type;
-
-	$id = (int)SecurityHelper::sanitizeGet('id', 0);
-
-	if (!empty($id)) {
-		/* Get data detail - Sử dụng SecurityHelper */
+		$id = (int)SecurityHelper::sanitizeGet('id', 0);
+		
+		if (empty($id)) {
+			$func->transfer("Trang không tồn tại", "index.php", false);
+		}
+		
+		/* Get data detail */
 		$item = $d->rawQueryOne(
 			"SELECT * FROM #_{$variant} WHERE id = ? AND type = ? LIMIT 0,1",
 			[$id, $type]
 		);
 
 		/* Check data detail */
-		if (!empty($item)) {
-			/* Comment */
-			$comment = new Comments($d, $func, $item['id'], $item['type'], true);
-		} else {
+		if (empty($item)) {
 			$func->transfer("Dữ liệu không có thực", "index.php", false);
 		}
-	} else {
-		$func->transfer("Trang không tồn tại", "index.php", false);
-	}
+		
+		/* Comment - Sử dụng class Comments cũ để tương thích với template */
+		$comment = new Comments($d, $func, $item['id'], $item['type'], true);
+		
+		$template = "comment/man/mans";
+		break;
+
+	default:
+		$template = "404";
 }
 
 /* 

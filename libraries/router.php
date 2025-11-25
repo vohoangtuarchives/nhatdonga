@@ -66,28 +66,69 @@ $router->map('GET|POST', '[a:com]/[a:lang]/', 'allpagelang', 'lang');
 $router->map('GET|POST', '[a:com]/[a:action]', 'account', 'account');
 
 $router->map('GET', THUMBS . '/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z, $src) {
-	global $func;
-	$func->createThumb($w, $h, $z, $src, null, THUMBS);
+	global $func, $config;
+	// Convert URL path to file system path
+	$src = str_replace('%20', ' ', $src);
+	// Remove leading slash if present
+	$src = ltrim($src, '/');
+	// Build full file system path
+	$filePath = ROOT . $src;
+	// Normalize path separators for Windows
+	$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
+	// If file doesn't exist, try alternative paths
+	if (!file_exists($filePath)) {
+		// Try with BASE_PATH
+		$filePath = BASE_PATH . DIRECTORY_SEPARATOR . $src;
+		$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
+	}
+	// If still doesn't exist, try removing config URL prefix
+	if (!file_exists($filePath) && !empty($config['database']['url'])) {
+		$srcClean = str_replace($config['database']['url'], '', $src);
+		$srcClean = ltrim($srcClean, '/');
+		$filePath = ROOT . $srcClean;
+		$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
+	}
+	$func->createThumb($w, $h, $z, $filePath, null, THUMBS);
 }, 'thumb');
 
 $router->map('GET', WATERMARK . '/product/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z, $src) {
-	global $func, $cache;
+	global $func, $cache, $config, $d, $lang, $sluglang;
+	
+	// Convert URL path to file system path
+	$src = str_replace('%20', ' ', $src);
+	$src = ltrim($src, '/');
+	$filePath = ROOT . $src;
+	$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
+	if (!file_exists($filePath)) {
+		$filePath = BASE_PATH . DIRECTORY_SEPARATOR . $src;
+		$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
+	}
 	
 	// Sử dụng PhotoRepository thay vì cache trực tiếp
 	$photoRepo = new PhotoRepository($d, $cache, $lang ?? 'vi', $sluglang ?? 'slugvi');
 	$wtm = $photoRepo->getByTypeAndAct('watermark', 'photo_static');
 	
-	$func->createThumb($w, $h, $z, $src, $wtm, "product");
+	$func->createThumb($w, $h, $z, $filePath, $wtm, "product");
 }, 'watermark');
 
 $router->map('GET', WATERMARK . '/news/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z, $src) {
-	global $func, $cache;
+	global $func, $cache, $config, $d, $lang, $sluglang;
+	
+	// Convert URL path to file system path
+	$src = str_replace('%20', ' ', $src);
+	$src = ltrim($src, '/');
+	$filePath = ROOT . $src;
+	$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
+	if (!file_exists($filePath)) {
+		$filePath = BASE_PATH . DIRECTORY_SEPARATOR . $src;
+		$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
+	}
 	
 	// Sử dụng PhotoRepository
 	$photoRepo = new PhotoRepository($d, $cache, $lang ?? 'vi', $sluglang ?? 'slugvi');
 	$wtm = $photoRepo->getByTypeAndAct('watermark-news', 'photo_static');
 	
-	$func->createThumb($w, $h, $z, $src, $wtm, "news");
+	$func->createThumb($w, $h, $z, $filePath, $wtm, "news");
 }, 'watermarkNews');
 
 /* Router match */

@@ -1056,43 +1056,83 @@ class Functions
 
 			if (!empty($slug)) {
 
-				$table = array(
-
-					"#_product_list",
-
-					"#_product_cat",
-
-					"#_product_item",
-
-					"#_product_sub",
-
-					"#_product_brand",
-
-					"#_product",
-
-					"#_news_list",
-
-					"#_news_cat",
-
-					"#_news_item",
-
-					"#_news_sub",
-
-					"#_news",
-
-					"#_tags"
-
+				// Map table names from com parameter
+				$tableMap = array(
+					'product' => array(
+						"#_product_list",
+						"#_product_cat",
+						"#_product_item",
+						"#_product_sub",
+						"#_product_brand",
+						"#_product"
+					),
+					'news' => array(
+						"#_news_list",
+						"#_news_cat",
+						"#_news_item",
+						"#_news_sub",
+						"#_news"
+					),
+					'tags' => array(
+						"#_tags"
+					)
 				);
 
+				// Determine which tables to check
+				$tablesToCheck = array();
+				
+				// If specific table name is provided (e.g., "product_list", "product_cat")
+				if (!empty($data['table'])) {
+					// Check if it's a specific table name (contains underscore)
+					if (strpos($data['table'], '_') !== false) {
+						// Specific table like "product_list", "product_cat", etc.
+						$tablesToCheck[] = "#_" . $data['table'];
+					} elseif (isset($tableMap[$data['table']])) {
+						// Com name like "product", "news" - check all tables in that group
+						$tablesToCheck = $tableMap[$data['table']];
+					} else {
+						// Unknown table, check all
+						foreach ($tableMap as $tables) {
+							$tablesToCheck = array_merge($tablesToCheck, $tables);
+						}
+					}
+				} else {
+					// No table specified, check all tables
+					foreach ($tableMap as $tables) {
+						$tablesToCheck = array_merge($tablesToCheck, $tables);
+					}
+				}
 
+				// Build WHERE clause
+				$whereConditions = array();
+				$whereParams = array();
 
-				$where = (!empty($data['id']) && empty($data['copy'])) ? "id != " . $data['id'] . " and " : "";
+				// Exclude current record when editing (check if id is set and > 0)
+				$currentId = isset($data['id']) ? (int)$data['id'] : 0;
+				if ($currentId > 0 && empty($data['copy'])) {
+					$whereConditions[] = "id != ?";
+					$whereParams[] = $currentId;
+				}
 
+				// Add type condition if specified
+				if (!empty($data['type'])) {
+					$whereConditions[] = "type = ?";
+					$whereParams[] = $data['type'];
+				}
 
+				// Build WHERE clause string
+				$where = '';
+				if (!empty($whereConditions)) {
+					$where = implode(' AND ', $whereConditions) . ' AND ';
+				}
 
-				foreach ($table as $v) {
+				// Add slug condition parameters
+				$slugParams = array($data['slug'], $data['slug']);
+				$allParams = array_merge($whereParams, $slugParams);
 
-					$check = $this->d->rawQueryOne("select id from $v where $where (slugvi = ? or slugen = ?) limit 0,1", array($data['slug'], $data['slug']));
+				foreach ($tablesToCheck as $v) {
+
+					$check = $this->d->rawQueryOne("select id from $v where $where (slugvi = ? or slugen = ?) limit 0,1", $allParams);
 
 
 
@@ -1282,7 +1322,7 @@ class Functions
 
 	{
 
-		global $config;
+		global $config, $configBase;
 
 
 
@@ -1384,9 +1424,11 @@ class Functions
 
 
 
-		/* Path error */
+		/* Path error - Use $configBase instead of ASSET to ensure correct domain */
 
-		$info['pathError'] = ASSET . $info['thumbs'] . "/" . $info['size-error'] . "/" . $info['upload-error'] . $info['image-error'];
+		$baseUrl = !empty($configBase) ? rtrim($configBase, '/') : ASSET;
+
+		$info['pathError'] = $baseUrl . "/" . ltrim($info['thumbs'] . "/" . $info['size-error'] . "/" . $info['upload-error'] . $info['image-error'], '/');
 
 
 
@@ -1858,6 +1900,14 @@ class Functions
 
 		return $pagination;
 
+	}
+
+
+
+	/* Paging - Alias for pagination (backward compatibility) */
+	public function paging($totalq = 0, $perPage = 10, $page = 1, $url = '?')
+	{
+		return $this->pagination($totalq, $perPage, $page, $url);
 	}
 
 

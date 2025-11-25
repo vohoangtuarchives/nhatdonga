@@ -3,62 +3,23 @@
 /**
  * sources/contact.php - REFACTORED VERSION
  * 
- * File này là phiên bản refactored của sources/contact.php
- * Sử dụng FormHandler để giảm code từ ~430 dòng xuống ~50 dòng
- * 
- * CÁCH SỬ DỤNG:
- * 1. Backup file gốc: cp sources/contact.php sources/contact.php.backup
- * 2. Copy file này: cp sources/contact-refactored.php sources/contact.php
- * 3. Test kỹ trước khi deploy
+ * Sử dụng ContactController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
  */
 
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\FormHandler;
-use Tuezy\ValidationHelper;
-use Tuezy\SEOHelper;
-use Tuezy\BreadcrumbHelper;
-use Tuezy\Repository\StaticRepository;
-use Tuezy\Config;
+use Tuezy\Controller\ContactController;
 
-// Initialize Config
-$configObj = new Config($config);
+// Initialize Controller
+$controller = new ContactController($d, $cache, $func, $seo, $config, $emailer, $flash);
 
-// Initialize helpers
-$validator = new ValidationHelper($func, $config);
-$formHandler = new FormHandler($d, $func, $emailer, $flash, $validator, $configBase, $lang, $setting);
-$seoHelper = new SEOHelper($seo, $func, $d, $lang, $seolang, $configBase);
-$breadcrumbHelper = new BreadcrumbHelper($breadcr, $configBase);
-$staticRepo = new StaticRepository($d, $cache, $lang, $sluglang);
+// Handle request
+$viewData = $controller->index();
 
-/* Handle Contact Form Submission - Sử dụng FormHandler */
-if (!empty($_POST['submit-contact'])) {
-    $dataContact = $_POST['dataContact'] ?? [];
-    $recaptchaResponse = $_POST['recaptcha_response_contact'] ?? '';
-    
-    // Sử dụng FormHandler - giảm từ ~200 dòng xuống 1 dòng!
-    $formHandler->handleContact($dataContact, $recaptchaResponse);
-    // FormHandler tự động xử lý:
-    // - Validation
-    // - Recaptcha check
-    // - Database insert
-    // - File upload
-    // - Email sending
-    // - Redirects
-}
-
-/* SEO Setup - Sử dụng SEOHelper */
-$seoHelper->setupFromSeopage('lien-he', $titleMain);
-$seoHelper->setType('object');
-
-/* Get Contact Content - Sử dụng StaticRepository */
-$lienhe = $staticRepo->getByType('lienhe');
-
-/* Breadcrumbs - Sử dụng BreadcrumbHelper */
-if (!empty($titleMain)) {
-    $breadcrumbHelper->add($titleMain, '/lien-he');
-}
-$breadcrumbs = $breadcrumbHelper->render();
+// Extract data for template
+extract($viewData);
+$breadcrumbs = $viewData['breadcrumbs'];
 
 /* 
  * SO SÁNH:

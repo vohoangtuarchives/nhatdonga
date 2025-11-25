@@ -1,38 +1,37 @@
 <?php
 
+/**
+ * admin/sources/gallery.php - REFACTORED VERSION
+ * 
+ * Sử dụng GalleryAdminController để xử lý logic
+ * File này giờ chỉ là entry point, logic đã được chuyển vào Controller
+ */
+
 if (!defined('SOURCES')) die("Error");
 
-use Tuezy\Admin\AdminCRUDHelper;
+use Tuezy\Admin\Controller\GalleryAdminController;
+use Tuezy\Admin\AdminAuthHelper;
+use Tuezy\Admin\AdminPermissionHelper;
 use Tuezy\SecurityHelper;
 
-$adminCRUD = new AdminCRUDHelper(
-	$d, 
-	$func, 
-	$flash, 
-	'gallery', 
-	$type, 
-	'gallery', 
-	UPLOAD_GALLERY_L, 
-	$lang, 
-	$sluglang
-);
+// Initialize language variables
+if (!isset($lang)) {
+	$lang = $_SESSION['lang'] ?? 'vi';
+}
+if (!isset($sluglang)) {
+	$sluglang = 'slugvi';
+}
+
+// Initialize Controller
+$adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
+$adminPermissionHelper = new AdminPermissionHelper($func, $config);
+$controller = new GalleryAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper);
 
 switch($act) {
 	case "man_photo":
-		$where = "id_parent = ? and com = ? and type = ? and kind = ? and val = ?";
-		$params = [$id_parent, $com, $type, $kind, $val];
-		
-		$perPage = 10;
-		$start = ($curPage - 1) * $perPage;
-		$sql = "SELECT * FROM #_gallery WHERE {$where} ORDER BY numb,id DESC LIMIT {$start},{$perPage}";
-		$items = $d->rawQuery($sql, $params);
-		
-		$countSql = "SELECT COUNT(*) as total FROM #_gallery WHERE {$where}";
-		$total = $d->rawQueryOne($countSql, $params);
-		$totalItems = (int)($total['total'] ?? 0);
-		
-		$url = "index.php?com={$com}&act=man_photo&id_parent={$id_parent}&type={$type}&kind={$kind}&val={$val}";
-		$paging = $func->pagination($totalItems, $perPage, $curPage, $url);
+		$viewData = $controller->manPhoto($id_parent, $com, $type, $kind, $val, $curPage, 10);
+		$items = $viewData['items'];
+		$paging = $viewData['paging'];
 		$template = "gallery/man/photos";
 		break;
 		
@@ -46,10 +45,7 @@ switch($act) {
 			$func->transfer("Không nhận được dữ liệu", "index.php?com={$com}&act=man_photo&id_parent={$id_parent}&type={$type}&kind={$kind}&val={$val}&p={$curPage}", false);
 		}
 		
-		$item = $d->rawQueryOne(
-			"SELECT * FROM #_gallery WHERE id_parent = ? AND com = ? AND type = ? AND kind = ? AND val = ? AND id = ? LIMIT 0,1",
-			[$id_parent, $com, $type, $kind, $val, $id]
-		);
+		$item = $controller->getPhoto($id, $id_parent, $com, $type, $kind, $val);
 		
 		if (empty($item)) {
 			$func->transfer("Dữ liệu không có thực", "index.php?com={$com}&act=man_photo&id_parent={$id_parent}&type={$type}&kind={$kind}&val={$val}&p={$curPage}", false);
@@ -58,21 +54,19 @@ switch($act) {
 		break;
 		
 	case "save_photo":
-		savePhoto();
+		// Save logic - giữ nguyên logic cũ vì phức tạp (file upload, dataMulti, etc.)
+		if (function_exists('savePhoto')) {
+			savePhoto();
+		}
 		break;
 		
 	case "delete_photo":
 		$id = (int)SecurityHelper::sanitizeGet('id', 0);
-		if ($id) {
-			$item = $d->rawQueryOne("SELECT * FROM #_gallery WHERE id = ? LIMIT 0,1", [$id]);
-			if ($item) {
-				if ($d->rawQuery("DELETE FROM #_gallery WHERE id = ?", [$id])) {
-					$func->deleteFile(UPLOAD_GALLERY . $item['photo']);
-					$func->transfer("Xóa dữ liệu thành công", "index.php?com={$com}&act=man_photo&id_parent={$id_parent}&type={$type}&kind={$kind}&val={$val}&p={$curPage}");
-				}
-			}
+		if ($id && $controller->deletePhoto($id)) {
+			$func->transfer("Xóa dữ liệu thành công", "index.php?com={$com}&act=man_photo&id_parent={$id_parent}&type={$type}&kind={$kind}&val={$val}&p={$curPage}");
+		} else {
+			$func->transfer("Xóa dữ liệu thất bại", "index.php?com={$com}&act=man_photo&id_parent={$id_parent}&type={$type}&kind={$kind}&val={$val}&p={$curPage}", false);
 		}
-		$func->transfer("Xóa dữ liệu thất bại", "index.php?com={$com}&act=man_photo&id_parent={$id_parent}&type={$type}&kind={$kind}&val={$val}&p={$curPage}", false);
 		break;
 		
 	default:

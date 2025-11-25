@@ -63,9 +63,9 @@ class SettingRepository
      */
     public function update(int $id, array $data): bool
     {
-        if (!isset($data['date_updated'])) {
-            $data['date_updated'] = time();
-        }
+        // Note: Setting table may not have date_updated column
+        // Only add date_updated if it's explicitly provided in $data
+        // Don't auto-add to avoid column not found errors
         $this->d->where('id', $id);
         return $this->d->update('setting', $data);
     }
