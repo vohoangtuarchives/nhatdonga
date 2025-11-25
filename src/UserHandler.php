@@ -3,10 +3,13 @@
 namespace Tuezy;
 
 use Tuezy\SecurityHelper;
+use Tuezy\Service\UserService;
+use Tuezy\Repository\UserRepository;
 
 /**
  * UserHandler - Handles user authentication and account management
  * Centralizes user-related operations
+ * Now uses UserService for business logic
  */
 class UserHandler
 {
@@ -14,11 +17,12 @@ class UserHandler
     private $func;
     private $flash;
     private ValidationHelper $validator;
+    private UserService $userService;
     private string $configBase;
     private string $loginMember;
     private array $config;
 
-    public function __construct($d, $func, $flash, ValidationHelper $validator, string $configBase, string $loginMember, array $config)
+    public function __construct($d, $func, $flash, ValidationHelper $validator, string $configBase, string $loginMember, array $config, $cache = null)
     {
         $this->d = $d;
         $this->func = $func;
@@ -27,6 +31,10 @@ class UserHandler
         $this->configBase = $configBase;
         $this->loginMember = $loginMember;
         $this->config = $config;
+        
+        // Initialize UserService
+        $userRepo = new UserRepository($d, $cache);
+        $this->userService = new UserService($userRepo, $d);
     }
 
     /**
@@ -44,13 +52,10 @@ class UserHandler
             return false;
         }
 
-        $passwordMD5 = md5($password);
-        $row = $this->d->rawQueryOne(
-            "SELECT * FROM #_member WHERE (username = ? OR email = ?) AND password = ? AND find_in_set('hienthi',status) LIMIT 0,1",
-            [$username, $username, $passwordMD5]
-        );
+        // Use UserService for login
+        $user = $this->userService->login($username, $password);
 
-        if (empty($row)) {
+        if (!$user) {
             $this->flash->set('error', 'Thông tin đăng nhập không chính xác');
             return false;
         }
@@ -58,20 +63,16 @@ class UserHandler
         // Set session
         $_SESSION[$this->loginMember] = [
             'active' => true,
-            'id' => $row['id'],
-            'username' => $row['username'],
-            'login_session' => md5(sha1($row['password'] . $row['username'])),
+            'id' => $user['id'],
+            'username' => $user['username'] ?? '',
+            'login_session' => md5(sha1($user['password'] . ($user['username'] ?? ''))),
         ];
 
         // Remember me
         if ($remember) {
-            setcookie('login_member_id', $row['id'], time() + 86400 * 30, '/');
-            setcookie('login_member_session', md5(sha1($row['password'] . $row['username'])), time() + 86400 * 30, '/');
+            setcookie('login_member_id', $user['id'], time() + 86400 * 30, '/');
+            setcookie('login_member_session', md5(sha1($user['password'] . ($user['username'] ?? ''))), time() + 86400 * 30, '/');
         }
-
-        // Update last login
-        $this->d->where('id', $row['id']);
-        $this->d->update('member', ['lastlogin' => time()]);
 
         return true;
     }
@@ -89,11 +90,6 @@ class UserHandler
         $this->validator->required($data['email'] ?? '', 'Email không được trống');
         if (!empty($data['email'])) {
             $this->validator->email($data['email'], 'Email không hợp lệ');
-            if ($this->func->checkAccount($data['email'], 'email', 'member')) {
-                $this->validator->getErrors(); // Add error
-                $this->flash->set('error', 'Email đã tồn tại');
-                return false;
-            }
         }
         $this->validator->required($data['phone'] ?? '', 'Số điện thoại không được trống');
         if (!empty($data['phone'])) {
@@ -105,24 +101,14 @@ class UserHandler
             return false;
         }
 
-        // Prepare data
-        $userData = [
-            'fullname' => htmlspecialchars($data['fullname']),
-            'email' => htmlspecialchars($data['email']),
-            'phone' => htmlspecialchars($data['phone'] ?? ''),
-            'address' => htmlspecialchars($data['address'] ?? ''),
-            'password' => md5($data['password']),
-            'date_created' => time(),
-            'status' => 'hienthi',
-            'numb' => 0,
-        ];
+        // Use UserService for registration
+        $userId = $this->userService->register($data);
 
-        // Create user
-        if ($this->d->insert('member', $userData)) {
+        if ($userId) {
             return true;
         }
 
-        $this->flash->set('error', 'Đăng ký thất bại. Vui lòng thử lại sau.');
+        $this->flash->set('error', 'Đăng ký thất bại. Email có thể đã tồn tại.');
         return false;
     }
 
@@ -152,55 +138,35 @@ class UserHandler
         $this->validator->required($data['email'] ?? '', 'Email không được trống');
         if (!empty($data['email'])) {
             $this->validator->email($data['email'], 'Email không hợp lệ');
-            if ($this->func->checkAccount($data['email'], 'email', 'member', $userId)) {
-                $this->flash->set('error', 'Email đã tồn tại');
-                return false;
-            }
         }
         $this->validator->required($data['phone'] ?? '', 'Số điện thoại không được trống');
         if (!empty($data['phone'])) {
             $this->validator->phone($data['phone'], 'Số điện thoại không hợp lệ');
         }
 
-        // Check old password if changing password
-        if ($oldPassword && $newPassword) {
-            $user = $this->d->rawQueryOne("SELECT password FROM #_member WHERE id = ? LIMIT 0,1", [$userId]);
-            if ($user['password'] != md5($oldPassword)) {
-                $this->flash->set('error', 'Mật khẩu cũ không chính xác');
-                return false;
-            }
-        }
-
         if (!empty($this->validator->getErrors())) {
             return false;
         }
 
-        // Prepare update data
-        $updateData = [
-            'fullname' => htmlspecialchars($data['fullname']),
-            'email' => htmlspecialchars($data['email']),
-            'phone' => htmlspecialchars($data['phone']),
-            'address' => htmlspecialchars($data['address'] ?? ''),
-        ];
-
-        if ($newPassword) {
-            $updateData['password'] = md5($newPassword);
+        // Update profile using UserService
+        if (!$this->userService->updateProfile($userId, $data)) {
+            $this->flash->set('error', 'Cập nhật thông tin thất bại. Email có thể đã tồn tại.');
+            return false;
         }
 
-        // Update
-        $this->d->where('id', $userId);
-        if ($this->d->update('member', $updateData)) {
-            // If password changed, logout
-            if ($newPassword) {
-                $this->logout();
-                $this->func->transfer("Cập nhật thông tin thành công", $this->configBase . "account/dang-nhap");
-                return true;
+        // Update password if provided
+        if ($oldPassword && $newPassword) {
+            if (!$this->userService->updatePassword($userId, $oldPassword, $newPassword)) {
+                $this->flash->set('error', 'Mật khẩu cũ không chính xác');
+                return false;
             }
+            // If password changed, logout
+            $this->logout();
+            $this->func->transfer("Cập nhật thông tin thành công", $this->configBase . "account/dang-nhap");
             return true;
         }
 
-        $this->flash->set('error', 'Cập nhật thông tin thất bại');
-        return false;
+        return true;
     }
 
     /**
@@ -220,22 +186,16 @@ class UserHandler
             return false;
         }
 
-        $row = $this->d->rawQueryOne(
-            "SELECT * FROM #_member WHERE email = ? AND find_in_set('hienthi',status) LIMIT 0,1",
-            [$email]
-        );
+        // Use UserService for forgot password
+        $resetCode = $this->userService->forgotPassword($email);
 
-        if (empty($row)) {
+        if (!$resetCode) {
             $this->flash->set('error', 'Email không tồn tại trong hệ thống');
             return false;
         }
 
-        // Generate reset code
-        $resetCode = $this->func->stringRandom(32);
-        $this->d->where('id', $row['id']);
-        $this->d->update('member', ['reset_code' => $resetCode, 'reset_time' => time()]);
-
         // Send email (implement email sending logic here)
+        // TODO: Send email with reset code
         // ...
 
         return true;

@@ -1,52 +1,53 @@
 <?php
-	include "config.php";
+include "config.php";
 
-	if(!empty($_POST["id"]))
-	{
-		$level = (!empty($_POST["level"])) ? htmlspecialchars($_POST["level"]) : 0;
-		$table = (!empty($_POST["table"])) ? htmlspecialchars($_POST["table"]) : '';
-		$id = (!empty($_POST["id"])) ? htmlspecialchars($_POST["id"]) : 0;
-		$type = (!empty($_POST["type"])) ? htmlspecialchars($_POST["type"]) : '';
-		$row = null;
+use Tuezy\Repository\CategoryRepository;
+use Tuezy\Config;
+use Tuezy\SecurityHelper;
 
-		switch($level)
-		{
-			case '0':
-				$id_temp = "id_list";
-				break;
+// Initialize Config
+$configObj = new Config($config);
 
-			case '1':
-				$id_temp = "id_cat";
-				break;
+// Initialize CategoryRepository
+$categoryRepo = new CategoryRepository($d, $cache, $lang, $sluglang, 'product');
 
-			case '2':
-				$id_temp = "id_item";
-				break;
+$str = '<option value="0">Chọn danh mục</option>';
 
-			default:
-				echo 'error ajax';
-				exit();
-				break;
-		}
+if (!empty($_POST["id"])) {
+	$level = (int)SecurityHelper::sanitizePost('level', 0);
+	$table = SecurityHelper::sanitizePost('table', '');
+	$id = (int)SecurityHelper::sanitizePost('id', 0);
+	$type = SecurityHelper::sanitizePost('type', '');
+	
+	$idField = '';
+	switch($level) {
+		case 0:
+			$idField = "id_list";
+			break;
+		case 1:
+			$idField = "id_cat";
+			break;
+		case 2:
+			$idField = "id_item";
+			break;
+		default:
+			echo $str;
+			exit();
+	}
 
-		if($id)
-		{
-			$row = $d->rawQuery("select namevi, id from $table where $id_temp = ? and type = ? order by numb,id desc",array($id,$type));
-		}
+	if ($id && $table) {
+		$row = $d->rawQuery(
+			"SELECT namevi, id FROM #_{$table} WHERE {$idField} = ? AND type = ? ORDER BY numb, id DESC",
+			[$id, $type]
+		);
 
-		$str = '<option value="0">Chọn danh mục</option>';
-		if(!empty($row))
-		{
-			foreach($row as $v)
-			{
-				$str .= '<option value='.$v["id"].'>'.$v["namevi"].'</option>';
+		if (!empty($row)) {
+			foreach($row as $v) {
+				$str .= '<option value="' . htmlspecialchars($v["id"]) . '">' . htmlspecialchars($v["namevi"]) . '</option>';
 			}
 		}
 	}
-	else
-	{
-		$str = '<option value="0">Chọn danh mục</option>';
-	}
+}
 
-	echo $str;
+echo $str;
 ?>

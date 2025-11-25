@@ -15,9 +15,12 @@
 include "config.php";
 
 use Tuezy\Repository\ProductRepository;
+use Tuezy\Repository\CategoryRepository;
+use Tuezy\Repository\TagsRepository;
 use Tuezy\PaginationHelper;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
+use Tuezy\Service\ProductService;
 
 // Initialize Config
 $configObj = new Config($config);
@@ -28,6 +31,9 @@ $pagingAjax = new PaginationsAjax();
 
 // Initialize Repositories and Helpers
 $productRepo = new ProductRepository($d, $cache, $lang, $sluglang);
+$categoryRepo = new CategoryRepository($d, $cache, $lang, $sluglang, 'product');
+$tagsRepo = new TagsRepository($d, $cache, $lang, $sluglang);
+$productService = new ProductService($productRepo, $categoryRepo, $tagsRepo, $d, $lang);
 $paginationHelper = new PaginationHelper($pagingAjax, $func);
 
 // Get parameters
@@ -60,24 +66,21 @@ if ($pNoibat != 'all') {
 }
 $pageLink .= $tempLink;
 
-// Get products - Sử dụng ProductRepository
-// Note: Cần filter thêm 'noibat' và 'hienthi' status
-$filters['status'] = 'noibat'; // Override với noibat
-$products = $productRepo->getProducts('san-pham', $filters, $start, $perPage);
-$totalItems = $productRepo->countProducts('san-pham', $filters);
+// Get products thông qua ProductService
+$filters['status'] = 'noibat';
+$listResult = $productService->getListing('san-pham', $filters, $p, $perPage);
+$products = $listResult['items'];
+$totalItems = $listResult['total'];
 
 // Pagination
 $paging = $pagingAjax->getAllPageLinks($totalItems, $pageLink, $eShow);
 
 // Output HTML (giữ nguyên format cũ)
-if ($totalItems) { ?>
-	<div class="row row-product">
-		<?php foreach ($products as $k => $v) {
-			echo $custom->products($v);
-		} ?>
-	</div>
-	<div class="pagination-ajax"><?= $paging ?></div>
-<?php }
+if ($totalItems) {
+	$productItems = $products;
+	$paginationHtml = $paging;
+	include TEMPLATE . 'components/product-grid.php';
+}
 
 /* 
  * SO SÁNH:

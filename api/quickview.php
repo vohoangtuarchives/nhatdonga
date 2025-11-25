@@ -17,12 +17,14 @@ include "config.php";
 use Tuezy\Repository\ProductRepository;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
+use Tuezy\Service\ProductService;
 
 // Initialize Config
 $configObj = new Config($config);
 
 // Initialize Repositories
 $productRepo = new ProductRepository($d, $cache, $lang, $sluglang);
+$productService = new ProductService($productRepo, null, null, $d, $lang);
 
 // Configuration
 $w = 307;
@@ -37,16 +39,13 @@ $assets = $isWater ? WATERMARK . '/product' : THUMBS;
 $id = (int)($_GET['id'] ?? 0);
 
 if ($id) {
-	// Get product detail - Sử dụng ProductRepository
-	$rowDetail = $productRepo->getProductDetail($id, 'san-pham');
+	$rowDetailContext = $productService->getDetailContext($id, 'san-pham', false);
 	
-	if ($rowDetail) {
-		// Get product gallery - Sử dụng ProductRepository
-		$rowDetailPhoto = $productRepo->getProductGallery($id, 'san-pham');
-		
-		// Get colors and sizes
-		$rowColor = $productRepo->getProductColors($id, 'san-pham');
-		$rowSize = $productRepo->getProductSizes($id, 'san-pham');
+	if (!empty($rowDetailContext['detail'])) {
+		$rowDetail = $rowDetailContext['detail'];
+		$rowDetailPhoto = $rowDetailContext['photos'];
+		$rowColor = $rowDetailContext['colors'];
+		$rowSize = $rowDetailContext['sizes'];
 		
 		// Include quickview template (giữ nguyên template cũ)
 		include TEMPLATE . "product/quickview.php";

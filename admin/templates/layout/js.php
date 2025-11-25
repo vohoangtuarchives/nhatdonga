@@ -24,26 +24,11 @@
 	var ORDER_PRICE_TO = <?=(!empty($price_to)) ? $price_to : ((!empty($maxTotal)) ? $maxTotal : 1)?>;
 </script>
 
+<?php
+$assets = include __DIR__ . '/assets-manifest.php';
+$jsAssets = $assets['js'] ?? [];
+?>
 <!-- Js Files -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/moment.min.js"></script>
-<script src="assets/confirm/confirm.js"></script>
-<script src="assets/select2/select2.full.js"></script>
-<script src="assets/sumoselect/jquery.sumoselect.js"></script>
-<script src="assets/datetimepicker/php-date-formatter.min.js"></script>
-<script src="assets/datetimepicker/jquery.mousewheel.js"></script>
-<script src="assets/datetimepicker/jquery.datetimepicker.js"></script>
-<script src="assets/daterangepicker/daterangepicker.js"></script>
-<script src="assets/rangeSlider/ion.rangeSlider.js"></script>
-<script src="assets/js/priceFormat.js"></script>
-<script src="assets/jscolor/jscolor.js"></script>
-<script src="assets/filer/jquery.filer.js"></script>
-<script src="assets/holdon/HoldOn.js"></script>
-<script src="assets/sortable/Sortable.js"></script>
-<script src="assets/js/bootstrap.js"></script>
-<script src="assets/js/adminlte.js"></script>
-<script src="ckeditor/ckeditor.js"></script>
-<script src="assets/apexcharts/apexcharts.min.js"></script>
-<script src="assets/simplenotify/simple-notify.js"></script>
-<script src="assets/comment/comment.js"></script>
-<script src="assets/js/apps.js"></script>
+<?php foreach ($jsAssets as $path) { ?>
+	<script src="<?=htmlspecialchars($path, ENT_QUOTES, 'UTF-8')?>"></script>
+<?php } ?>

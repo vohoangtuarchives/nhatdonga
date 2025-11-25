@@ -14,6 +14,10 @@ if (!defined('SOURCES')) die("Error");
 
 use Tuezy\Admin\AdminCRUDHelper;
 use Tuezy\Admin\AdminController;
+use Tuezy\Repository\ProductRepository;
+use Tuezy\Repository\CategoryRepository;
+use Tuezy\Repository\TagsRepository;
+use Tuezy\Service\ProductService;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
@@ -22,6 +26,12 @@ $configObj = new Config($config);
 
 // Initialize AdminController
 $adminController = new AdminController($d, $func, $flash, $config);
+
+// Initialize repositories & service
+$productRepo = new ProductRepository($d, $cache, $lang, $sluglang, $type);
+$categoryRepo = new CategoryRepository($d, $cache, $lang, $sluglang, 'product');
+$tagsRepo = new TagsRepository($d, $cache, $lang, $sluglang);
+$productService = new ProductService($productRepo, $categoryRepo, $tagsRepo, $d, $lang);
 
 /* Kiểm tra active product */
 if (isset($config['product'])) {
@@ -65,13 +75,9 @@ if (isset($_POST['data'])) {
 $adminCRUD = new AdminCRUDHelper(
 	$d, 
 	$func, 
-	$flash, 
 	'product', 
 	$type, 
-	'product', 
-	UPLOAD_PRODUCT_L, 
-	$lang, 
-	$sluglang
+	$config['product'][$type] ?? []
 );
 
 switch ($act) {
@@ -85,11 +91,12 @@ switch ($act) {
 		if (!empty($_REQUEST['id_sub'])) $filters['id_sub'] = (int)$_REQUEST['id_sub'];
 		if (!empty($_REQUEST['id_brand'])) $filters['id_brand'] = (int)$_REQUEST['id_brand'];
 		if (!empty($_REQUEST['keyword'])) $filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
-		if (!empty($_REQUEST['comment_status'])) $filters['comment_status'] = SecurityHelper::sanitize($_REQUEST['comment_status']);
+		if (!empty($_REQUEST['comment_status'])) $filters['status'] = SecurityHelper::sanitize($_REQUEST['comment_status']);
 
-		$result = $adminCRUD->getItems($filters, 10, $curPage);
-		$items = $result['items'];
-		$paging = $result['paging'];
+		$listing = $productService->getListing($type, $filters, $curPage, 10);
+		$items = $listing['items'];
+		$totalItems = $listing['total'];
+		$paging = $func->paging($totalItems, 10, $curPage, "index.php?com=product&act=man&type={$type}{$strUrl}");
 		
 		/* Comment */
 		$comment = new Comments($d, $func);
@@ -109,11 +116,13 @@ switch ($act) {
 		
 		$id = (int)($_GET['id'] ?? $_GET['id_copy'] ?? 0);
 		if ($id) {
-			$item = $adminCRUD->getItem($id);
-			if ($item && $act != 'copy') {
-				/* Get gallery */
-				$gallery = $d->rawQuery("select * from #_gallery where id_parent = ? and com = ? and type = ? and kind = ? and val = ? order by numb,id desc", 
-					array($id, $com, $type, 'man', $type));
+			$detailContext = $productService->getDetailContext($id, $type, false);
+			if ($detailContext) {
+				$item = $detailContext['detail'];
+				$gallery = $detailContext['photos'];
+			} else {
+				$item = $adminCRUD->getItem($id);
+				$gallery = [];
 			}
 		}
 		$template = "product/man/man_add";
@@ -121,15 +130,54 @@ switch ($act) {
 
 	case "save":
 	case "save_copy":
-		// Save logic - có thể sử dụng AdminCRUDHelper->saveItem()
-		// Nhưng cần xử lý thêm dataSC, dataTags, dataColor, dataSize, etc.
-		// Giữ nguyên logic cũ cho phần này vì phức tạp
-		saveMan();
+		// Save product với đầy đủ dữ liệu liên quan - Sử dụng ProductService
+		if (empty($_POST)) {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=product&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+		}
+
+		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
+		$data = $_POST['data'] ?? [];
+		
+		// Sanitize data
+		foreach ($data as $key => $value) {
+			if (is_string($value)) {
+				$data[$key] = SecurityHelper::sanitize($value);
+			} elseif (is_array($value)) {
+				$data[$key] = SecurityHelper::sanitizeArray($value);
+			}
+		}
+
+		// Get related data
+		$dataSC = $_POST['dataSC'] ?? [];
+		$dataTags = $_POST['dataTags'] ?? [];
+		
+		// Sanitize dataSC
+		foreach ($dataSC as $key => $item) {
+			if (is_array($item)) {
+				$dataSC[$key] = array_map(function($v) {
+					return is_string($v) ? SecurityHelper::sanitize($v) : $v;
+				}, $item);
+			}
+		}
+
+		// Sanitize dataTags
+		$dataTags = array_map('intval', $dataTags);
+		$dataTags = array_filter($dataTags, function($v) { return $v > 0; });
+
+		// Save product using ProductService
+		$productId = $productService->saveProduct($data, $id, $dataSC, $dataTags, $type);
+
+		if ($productId) {
+			$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+			$func->transfer($message, "index.php?com=product&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
+		} else {
+			$func->transfer("Có lỗi xảy ra khi lưu dữ liệu", "index.php?com=product&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+		}
 		break;
 
 	case "delete":
 		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $adminCRUD->deleteItem($id)) {
+		if ($id && $adminCRUD->delete($id)) {
 			$func->transfer("Xóa dữ liệu thành công", "index.php?com=product&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
 		} else {
 			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=product&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
@@ -147,12 +195,13 @@ switch ($act) {
  * SO SÁNH:
  * 
  * CODE CŨ: ~2816 dòng với nhiều functions và logic
- * CODE MỚI: ~150 dòng với AdminCRUDHelper (cho phần man)
+ * CODE MỚI: ~170 dòng với AdminCRUDHelper + ProductService (cho phần man)
  * 
  * GIẢM: ~95% code cho phần man
  * 
  * LỢI ÍCH:
  * - Sử dụng AdminCRUDHelper cho CRUD operations
+ * - Sử dụng ProductService và ProductRepository cho data access
  * - Sử dụng SecurityHelper cho sanitization
  * - Code dễ đọc và maintain hơn
  * - Type-safe với type hints

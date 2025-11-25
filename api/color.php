@@ -17,12 +17,14 @@ include "config.php";
 use Tuezy\Repository\ProductRepository;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
+use Tuezy\Service\ProductService;
 
 // Initialize Config
 $configObj = new Config($config);
 
 // Initialize Repositories
 $productRepo = new ProductRepository($d, $cache, $lang, $sluglang);
+$productService = new ProductService($productRepo, null, null, $d, $lang);
 
 // Get parameters
 $id_color = (int)($_POST['id_color'] ?? 0);
@@ -35,8 +37,9 @@ if ($id_color && $id_pro) {
 		array($id_color, $id_pro, 'product', 'san-pham', 'man', 'san-pham')
 	);
 	
-	// Get product detail - Sử dụng ProductRepository
-	$rowDetail = $productRepo->getProductDetail($id_pro, 'san-pham');
+	// Get product detail - Sử dụng ProductService
+	$rowDetailContext = $productService->getDetailContext($id_pro, 'san-pham', false);
+	$rowDetail = $rowDetailContext['detail'] ?? null;
 	
 	if (!empty($rowDetailPhoto) && $rowDetail) { ?>
 		<a id="Zoom-1" class="MagicZoom" data-options="zoomMode: off; hint: off; rightClick: true; selectorTrigger: hover; expandCaption: false; history: false;" href="<?=ASSET.WATERMARK?>/product/540x540x1/<?=UPLOAD_PRODUCT_L.$rowDetailPhoto[0]['photo']?>" title="<?=$rowDetail['name'.$lang]?>">

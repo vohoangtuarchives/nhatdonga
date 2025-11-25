@@ -61,7 +61,7 @@ if ($id > 0) {
 
 	/* Get items based on table type */
 	if ($table == 'product') {
-		$productRepo = new ProductRepository($d, $func, $lang, 'san-pham');
+		$productRepo = new ProductRepository($d, $cache, $lang, $sluglang, 'san-pham');
 		// Get products by IDs
 		if (!empty($idTags)) {
 			$ids = explode(',', $idTags);

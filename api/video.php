@@ -4,21 +4,23 @@
 include "config.php";
 
 use Tuezy\Repository\PhotoRepository;
+use Tuezy\Service\VideoService;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
 // Initialize Config
 $configObj = new Config($config);
 
-// Initialize Repositories
+// Initialize Repositories & Service
 $photoRepo = new PhotoRepository($d, $cache, $lang, $sluglang);
+$videoService = new VideoService($photoRepo, $d);
 
 // Get video ID
-$id = (int)($_POST['id'] ?? 0);
+$id = (int)SecurityHelper::sanitizePost('id', 0);
 
 if ($id) {
-	// Get video - Sử dụng PhotoRepository
-	$video = $photoRepo->getById($id);
+	// Get video - Sử dụng VideoService
+	$video = $videoService->getVideoDetail($id);
 	
 	if (!empty($video['link_video'])) {
 		$youtubeId = $func->getYoutube($video['link_video']);

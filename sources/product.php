@@ -21,6 +21,7 @@ use Tuezy\BreadcrumbHelper;
 use Tuezy\PaginationHelper;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
+use Tuezy\Service\ProductService;
 
 // Initialize Config
 $configObj = new Config($config);
@@ -35,9 +36,10 @@ $ids = (int)($_GET['ids'] ?? 0);
 $idb = (int)($_GET['idb'] ?? 0);
 
 // Initialize Repositories
-$productRepo = new ProductRepository($d, $func, $lang, $type);
+$productRepo = new ProductRepository($d, $cache, $lang, $sluglang, $type);
 $categoryRepo = new CategoryRepository($d, $cache, $lang, $sluglang, 'product');
 $tagsRepo = new TagsRepository($d, $cache, $lang, $sluglang);
+$productService = new ProductService($productRepo, $categoryRepo, $tagsRepo, $d, $lang);
 $seoHelper = new SEOHelper($seo, $func, $d, $lang, $seolang, $configBase);
 $breadcrumbHelper = new BreadcrumbHelper($breadcr, $configBase);
 $paginationHelper = new PaginationHelper($pagingAjax ?? null, $func);
@@ -47,41 +49,25 @@ $sqlgetItems = "select photo, name$lang, slug$lang, sale_price, regular_price, d
 $perPage = 12;
 
 if ($id > 0) {
-	/* Lấy sản phẩm detail - Sử dụng ProductRepository */
-	$rowDetail = $productRepo->getProductDetail($id, $type);
-	
-	if (!$rowDetail) {
+	$detailContext = $productService->getDetailContext($id, $type);
+
+	if (!$detailContext) {
 		header('HTTP/1.0 404 Not Found', true, 404);
 		include("404.php");
 		exit;
 	}
 
-	/* Cập nhật lượt xem - Sử dụng ProductRepository */
-	$productRepo->updateProductView($id, $rowDetail['view']);
-
-	/* Lấy tags - Sử dụng TagsRepository */
-	$rowTags = $tagsRepo->getByProduct($id, $type);
-
-	/* Lấy màu - Sử dụng ProductRepository */
-	$rowColor = $productRepo->getProductColors($id, $type);
-
-	/* Lấy size - Sử dụng ProductRepository */
-	$rowSize = $productRepo->getProductSizes($id, $type);
-
-	/* Lấy category hierarchy - Sử dụng CategoryRepository */
-	$productList = $categoryRepo->getListById($rowDetail['id_list'], $type);
-	$productCat = $categoryRepo->getCatById($rowDetail['id_cat'], $type);
-	$productItem = $categoryRepo->getItemById($rowDetail['id_item'], $type);
-	$productSub = $categoryRepo->getSubById($rowDetail['id_sub'], $type);
-
-	/* Lấy thương hiệu - Cần thêm vào CategoryRepository hoặc tạo BrandRepository */
-	$productBrand = $d->rawQueryOne("select name$lang, slugvi, slugen, id from #_product_brand where id = ? and type = ? and find_in_set('hienthi',status)", array($rowDetail['id_brand'], $type));
-
-	/* Lấy hình ảnh con - Sử dụng ProductRepository */
-	$rowDetailPhoto = $productRepo->getProductGallery($id, $type);
-
-	/* Lấy sản phẩm liên quan - Sử dụng ProductRepository */
-	$relatedProducts = $productRepo->getRelatedProducts($id, $rowDetail['id_list'], $type, 8);
+	$rowDetail = $detailContext['detail'];
+	$rowTags = $detailContext['tags'];
+	$rowColor = $detailContext['colors'];
+	$rowSize = $detailContext['sizes'];
+	$productList = $detailContext['list'];
+	$productCat = $detailContext['cat'];
+	$productItem = $detailContext['item'];
+	$productSub = $detailContext['sub'];
+	$productBrand = $detailContext['brand'];
+	$rowDetailPhoto = $detailContext['photos'];
+	$relatedProducts = $detailContext['related'];
 
 	/* SEO - Sử dụng SEOHelper */
 	$seoDB = $seo->getOnDB($rowDetail['id'], 'product', 'man', $rowDetail['type']);
@@ -152,10 +138,9 @@ if ($id > 0) {
 	}
 
 	$curPage = $paginationHelper->getCurrentPage();
-	$start = $paginationHelper->getStartPoint($curPage, $perPage);
-	
-	$products = $productRepo->getProducts($type, $filters, $start, $perPage);
-	$totalItems = $productRepo->countProducts($type, $filters);
+	$listResult = $productService->getListing($type, $filters, $curPage, $perPage);
+	$products = $listResult['items'];
+	$totalItems = $listResult['total'];
 
 	// Pagination
 	$url = $func->getCurrentPageURL();

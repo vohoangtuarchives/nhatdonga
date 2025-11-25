@@ -14,14 +14,16 @@ if (!defined('SOURCES')) die("Error");
 
 use Tuezy\Admin\AdminCRUDHelper;
 use Tuezy\Repository\PhotoRepository;
+use Tuezy\Service\PhotoService;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
 // Initialize Config
 $configObj = new Config($config);
 
-// Initialize Repositories
+// Initialize Repositories & Service
 $photoRepo = new PhotoRepository($d, $cache, $lang, $sluglang);
+$photoService = new PhotoService($photoRepo, $d);
 
 /* Kiểm tra active photo */
 if (isset($config['photo'])) {
@@ -56,8 +58,11 @@ $adminCRUD = new AdminCRUDHelper(
 switch($act) {
 	/* Photo static */
 	case "photo_static":
-		// Get static photos - Sử dụng PhotoRepository
-		$item = $photoRepo->getByTypeAndAct($type, 'photo_static');
+		// Get static photos - Sử dụng PhotoService
+		$item = $photoService->getWatermarkConfig();
+		if (!$item) {
+			$item = $photoRepo->getByTypeAndAct($type, 'photo_static');
+		}
 		$template = "photo/static/photo_static";
 		break;
 		

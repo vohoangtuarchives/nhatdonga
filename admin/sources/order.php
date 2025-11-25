@@ -13,15 +13,16 @@
 if (!defined('SOURCES')) die("Error");
 
 use Tuezy\Repository\OrderRepository;
-use Tuezy\Helper\FilterHelper;
+use Tuezy\Service\OrderService;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
 // Initialize Config
 $configObj = new Config($config);
 
-// Initialize Repositories
+// Initialize Repositories & Service
 $orderRepo = new OrderRepository($d, $cache);
+$orderService = new OrderService($orderRepo, $d);
 
 /* Kiểm tra active đơn hàng */
 if (!isset($config['order']['active']) || $config['order']['active'] == false) {
@@ -66,36 +67,29 @@ switch($act) {
 			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
 		}
 
-		// Get orders - Sử dụng OrderRepository
+		// Get orders - Sử dụng OrderService
 		$perPage = 10;
-		$start = ($curPage - 1) * $perPage;
-		$orders = $orderRepo->getOrders($filters, $start, $perPage);
-		$totalItems = $orderRepo->countOrders($filters);
+		$listing = $orderService->getListing($filters, $curPage, $perPage);
+		$items = $listing['items'];
+		$totalItems = $listing['total'];
 		
 		// Extract min/max from filters if needed
 		$price_from = $filters['range_price'] ? explode(";", $filters['range_price'])[0] : null;
 		$price_to = $filters['range_price'] ? explode(";", $filters['range_price'])[1] : null;
 		
-		$items = $orders;
 		$url = "index.php?com=order&act=man" . $strUrl;
-		$paging = $func->pagination($totalItems, $perPage, $curPage, $url);
+		$paging = $func->paging($totalItems, $perPage, $curPage, $url);
 
 		/* Lấy tổng giá min/max - Sử dụng OrderRepository */
 		$minTotal = $orderRepo->getMinTotalPrice();
 		$maxTotal = $orderRepo->getMaxTotalPrice();
 
-		/* Lấy số đơn hàng theo status - Sử dụng OrderRepository */
-		$allNewOrder = $orderRepo->getOrdersByStatus('dathang', 0, 0);
-		$totalNewOrder = count($allNewOrder);
-		
-		$allConfirmOrder = $orderRepo->getOrdersByStatus('xacnhan', 0, 0);
-		$totalConfirmOrder = count($allConfirmOrder);
-		
-		$allDeliveriedOrder = $orderRepo->getOrdersByStatus('giaohang', 0, 0);
-		$totalDeliveriedOrder = count($allDeliveriedOrder);
-		
-		$allCanceledOrder = $orderRepo->getOrdersByStatus('huy', 0, 0);
-		$totalCanceledOrder = count($allCanceledOrder);
+		/* Lấy số đơn hàng theo status - Sử dụng OrderService */
+		$stats = $orderService->getStatistics();
+		$totalNewOrder = $stats['total_new'];
+		$totalConfirmOrder = $stats['total_confirm'];
+		$totalDeliveriedOrder = $stats['total_delivered'];
+		$totalCanceledOrder = $stats['total_canceled'];
 		
 		$template = "order/man/mans";
 		break;
@@ -103,8 +97,11 @@ switch($act) {
 	case "edit":
 		$id = (int)($_GET['id'] ?? 0);
 		if ($id) {
-			$item = $orderRepo->getById($id);
-			if (!$item) {
+			$detailContext = $orderService->getDetailContext($id);
+			if ($detailContext) {
+				$item = $detailContext['order'];
+				$orderDetails = $detailContext['details'];
+			} else {
 				$func->transfer("Dữ liệu không có thực", "index.php?com=order&act=man" . $strUrl, false);
 			}
 		} else {

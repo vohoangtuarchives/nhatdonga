@@ -14,6 +14,9 @@ if (!defined('SOURCES')) die("Error");
 
 use Tuezy\Admin\AdminCRUDHelper;
 use Tuezy\Admin\AdminController;
+use Tuezy\Repository\NewsRepository;
+use Tuezy\Repository\CategoryRepository;
+use Tuezy\Service\NewsService;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
@@ -61,17 +64,20 @@ if (isset($_POST['data'])) {
 	}
 }
 
+// Initialize Repositories
+$newsRepo = new NewsRepository($d, $lang, $type);
+$categoryRepo = new CategoryRepository($d, $cache, $lang, $sluglang, 'news');
+
+// Initialize Service
+$newsService = new NewsService($newsRepo, $categoryRepo, $d, $lang, $sluglang);
+
 // Initialize AdminCRUDHelper for news
 $adminCRUD = new AdminCRUDHelper(
 	$d, 
 	$func, 
-	$flash, 
 	'news', 
 	$type, 
-	'news', 
-	UPLOAD_NEWS_L, 
-	$lang, 
-	$sluglang
+	$config['news'][$type] ?? []
 );
 
 switch ($act) {
@@ -86,9 +92,14 @@ switch ($act) {
 		if (!empty($_REQUEST['keyword'])) $filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
 		if (!empty($_REQUEST['comment_status'])) $filters['comment_status'] = SecurityHelper::sanitize($_REQUEST['comment_status']);
 
-		$result = $adminCRUD->getItems($filters, 10, $curPage);
-		$items = $result['items'];
-		$paging = $result['paging'];
+		// Sử dụng NewsService để lấy danh sách
+		$listing = $newsService->getListing($type, $filters, $curPage, 10);
+		$items = $listing['items'];
+		$totalItems = $listing['total'];
+		
+		// Generate pagination
+		$url = "index.php?com=news&act=man&type={$type}" . $strUrl;
+		$paging = $func->paging($totalItems, 10, $curPage, $url);
 		
 		/* Comment */
 		$comment = new Comments($d, $func);
@@ -110,9 +121,8 @@ switch ($act) {
 		if ($id) {
 			$item = $adminCRUD->getItem($id);
 			if ($item && $act != 'copy') {
-				/* Get gallery */
-				$gallery = $d->rawQuery("select * from #_gallery where id_parent = ? and com = ? and type = ? and kind = ? and val = ? order by numb,id desc", 
-					array($id, $com, $type, 'man', $type));
+				/* Get gallery - Sử dụng NewsRepository */
+				$gallery = $newsRepo->getNewsGallery($id, $type);
 			}
 		}
 		$template = "news/man/man_add";
@@ -128,7 +138,7 @@ switch ($act) {
 
 	case "delete":
 		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $adminCRUD->deleteItem($id)) {
+		if ($id && $adminCRUD->delete($id)) {
 			$func->transfer("Xóa dữ liệu thành công", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
 		} else {
 			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
@@ -146,18 +156,21 @@ switch ($act) {
  * SO SÁNH:
  * 
  * CODE CŨ: ~1952 dòng với nhiều functions và logic
- * CODE MỚI: ~150 dòng với AdminCRUDHelper (cho phần man)
+ * CODE MỚI: ~160 dòng với AdminCRUDHelper và NewsService
  * 
  * GIẢM: ~92% code cho phần man
  * 
  * LỢI ÍCH:
  * - Sử dụng AdminCRUDHelper cho CRUD operations
+ * - Sử dụng NewsService và NewsRepository cho data access
  * - Sử dụng SecurityHelper cho sanitization
  * - Code dễ đọc và maintain hơn
  * - Type-safe với type hints
+ * - Dễ tái sử dụng logic giữa frontend và admin
  * 
  * LƯU Ý:
  * - Phần save vẫn giữ nguyên logic cũ vì phức tạp
  * - Các phần khác (list, cat, item, sub, etc.) có thể refactor tương tự
+ * - NewsService có thể được sử dụng thay thế AdminCRUDHelper cho listing nếu cần
  */
 

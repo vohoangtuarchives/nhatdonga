@@ -3,6 +3,7 @@
 namespace Tuezy;
 
 use Tuezy\Repository\OrderRepository;
+use Tuezy\Service\OrderService;
 
 /**
  * OrderHandler - Handles order processing
@@ -17,6 +18,7 @@ class OrderHandler
     private $flash;
     private ValidationHelper $validator;
     private OrderRepository $orderRepo;
+    private OrderService $orderService;
     private string $configBase;
     private string $lang;
     private array $setting;
@@ -31,6 +33,7 @@ class OrderHandler
         $this->flash = $flash;
         $this->validator = $validator;
         $this->orderRepo = $orderRepo;
+        $this->orderService = new OrderService($orderRepo, $d);
         $this->configBase = $configBase;
         $this->lang = $lang;
         $this->setting = $setting;
@@ -69,16 +72,17 @@ class OrderHandler
         // Prepare order data
         $orderData = $this->prepareOrderData($dataOrder);
 
-        // Create order
-        if (!$this->orderRepo->create($orderData)) {
+        // Create order using OrderService
+        $orderId = $this->orderService->createOrder($orderData);
+        
+        if (!$orderId) {
             $this->func->transfer("Đặt hàng thất bại. Vui lòng thử lại sau.", $this->configBase, false);
             return false;
         }
 
-        $orderId = $this->d->getLastInsertId();
-
         // Save order details
-        $this->saveOrderDetails($orderId);
+        $orderItems = $this->prepareOrderItems();
+        $this->orderService->saveOrderDetails($orderId, $orderItems);
 
         // Send emails
         if ($this->sendOrderEmails($orderData, $orderId)) {
@@ -210,12 +214,13 @@ class OrderHandler
     }
 
     /**
-     * Save order details
+     * Prepare order items from cart
      * 
-     * @param int $orderId Order ID
+     * @return array Order items
      */
-    private function saveOrderDetails(int $orderId): void
+    private function prepareOrderItems(): array
     {
+        $items = [];
         $max = count($_SESSION['cart'] ?? []);
 
         for ($i = 0; $i < $max; $i++) {
@@ -227,18 +232,19 @@ class OrderHandler
             $proinfo = $this->cart->getProductInfo($pid);
             $price = $this->cart->getPriceSC($pid, $size, $color);
 
-            $orderDetailData = [
-                'id_order' => $orderId,
+            $items[] = [
                 'id_product' => $pid,
                 'quantity' => $q,
                 'price' => $price,
-                'color' => $color,
-                'size' => $size,
-                'date_created' => time(),
+                'total' => $price * $q,
+                'id_color' => $color,
+                'id_size' => $size,
+                'name' => $proinfo['name' . $this->lang] ?? '',
+                'photo' => $proinfo['photo'] ?? '',
             ];
-
-            $this->d->insert('order_detail', $orderDetailData);
         }
+
+        return $items;
     }
 
     /**

@@ -15,6 +15,7 @@
 if (!defined('SOURCES')) die("Error");
 
 use Tuezy\Repository\PhotoRepository;
+use Tuezy\Service\PhotoService;
 use Tuezy\SEOHelper;
 use Tuezy\BreadcrumbHelper;
 use Tuezy\PaginationHelper;
@@ -23,13 +24,14 @@ use Tuezy\Config;
 // Initialize Config
 $configObj = new Config($config);
 
-// Initialize Repositories and Helpers
+// Initialize Repositories, Service and Helpers
 $photoRepo = new PhotoRepository($d, $cache, $lang, $sluglang);
+$photoService = new PhotoService($photoRepo, $d);
 $seoHelper = new SEOHelper($seo, $func, $d, $lang, $seolang, $configBase);
 $breadcrumbHelper = new BreadcrumbHelper($breadcr, $configBase);
 $paginationHelper = new PaginationHelper($pagingAjax ?? null, $func);
 
-/* Lấy photos - Sử dụng PhotoRepository */
+/* Lấy photos - Sử dụng PhotoService */
 $curPage = $paginationHelper->getCurrentPage();
 $perPage = 12;
 $start = $paginationHelper->getStartPoint($curPage, $perPage);

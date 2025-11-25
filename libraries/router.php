@@ -39,7 +39,9 @@ $func->checkUrl($config['website']['index']);
 $func->checkLoginMember();
 
 /* Mobile detect */
-define('TEMPLATE', './templates/');
+if (!defined('TEMPLATE')) {
+	define('TEMPLATE', './templates/');
+}
 
 /* Router */
 $router->setBasePath($config['database']['url']);

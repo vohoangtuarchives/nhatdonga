@@ -14,18 +14,22 @@
 
 include "config.php";
 
+use Tuezy\Repository\LocationRepository;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
 // Initialize Config
 $configObj = new Config($config);
 
-// Get parameters
-$id_district = (int)($_POST['id_district'] ?? 0);
+// Initialize LocationRepository
+$locationRepo = new LocationRepository($d, $cache);
 
-$ward = null;
+// Get parameters
+$id_district = (int)SecurityHelper::sanitizePost('id_district', 0);
+
+$ward = [];
 if ($id_district) {
-	$ward = $d->rawQuery("select name, id from #_ward where id_district = ? order by id asc", array($id_district));
+	$ward = $locationRepo->getWardsByDistrict($id_district);
 }
 
 if ($ward) { ?>

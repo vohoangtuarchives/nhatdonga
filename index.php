@@ -1,71 +1,15 @@
 <?php
 
-    session_start();
+require __DIR__ . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'context.php';
 
-    define('LIBRARIES','./libraries/');
+$app = bootstrap_context('web', [
+    'sources' => __DIR__ . DIRECTORY_SEPARATOR . 'sources' . DIRECTORY_SEPARATOR,
+    'templates' => __DIR__ . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR,
+    'watermark' => 'watermark',
+]);
 
-    define('SOURCES','./sources/');
+/* Router */
+require_once LIBRARIES . "router.php";
 
-    define('LAYOUT','layout/');
-
-    define('THUMBS','thumbs');
-
-    define('WATERMARK','watermark');
-
-
-
-    /* Config */
-
-    require_once LIBRARIES."config.php";
-
-    require_once LIBRARIES.'autoload.php';
-    require_once LIBRARIES.'autoload-refactored.php'; // Support for Tuezy namespace
-
-    new AutoLoad();
-    new AutoLoadRefactored(); // Load Tuezy namespace classes
-
-    $injection = new AntiSQLInjection();
-
-    $d = new PDODb($config['database']);
-
-    $flash = new Flash();
-
-    $seo = new Seo($d);
-
-    $emailer = new Email($d);
-
-    $router = new AltoRouter();
-
-    $cache = new Cache($d);
-
-    $func = new Functions($d, $cache);
-
-    $custom = new Custom($d);
-
-    $breadcr = new BreadCrumbs($d);
-
-    $statistic = new Statistic($d, $cache);
-
-    $cart = new Cart($d);
-
-    $detect = new MobileDetect();
-
-    $addons = new AddonsOnline();
-
-    $css = new CssMinify($config['website']['debug-css'], $func);
-
-    $js = new JsMinify($config['website']['debug-js'], $func);
-
-
-
-    /* Router */
-
-    require_once LIBRARIES."router.php";
-
-
-
-    /* Template */
-
-    include TEMPLATE."index.php";
-
-?>
+/* Template */
+include TEMPLATE . "index.php";

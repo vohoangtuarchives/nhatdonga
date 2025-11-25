@@ -27,7 +27,7 @@ $action = SecurityHelper::sanitize($match['params']['action'] ?? '');
 
 // Initialize Handlers
 $validator = new ValidationHelper($func, $config);
-$userHandler = new UserHandler($d, $func, $flash, $validator, $configBase, $loginMember, $config);
+$userHandler = new UserHandler($d, $func, $flash, $validator, $configBase, $loginMember, $config, $cache ?? null);
 
 switch ($action) {
 	case 'dang-nhap':

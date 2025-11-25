@@ -1,5 +1,13 @@
 <?php
+use Tuezy\Repository\ProductRepository;
+use Tuezy\Service\ProductService;
+
 include "config.php";
+
+$currentLang = $lang ?? ($_SESSION['lang'] ?? 'vi');
+$currentSlug = $sluglang ?? 'slugvi';
+$productRepo = new ProductRepository($d, $cache, $currentLang, $currentSlug, $type);
+$productService = new ProductService($productRepo, null, null, $d, $currentLang);
 $action = (!empty($_GET['action'])) ? $_GET['action'] : null;
 $type = (!empty($_GET['type'])) ? $_GET['type'] : 'san-pham';
 $target = (!empty($_GET['target'])) ? $_GET['target'] : array();
@@ -50,8 +58,7 @@ if ($action == "add") {
     echo $template;
 } elseif ($action == "delete") {
     if ($id_product) {
-        $d->rawQuery("delete from table_product_size_color where id_product = ? and id_color=? and id_size=?", array($id_product, $id_color, $id_size));
-        $d->rawQuery("delete from table_product_sale where id_parent = ? and id_color=? and id_size=?", array($id_product, $id_color, $id_size));
+        $productService->removeSizeColorCombination((int)$id_product, (int)$id_color, (int)$id_size);
     }
 } 
 

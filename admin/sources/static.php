@@ -13,14 +13,16 @@
 if (!defined('SOURCES')) die("Error");
 
 use Tuezy\Repository\StaticRepository;
+use Tuezy\Service\StaticService;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
 // Initialize Config
 $configObj = new Config($config);
 
-// Initialize Repositories
+// Initialize Repositories & Service
 $staticRepo = new StaticRepository($d, $cache, $lang, $sluglang);
+$staticService = new StaticService($staticRepo);
 
 /* Kiểm tra active static */
 if (isset($config['static'])) {
@@ -35,8 +37,8 @@ if (isset($config['static'])) {
 
 switch($act) {
 	case "update":
-		// Get static content - Sử dụng StaticRepository
-		$item = $staticRepo->getByType($type);
+		// Get static content - Sử dụng StaticService
+		$item = $staticService->getByType($type);
 		$template = "static/man/man_add";
 		break;
 		
@@ -62,7 +64,7 @@ function saveStatic()
 	}
 
 	/* Post dữ liệu */
-	$static = $staticRepo->getByType($type);
+	$static = $staticService->getByType($type);
 	$data = (!empty($_POST['data'])) ? $_POST['data'] : null;
 	
 	if($data) {

@@ -1,22 +1,32 @@
 <?php
-	include "config.php";
-	require_once LIBRARIES."config-type.php";
+include "config.php";
+require_once LIBRARIES."config-type.php";
 
-	/* Xử lý params */
-	$flag = true;
-	$param = (!empty($_POST['params'])) ? $_POST['params'] : null;
-	$params = null;
-	if($param) parse_str(base64_decode(addslashes($param)), $params);
-	$id = (!empty($params['id'])) ? $params['id'] : 0;
-	$com = (!empty($params['com'])) ? $params['com'] : '';
-	$type = (!empty($params['type'])) ? $params['type'] : '';
-	$hash = (!empty($_POST['hash'])) ? addslashes($_POST['hash']) : '';
-	$numb = (!empty($_POST['numb'])) ? (int)$_POST['numb'] : 0;
-	$e = (!empty($params['act'])) ? @explode("_", $params['act']) : null;
-	if($e) $ex = (count($e) > 1) ? end($e) : '';
-	else $ex = '';
-	$kind = "man".(($ex) ? ("_".$ex) : '');
-	$data = array('success' => true, 'msg' => 'Upload thành công');
+use Tuezy\Config;
+use Tuezy\SecurityHelper;
+
+// Initialize Config
+$configObj = new Config($config);
+
+/* Xử lý params - Sử dụng SecurityHelper */
+$flag = true;
+$param = SecurityHelper::sanitizePost('params', '');
+$params = null;
+if ($param) {
+	parse_str(base64_decode($param), $params);
+	$params = SecurityHelper::sanitizeArray($params);
+}
+
+$id = (int)($params['id'] ?? 0);
+$com = SecurityHelper::sanitize($params['com'] ?? '');
+$type = SecurityHelper::sanitize($params['type'] ?? '');
+$hash = SecurityHelper::sanitizePost('hash', '');
+$numb = (int)SecurityHelper::sanitizePost('numb', 0);
+
+$e = (!empty($params['act'])) ? explode("_", $params['act']) : null;
+$ex = ($e && count($e) > 1) ? end($e) : '';
+$kind = "man" . (($ex) ? ("_" . $ex) : '');
+$data = ['success' => true, 'msg' => 'Upload thành công'];
 
 	/* Xử lý $_FILE - Path image */
 	$myFile = (!empty($_FILES['files'])) ? $_FILES['files'] : null;

@@ -3,8 +3,7 @@
 namespace Tuezy\Middleware;
 
 /**
- * MiddlewareStack - Manages middleware execution
- * Allows chaining multiple middleware
+ * MiddlewareStack - Manages and executes middleware stack
  */
 class MiddlewareStack
 {
@@ -13,60 +12,41 @@ class MiddlewareStack
     /**
      * Add middleware to stack
      * 
-     * @param Middleware|callable $middleware Middleware instance or callable
+     * @param object $middleware Middleware instance
+     * @return self
      */
-    public function add($middleware): void
+    public function add(object $middleware): self
     {
         $this->middlewares[] = $middleware;
+        return $this;
     }
 
     /**
      * Execute middleware stack
      * 
-     * @param mixed $request Request object or data
-     * @return mixed Final result
-     */
-    public function execute($request)
-    {
-        return $this->executeMiddleware($request, 0);
-    }
-
-    /**
-     * Execute middleware at index
-     * 
-     * @param mixed $request Request object
-     * @param int $index Current middleware index
+     * @param callable $handler Final handler
      * @return mixed
      */
-    private function executeMiddleware($request, int $index)
+    public function execute(callable $handler)
     {
-        if ($index >= count($this->middlewares)) {
-            return $request;
+        $next = $handler;
+
+        // Build middleware chain in reverse order
+        for ($i = count($this->middlewares) - 1; $i >= 0; $i--) {
+            $middleware = $this->middlewares[$i];
+            $next = function () use ($middleware, $next) {
+                return $middleware->handle($next);
+            };
         }
 
-        $middleware = $this->middlewares[$index];
-
-        if ($middleware instanceof Middleware) {
-            return $middleware->handle($request, function($req) use ($index) {
-                return $this->executeMiddleware($req, $index + 1);
-            });
-        }
-
-        if (is_callable($middleware)) {
-            return $middleware($request, function($req) use ($index) {
-                return $this->executeMiddleware($req, $index + 1);
-            });
-        }
-
-        return $request;
+        return $next();
     }
 
     /**
-     * Clear all middleware
+     * Clear middleware stack
      */
     public function clear(): void
     {
         $this->middlewares = [];
     }
 }
-

@@ -14,6 +14,8 @@ if (!defined('SOURCES')) die("Error");
 
 use Tuezy\Admin\AdminAuthHelper;
 use Tuezy\Admin\AdminPermissionHelper;
+use Tuezy\Repository\UserRepository;
+use Tuezy\Service\UserService;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
@@ -23,6 +25,10 @@ $configObj = new Config($config);
 // Initialize Helpers
 $adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
 $adminPermissionHelper = new AdminPermissionHelper($func, $config);
+
+// Initialize UserService for member management
+$userRepo = new UserRepository($d, $cache);
+$userService = new UserService($userRepo, $d);
 
 /* Check access user - Sử dụng AdminPermissionHelper */
 $restrictedActions = ['man_admin', 'add_admin', 'edit_admin', 'delete_admin', 'man_member', 'add_member', 'edit_member', 'delete_member', 'permission_group', 'add_permission_group', 'edit_permission_group', 'delete_permission_group'];
@@ -74,9 +80,23 @@ switch($act) {
 		deleteAdmin();
 		break;
 
-	/* Members */
+	/* Members - Sử dụng UserService */
 	case "man_member":
-		viewMembers();
+		// Get filters
+		$filters = [];
+		if (!empty($_REQUEST['status'])) {
+			$filters['status'] = SecurityHelper::sanitize($_REQUEST['status']);
+		}
+		if (!empty($_REQUEST['keyword'])) {
+			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
+		}
+
+		// Get members using UserService
+		$perPage = 20;
+		$listing = $userService->getListing($filters, $curPage, $perPage);
+		$items = $listing['items'];
+		$totalItems = $listing['total'];
+		$paging = $func->paging($totalItems, $perPage, $curPage, "index.php?com=user&act=man_member");
 		$template = "user/man_member/mans";
 		break;
 		
@@ -85,16 +105,63 @@ switch($act) {
 		break;
 		
 	case "edit_member":
-		editMember();
+		$id = (int)($_GET['id'] ?? 0);
+		if ($id) {
+			$item = $userRepo->getById($id);
+			if (!$item) {
+				$func->transfer("Dữ liệu không có thực", "index.php?com=user&act=man_member", false);
+			}
+		} else {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=user&act=man_member", false);
+		}
 		$template = "user/man_member/man_add";
 		break;
 		
 	case "save_member":
-		saveMember();
+		if (empty($_POST)) {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=user&act=man_member", false);
+		}
+
+		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
+		$data = $_POST['data'] ?? [];
+		
+		// Sanitize data
+		foreach ($data as $key => $value) {
+			if (is_string($value)) {
+				$data[$key] = SecurityHelper::sanitize($value);
+			}
+		}
+
+		if ($id) {
+			// Update existing member
+			if ($userService->updateProfile($id, $data)) {
+				// Update password if provided
+				if (!empty($_POST['data']['password'])) {
+					$oldPassword = $_POST['data']['old_password'] ?? '';
+					$newPassword = $_POST['data']['password'];
+					$userService->updatePassword($id, $oldPassword, $newPassword);
+				}
+				$func->transfer("Cập nhật dữ liệu thành công", "index.php?com=user&act=man_member");
+			} else {
+				$func->transfer("Cập nhật dữ liệu thất bại", "index.php?com=user&act=man_member", false);
+			}
+		} else {
+			// Create new member
+			if ($userService->register($data)) {
+				$func->transfer("Thêm dữ liệu thành công", "index.php?com=user&act=man_member");
+			} else {
+				$func->transfer("Thêm dữ liệu thất bại. Email có thể đã tồn tại.", "index.php?com=user&act=man_member", false);
+			}
+		}
 		break;
 		
 	case "delete_member":
-		deleteMember();
+		$id = (int)($_GET['id'] ?? 0);
+		if ($id && $userRepo->delete($id)) {
+			$func->transfer("Xóa dữ liệu thành công", "index.php?com=user&act=man_member");
+		} else {
+			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=user&act=man_member", false);
+		}
 		break;
 		
 	/* Permission */

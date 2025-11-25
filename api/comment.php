@@ -38,7 +38,15 @@ if (!empty($route)) {
 	
 	if (method_exists($comment, $method) && $_SERVER['REQUEST_METHOD'] == $requestType) {
 		print $comment->$method();
+	} else {
+		// Error handling
+		header('Content-Type: application/json');
+		echo json_encode(['error' => 'Method not allowed or not found']);
 	}
+} else {
+	// Error handling
+	header('Content-Type: application/json');
+	echo json_encode(['error' => 'Invalid route']);
 }
 
 /* 

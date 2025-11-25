@@ -15,6 +15,7 @@ if (!defined('SOURCES')) die("Error");
 use Tuezy\RequestHandler;
 use Tuezy\Repository\NewsRepository;
 use Tuezy\Repository\CategoryRepository;
+use Tuezy\Service\NewsService;
 use Tuezy\SEOHelper;
 use Tuezy\BreadcrumbHelper;
 use Tuezy\PaginationHelper;
@@ -35,40 +36,39 @@ $ids = (int)($_GET['ids'] ?? 0);
 // Initialize Repositories
 $newsRepo = new NewsRepository($d, $lang, $type);
 $categoryRepo = new CategoryRepository($d, $cache, $lang, $sluglang, 'news');
+
+// Initialize Service
+$newsService = new NewsService($newsRepo, $categoryRepo, $d, $lang, $sluglang);
+
+// Initialize Helpers
 $seoHelper = new SEOHelper($seo, $func, $d, $lang, $seolang, $configBase);
 $breadcrumbHelper = new BreadcrumbHelper($breadcr, $configBase);
 $paginationHelper = new PaginationHelper($pagingAjax ?? null, $func);
 
-$sqlgetItems = "select * ";
 $perPage = 12;
 
 if ($id > 0) {
-	/* Lấy bài viết detail - Sử dụng NewsRepository */
-	$rowDetail = $newsRepo->getNewsDetail($id, $type);
+	/* Lấy bài viết detail với đầy đủ context - Sử dụng NewsService */
+	$newsContext = $newsService->getDetailContext($id, $type, true);
 	
-	if (!$rowDetail) {
+	if (!$newsContext) {
 		header('HTTP/1.0 404 Not Found', true, 404);
 		include("404.php");
 		exit;
 	}
 
-	/* Cập nhật lượt xem - Sử dụng NewsRepository */
-	$newsRepo->updateNewsView($id, $rowDetail['view']);
+	$rowDetail = $newsContext['detail'];
+	$newsList = $newsContext['list'];
+	$newsCat = $newsContext['cat'];
+	$newsItem = $newsContext['item'];
+	$newsSub = $newsContext['sub'];
+	$rowDetailPhoto = $newsContext['photos'];
+	$otherNewss = $newsContext['related'];
 
-	/* Lấy category hierarchy - Sử dụng CategoryRepository */
-	$newsList = $categoryRepo->getListById($rowDetail['id_list'], $type);
-	$newsCat = $categoryRepo->getCatById($rowDetail['id_cat'], $type);
-	$newsItem = $categoryRepo->getItemById($rowDetail['id_item'], $type);
-	$newsSub = $categoryRepo->getSubById($rowDetail['id_sub'], $type);
-
-	/* Lấy hình ảnh con - Sử dụng NewsRepository */
-	$rowDetailPhoto = $newsRepo->getNewsGallery($id, $type);
-
-	/* Lấy bài viết cùng loại - Sử dụng NewsRepository */
+	/* Lấy bài viết cùng loại với pagination */
 	$curPage = $paginationHelper->getCurrentPage();
-	$start = $paginationHelper->getStartPoint($curPage, $perPage);
-	$otherNewss = $newsRepo->getNewsItems($type, [], $start, $perPage);
-	$totalItems = $newsRepo->countNewsItems($type, []);
+	$listing = $newsService->getListing($type, [], $curPage, $perPage);
+	$totalItems = $listing['total'];
 
 	// Pagination
 	$url = $func->getCurrentPageURL();
@@ -165,30 +165,28 @@ if ($id > 0) {
 	$breadcrumbHelper->add($newsList['name' . $lang], $newsList[$sluglang]);
 	$breadcrumbs = $breadcrumbHelper->render();
 
-	/* Lấy danh sách bài viết - Sử dụng NewsRepository */
+	/* Lấy danh sách bài viết - Sử dụng NewsService */
 	$filters = ['id_list' => $idl];
 	$curPage = $paginationHelper->getCurrentPage();
-	$start = $paginationHelper->getStartPoint($curPage, $perPage);
-	
-	$news = $newsRepo->getNewsItems($type, $filters, $start, $perPage);
-	$totalItems = $newsRepo->countNewsItems($type, $filters);
+	$listing = $newsService->getListing($type, $filters, $curPage, $perPage);
+	$news = $listing['items'];
+	$totalItems = $listing['total'];
 
 	// Pagination
 	$url = $func->getCurrentPageURL();
 	$paging = $paginationHelper->getPagination($totalItems, $url, '');
 
 } else {
-	/* List all news - Sử dụng NewsRepository */
+	/* List all news - Sử dụng NewsService */
 	$filters = [];
 	if (!empty($_GET['keyword'])) {
 		$filters['keyword'] = SecurityHelper::sanitizeGet('keyword');
 	}
 
 	$curPage = $paginationHelper->getCurrentPage();
-	$start = $paginationHelper->getStartPoint($curPage, $perPage);
-	
-	$news = $newsRepo->getNewsItems($type, $filters, $start, $perPage);
-	$totalItems = $newsRepo->countNewsItems($type, $filters);
+	$listing = $newsService->getListing($type, $filters, $curPage, $perPage);
+	$news = $listing['items'];
+	$totalItems = $listing['total'];
 
 	// Pagination
 	$url = $func->getCurrentPageURL();
@@ -202,16 +200,19 @@ if ($id > 0) {
  * SO SÁNH:
  * 
  * CODE CŨ: ~665 dòng với nhiều rawQuery
- * CODE MỚI: ~150 dòng với Repositories
+ * CODE MỚI (với Repository): ~150 dòng
+ * CODE MỚI (với Service): ~120 dòng
  * 
- * GIẢM: ~77% code!
+ * GIẢM: ~82% code!
  * 
  * LỢI ÍCH:
- * - Sử dụng NewsRepository thay vì rawQuery
+ * - Sử dụng NewsService để tách business logic
+ * - Sử dụng NewsRepository cho data access
  * - Sử dụng CategoryRepository cho categories
  * - Sử dụng SEOHelper cho SEO
  * - Sử dụng BreadcrumbHelper cho breadcrumbs
  * - Sử dụng PaginationHelper cho pagination
- * - Code dễ đọc và maintain hơn
+ * - Code dễ đọc, maintain và test hơn
+ * - Dễ tái sử dụng logic giữa frontend và admin
  */
 

@@ -21,6 +21,21 @@ URL building và parameter management.
 ### 5. AdminPermissionHelper
 Permission và role-based access control.
 
+## 🧱 Bootstrap & Config mới
+
+- Mọi entry point (frontend, admin, public API, admin API) đều chạy qua `bootstrap/context.php` → đảm bảo chỉ cần khai báo `APP_CONTEXT` và đường dẫn tùy theo môi trường, tránh define lặp lại.
+- Cấu hình chung được gom vào `config/app.php` (đọc từ `config/env.example` hoặc biến môi trường) rồi inject vào `Tuezy\Application`.
+- Khi thêm module/admin endpoint mới, chỉ cần `require bootstrap/context.php` và gọi `bootstrap_context('admin')` thay vì tự include `libraries/config.php`.
+
+## 🧩 Module sản phẩm (Service + Repository)
+
+- `src/Repository/ProductRepository.php` được viết lại với type hints rõ ràng, không còn sử dụng global function helper.
+- `src/Service/ProductService.php` gom toàn bộ nghiệp vụ sản phẩm (detail, list, gallery, size/color, brand, xoá combination) để tái sử dụng giữa:
+  - `sources/product.php`
+  - `api/product.php`
+  - `admin/api/product_size_color.php`
+- View layer được chuẩn hoá thông qua component `templates/components/product-grid.php`, dùng được cho AJAX/API và template chính.
+
 ## 🚀 Cách Áp Dụng
 
 ### Bước 1: Refactor admin/sources/product.php
@@ -125,4 +140,11 @@ Xem `examples/admin_product_refactored.php` để biết cách áp dụng chi ti
 - Test kỹ từng module
 - Có thể áp dụng từng phần
 - Giữ backward compatible
+
+## 🔍 Checklist triển khai nhanh
+
+- [ ] Route/context mới gọi `bootstrap_context()` thay vì tự define hằng số.
+- [ ] Service/repository được inject thông qua `ProductService` (hoặc helper tương đương).
+- [ ] View sử dụng component trong `templates/components` thay vì echo trực tiếp.
+- [ ] Ghi chú thay đổi vào `docs/architecture-audit.md` để đội khác theo dõi.
 

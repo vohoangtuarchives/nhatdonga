@@ -1,21 +1,11 @@
 <?php
-	session_start();
-	define('LIBRARIES','../libraries/');
-	define('SOURCES','./sources/');
-	define('TEMPLATE','./templates/');
-	define('LAYOUT','layout/');
-	define('THUMBS','thumbs');
-	define('WATERMARK','../watermark');
+	require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'context.php';
 
-	require_once LIBRARIES."config.php";
-    require_once LIBRARIES.'autoload.php';
-    new AutoLoad();
-    $d = new PDODb($config['database']);
-    $flash = new Flash();
-    $seo = new Seo($d);
-    $emailer = new Email($d);
-	$cache = new Cache($d);
-    $func = new Functions($d, $cache);
+	$app = bootstrap_context('admin', [
+		'sources' => __DIR__ . DIRECTORY_SEPARATOR . 'sources' . DIRECTORY_SEPARATOR,
+		'templates' => __DIR__ . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR,
+		'watermark' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'watermark',
+	]);
 
 	/* Check HTTP */
 	$func->checkHTTP($http, $config['arrayDomainSSL'], $configBase, $configUrl);

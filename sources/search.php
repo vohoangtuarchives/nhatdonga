@@ -19,6 +19,7 @@ use Tuezy\Repository\ProductRepository;
 use Tuezy\PaginationHelper;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
+use Tuezy\Service\ProductService;
 
 // Initialize Config
 $configObj = new Config($config);
@@ -27,7 +28,8 @@ $configObj = new Config($config);
 $params = RequestHandler::getParams();
 
 // Initialize Repositories
-$productRepo = new ProductRepository($d, $func, $lang, 'san-pham');
+$productRepo = new ProductRepository($d, $cache, $lang, $sluglang, 'san-pham');
+$productService = new ProductService($productRepo, null, null, $d, $lang);
 $paginationHelper = new PaginationHelper($pagingAjax ?? null, $func);
 
 /* Tìm kiếm sản phẩm */
@@ -43,8 +45,9 @@ if (!empty($_GET['keyword'])) {
 		$perPage = 12;
 		$start = $paginationHelper->getStartPoint($curPage, $perPage);
 		
-		$product = $productRepo->getProducts('san-pham', $filters, $start, $perPage);
-		$totalItems = $productRepo->countProducts('san-pham', $filters);
+		$listResult = $productService->getListing('san-pham', $filters, $curPage, $perPage);
+		$product = $listResult['items'];
+		$totalItems = $listResult['total'];
 
 		// Pagination
 		$url = $func->getCurrentPageURL();

@@ -15,6 +15,7 @@
 if (!defined('SOURCES')) die("Error");
 
 use Tuezy\Repository\PhotoRepository;
+use Tuezy\Service\VideoService;
 use Tuezy\SEOHelper;
 use Tuezy\BreadcrumbHelper;
 use Tuezy\PaginationHelper;
@@ -23,23 +24,23 @@ use Tuezy\Config;
 // Initialize Config
 $configObj = new Config($config);
 
-// Initialize Repositories and Helpers
+// Initialize Repositories, Service and Helpers
 $photoRepo = new PhotoRepository($d, $cache, $lang, $sluglang);
+$videoService = new VideoService($photoRepo, $d);
 $seoHelper = new SEOHelper($seo, $func, $d, $lang, $seolang, $configBase);
 $breadcrumbHelper = new BreadcrumbHelper($breadcr, $configBase);
 $paginationHelper = new PaginationHelper($pagingAjax ?? null, $func);
 
-/* Lấy videos - Sử dụng PhotoRepository */
+/* Lấy videos - Sử dụng VideoService */
 $curPage = $paginationHelper->getCurrentPage();
 $perPage = 10;
 $start = $paginationHelper->getStartPoint($curPage, $perPage);
 
-// Get all videos for count
-$allVideos = $photoRepo->getVideos($type, 0, "numb,id desc");
-$totalItems = count($allVideos);
-
-// Get paginated videos
-$video = array_slice($allVideos, $start, $perPage);
+// Get videos with pagination using VideoService
+$filters = [];
+$videoList = $videoService->getVideoList($type, $filters, $start, $perPage);
+$totalItems = $videoService->countVideos($type, $filters);
+$video = $videoList;
 
 // Pagination
 $url = $func->getCurrentPageURL();

@@ -156,5 +156,146 @@ class NewsRepository
             $params
         );
     }
+
+    /**
+     * Alias for getDetail() - for backward compatibility
+     * 
+     * @param int $id News ID
+     * @param string|null $type News type (optional, uses default if not provided)
+     * @return array|null
+     */
+    public function getNewsDetail(int $id, ?string $type = null): ?array
+    {
+        if ($type && $type !== $this->type) {
+            // Create temporary instance with different type
+            $tempRepo = new self($this->d, $this->lang, $type);
+            return $tempRepo->getDetail($id);
+        }
+        return $this->getDetail($id);
+    }
+
+    /**
+     * Alias for incrementViews() - for backward compatibility
+     * 
+     * @param int $id News ID
+     * @param int $currentView Current view count
+     */
+    public function updateNewsView(int $id, int $currentView): void
+    {
+        $this->incrementViews($id, $currentView);
+    }
+
+    /**
+     * Alias for getGallery() - for backward compatibility
+     * 
+     * @param int $newsId News ID
+     * @param string|null $type News type (optional)
+     * @return array
+     */
+    public function getNewsGallery(int $newsId, ?string $type = null): array
+    {
+        if ($type && $type !== $this->type) {
+            $tempRepo = new self($this->d, $this->lang, $type);
+            return $tempRepo->getGallery($newsId);
+        }
+        return $this->getGallery($newsId);
+    }
+
+    /**
+     * Get news items with filters and pagination
+     * 
+     * @param string|null $type News type (optional, uses default if not provided)
+     * @param array $filters Filters (id_list, id_cat, id_item, id_sub, keyword, status)
+     * @param int $start Start offset
+     * @param int $perPage Items per page
+     * @return array
+     */
+    public function getNewsItems(?string $type = null, array $filters = [], int $start = 0, int $perPage = 12): array
+    {
+        $type = $type ?: $this->type;
+        [$where, $params] = $this->buildFilterClause($type, $filters);
+
+        $params[] = $start;
+        $params[] = $perPage;
+
+        return $this->d->rawQuery(
+            "select id, name{$this->lang}, slug{$this->lang}, desc{$this->lang}, photo, 
+                    id_list, id_cat, id_item, id_sub, type, date_created, view
+             from #_news
+             where {$where}
+             order by numb,id desc
+             limit ?, ?",
+            $params
+        );
+    }
+
+    /**
+     * Count news items with filters
+     * 
+     * @param string|null $type News type (optional, uses default if not provided)
+     * @param array $filters Filters (id_list, id_cat, id_item, id_sub, keyword, status)
+     * @return int
+     */
+    public function countNewsItems(?string $type = null, array $filters = []): int
+    {
+        $type = $type ?: $this->type;
+        [$where, $params] = $this->buildFilterClause($type, $filters);
+
+        $result = $this->d->rawQueryOne(
+            "select count(id) as total from #_news where {$where}",
+            $params
+        );
+
+        return (int)($result['total'] ?? 0);
+    }
+
+    /**
+     * Build filter clause for news queries
+     * 
+     * @param string $type News type
+     * @param array $filters Filters
+     * @return array [where clause, params]
+     */
+    private function buildFilterClause(string $type, array $filters): array
+    {
+        $where = ["type = ?", "find_in_set('hienthi',status)"];
+        $params = [$type];
+
+        // Category filters
+        foreach (['id_list', 'id_cat', 'id_item', 'id_sub'] as $field) {
+            if (!empty($filters[$field])) {
+                $where[] = "{$field} = ?";
+                $params[] = (int)$filters[$field];
+            }
+        }
+
+        // Status filter
+        if (!empty($filters['status']) && $filters['status'] !== 'all') {
+            $statuses = (array)$filters['status'];
+            $statusClauses = [];
+            foreach ($statuses as $status) {
+                $status = trim((string)$status);
+                if ($status === '') {
+                    continue;
+                }
+                $statusClauses[] = "find_in_set(?,status)";
+                $params[] = $status;
+            }
+            if ($statusClauses) {
+                $where[] = '(' . implode(' or ', $statusClauses) . ')';
+            }
+        }
+
+        // Keyword filter
+        if (!empty($filters['keyword'])) {
+            $keyword = '%' . $filters['keyword'] . '%';
+            $where[] = "(name{$this->lang} like ? or slugvi like ? or slugen like ?)";
+            $params[] = $keyword;
+            $params[] = $keyword;
+            $params[] = $keyword;
+        }
+
+        return [implode(' and ', $where), $params];
+    }
 }
 

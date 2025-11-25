@@ -15,6 +15,7 @@
 if (!defined('SOURCES')) die("Error");
 
 use Tuezy\Repository\StaticRepository;
+use Tuezy\Service\StaticService;
 use Tuezy\SEOHelper;
 use Tuezy\BreadcrumbHelper;
 use Tuezy\Config;
@@ -22,13 +23,14 @@ use Tuezy\Config;
 // Initialize Config
 $configObj = new Config($config);
 
-// Initialize Repositories and Helpers
+// Initialize Repositories, Service and Helpers
 $staticRepo = new StaticRepository($d, $cache, $lang, $sluglang);
+$staticService = new StaticService($staticRepo);
 $seoHelper = new SEOHelper($seo, $func, $d, $lang, $seolang, $configBase);
 $breadcrumbHelper = new BreadcrumbHelper($breadcr, $configBase);
 
-/* Lấy bài viết tĩnh - Sử dụng StaticRepository */
-$static = $staticRepo->getByType($type);
+/* Lấy bài viết tĩnh - Sử dụng StaticService */
+$static = $staticService->getByType($type);
 
 /* SEO - Sử dụng SEOHelper */
 if (!empty($static)) {
