@@ -226,5 +226,48 @@ class ProductRepository
     {
         return implode(',', array_fill(0, $count, '?'));
     }
+
+    /**
+     * Lấy sản phẩm nổi bật (featured products)
+     * 
+     * @param int $limit Số lượng sản phẩm
+     * @param string|null $type Loại sản phẩm
+     * @return array
+     */
+    public function getFeaturedProducts(int $limit = 12, ?string $type = null): array
+    {
+        $type = $this->resolveType($type);
+        
+        return $this->d->rawQuery(
+            "SELECT id, name{$this->lang}, slugvi, slugen, photo, regular_price, sale_price, discount 
+             FROM #_product 
+             WHERE type = ? AND find_in_set('hienthi',status) AND find_in_set('noibat',status) 
+             ORDER BY numb, id DESC 
+             LIMIT 0, ?",
+            [$type, $limit]
+        ) ?: [];
+    }
+
+    /**
+     * Lấy sản phẩm theo danh mục
+     * 
+     * @param int $categoryId ID danh mục
+     * @param int $limit Số lượng sản phẩm
+     * @param string|null $type Loại sản phẩm
+     * @return array
+     */
+    public function getProductsByCategory(int $categoryId, int $limit = 8, ?string $type = null): array
+    {
+        $type = $this->resolveType($type);
+        
+        return $this->d->rawQuery(
+            "SELECT id, name{$this->lang}, slugvi, slugen, photo, regular_price, sale_price, discount 
+             FROM #_product 
+             WHERE type = ? AND find_in_set('hienthi',status) AND id_list = ? 
+             ORDER BY numb, id DESC 
+             LIMIT 0, ?",
+            [$type, $categoryId, $limit]
+        ) ?: [];
+    }
 }
 

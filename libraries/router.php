@@ -135,7 +135,7 @@ $router->map('GET', WATERMARK . '/product/[i:w]x[i:h]x[i:z]/[**:src]', function 
 	}
 	
 	// Sử dụng PhotoRepository thay vì cache trực tiếp
-	$photoRepo = new PhotoRepository($d, $cache, $lang ?? 'vi', $sluglang ?? 'slugvi');
+	$photoRepo = new PhotoRepository($d, $lang ?? 'vi', $sluglang ?? 'slugvi');
 	$wtm = $photoRepo->getByTypeAndAct('watermark', 'photo_static');
 	
 	$func->createThumb($w, $h, $z, $filePath, $wtm, "product");
@@ -160,7 +160,7 @@ $router->map('GET', WATERMARK . '/news/[i:w]x[i:h]x[i:z]/[**:src]', function ($w
 	}
 	
 	// Sử dụng PhotoRepository
-	$photoRepo = new PhotoRepository($d, $cache, $lang ?? 'vi', $sluglang ?? 'slugvi');
+	$photoRepo = new PhotoRepository($d, $lang ?? 'vi', $sluglang ?? 'slugvi');
 	$wtm = $photoRepo->getByTypeAndAct('watermark-news', 'photo_static');
 	
 	$func->createThumb($w, $h, $z, $filePath, $wtm, "news");
@@ -220,13 +220,13 @@ require_once LIBRARIES . "lang/$lang.php";
 
 /* Tối ưu link */
 $requick = array(
-	/* Sản phẩm */
+	/* Sản phẩm - ưu tiên product trước các bảng category */
+	array("tbl" => "product", "field" => "id", "source" => "product", "com" => "san-pham", "type" => "san-pham", "menu" => true),
 	array("tbl" => "product_list", "field" => "idl", "source" => "product", "com" => "san-pham", "type" => "san-pham"),
 	array("tbl" => "product_cat", "field" => "idc", "source" => "product", "com" => "san-pham", "type" => "san-pham"),
 	array("tbl" => "product_item", "field" => "idi", "source" => "product", "com" => "san-pham", "type" => "san-pham"),
 	array("tbl" => "product_sub", "field" => "ids", "source" => "product", "com" => "san-pham", "type" => "san-pham"),
 	array("tbl" => "product_brand", "field" => "idb", "source" => "product", "com" => "thuong-hieu", "type" => "san-pham"),
-	array("tbl" => "product", "field" => "id", "source" => "product", "com" => "san-pham", "type" => "san-pham", "menu" => true),
 
 	/* Tags */
 	array("tbl" => "tags", "tbltag" => "product", "field" => "id", "source" => "tags", "com" => "tags-san-pham", "type" => "san-pham", "menu" => true),
@@ -279,6 +279,10 @@ if (!empty($com) && !in_array($com, ['tim-kiem', 'account', 'sitemap'])) {
 			if (!empty($row['id'])) {
 				$_GET[$urlField] = $row['id'];
 				$com = $urlCom;
+				// Set type từ urlType để đảm bảo type được truyền đúng
+				if (!empty($urlType)) {
+					$type = $urlType;
+				}
 				break;
 			}
 		}

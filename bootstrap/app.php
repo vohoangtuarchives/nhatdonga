@@ -34,6 +34,10 @@ if (!defined('WATERMARK')) {
     define('WATERMARK', 'watermark');
 }
 
+// Load helpers TRƯỚC autoloader để đảm bảo function env() local được định nghĩa trước
+require_once BASE_PATH . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'helpers.php';
+loadEnv(BASE_PATH);
+
 $composerAutoload = BASE_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 if (file_exists($composerAutoload)) {
     require_once $composerAutoload;
@@ -67,10 +71,9 @@ $context = new Context($app);
 Context::setInstance($context);
 
 // Set globals for backward compatibility (will be phased out gradually)
+// Đảm bảo các biến global luôn được khởi tạo lại trong mỗi request
 foreach ($app->getGlobals() as $name => $service) {
-    if (!array_key_exists($name, $GLOBALS)) {
-        $GLOBALS[$name] = $service;
-    }
+    $GLOBALS[$name] = $service;
 }
 
 return $app;

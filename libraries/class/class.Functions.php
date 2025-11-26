@@ -3488,6 +3488,17 @@ class Functions
 		$upload_dir = '';
 
 		$folder_old = dirname($image_url) . '/';
+		
+		// Normalize folder_old - remove absolute path if present, keep only relative path
+		$folder_old = str_replace('\\', '/', $folder_old);
+		if (strpos($folder_old, $_SERVER['DOCUMENT_ROOT']) === 0) {
+			$folder_old = str_replace($_SERVER['DOCUMENT_ROOT'], '', $folder_old);
+		}
+		// Remove leading slashes and normalize
+		$folder_old = ltrim($folder_old, '/\\');
+		if (!empty($folder_old) && substr($folder_old, -1) !== '/') {
+			$folder_old .= '/';
+		}
 
 
 
@@ -3502,10 +3513,22 @@ class Functions
 			else $upload_dir = $path . '/' . $width_thumb . 'x' . $height_thumb . 'x' . $zoom_crop . '/' . $folder_old;
 
 		}
+		
+		// Normalize upload_dir path for Windows compatibility
+		$upload_dir = str_replace('\\', '/', $upload_dir);
+		$upload_dir = str_replace('//', '/', $upload_dir);
+		$upload_dir = rtrim($upload_dir, '/');
 
 
 
-		if (!file_exists($upload_dir)) if (!mkdir($upload_dir, 0777, true)) die('Failed to create folders...');
+		if (!file_exists($upload_dir)) {
+			// Try to create directory with better error handling
+			if (!@mkdir($upload_dir, 0777, true)) {
+				$error = error_get_last();
+				$errorMsg = $error ? $error['message'] : 'Unknown error';
+				die('Failed to create folders: ' . $upload_dir . ' - ' . $errorMsg);
+			}
+		}
 
 
 

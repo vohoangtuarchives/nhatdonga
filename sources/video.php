@@ -25,7 +25,7 @@ use Tuezy\Config;
 $configObj = new Config($config);
 
 // Initialize Repositories, Service and Helpers
-$photoRepo = new PhotoRepository($d, $cache, $lang, $sluglang);
+$photoRepo = new PhotoRepository($d, $lang, $sluglang);
 $videoService = new VideoService($photoRepo, $d);
 $seoHelper = new SEOHelper($seo, $func, $d, $lang, $seolang, $configBase);
 $breadcrumbHelper = new BreadcrumbHelper($breadcr, $configBase);

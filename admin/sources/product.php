@@ -141,8 +141,24 @@ switch ($act) {
 			$func->transfer("Không nhận được dữ liệu", $returnUrl, false);
 		}
 
-		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
+		// Lấy id từ POST (form có hidden field name="id", không phải name="data[id]")
+		// Hoặc từ GET nếu không có trong POST
+		$id = null;
+		if (!empty($_POST['id'])) {
+			$id = (int)$_POST['id'];
+		} elseif (!empty($_POST['data']['id'])) {
+			// Fallback: kiểm tra trong data nếu có
+			$id = (int)$_POST['data']['id'];
+		} elseif (!empty($_GET['id']) && ($act == 'save' || $act == 'save_copy')) {
+			// Fallback: lấy từ GET nếu không có trong POST (khi edit)
+			$id = (int)$_GET['id'];
+		}
+		
 		$data = $_POST['data'] ?? [];
+		
+		// Loại bỏ 'id' khỏi $data vì id được truyền riêng vào saveProduct
+		// Nếu không loại bỏ, có thể gây conflict và tạo row mới thay vì update
+		unset($data['id']);
 		
 		// Sanitize data
 		foreach ($data as $key => $value) {
@@ -175,6 +191,76 @@ switch ($act) {
 			$productId = $productService->saveProduct($data, $id, $dataSC, $dataTags, $type, $func);
 
 			if ($productId) {
+				// Xử lý upload ảnh chính và các ảnh phụ của sản phẩm
+				// Field names: "file" (ảnh chính), "file2" (ảnh 2), "file3" (ảnh 3)
+				$imgType = $config['product'][$type]['img_type'] ?? '.jpg|.gif|.png|.jpeg|.webp';
+				
+				// Upload ảnh chính (file -> photo)
+				if ($func->hasFile("file")) {
+					$file_name = $func->uploadName($_FILES["file"]["name"]);
+					
+					// Bắt output buffer để tránh alert() output HTML/JS
+					ob_start();
+					$photo = $func->uploadImage("file", $imgType, UPLOAD_PRODUCT, $file_name);
+					$alertOutput = ob_get_clean();
+					
+					if ($photo) {
+						// Xóa ảnh cũ nếu có (khi update)
+						if ($id) {
+							$oldProduct = $d->rawQueryOne("SELECT photo FROM #_product WHERE id = ? LIMIT 0,1", [$productId]);
+							if ($oldProduct && !empty($oldProduct['photo'])) {
+								$func->deleteFile(UPLOAD_PRODUCT . $oldProduct['photo']);
+							}
+						}
+						
+						// Cập nhật ảnh mới vào database
+						$d->where('id', $productId);
+						$d->update('product', ['photo' => $photo]);
+					}
+				}
+				
+				// Upload ảnh 2 (file2 -> photo2)
+				if (isset($config['product'][$type]['images2']) && $config['product'][$type]['images2'] == true && $func->hasFile("file2")) {
+					$file_name = $func->uploadName($_FILES["file2"]["name"]);
+					
+					ob_start();
+					$photo2 = $func->uploadImage("file2", $imgType, UPLOAD_PRODUCT, $file_name);
+					ob_get_clean();
+					
+					if ($photo2) {
+						if ($id) {
+							$oldProduct = $d->rawQueryOne("SELECT photo2 FROM #_product WHERE id = ? LIMIT 0,1", [$productId]);
+							if ($oldProduct && !empty($oldProduct['photo2'])) {
+								$func->deleteFile(UPLOAD_PRODUCT . $oldProduct['photo2']);
+							}
+						}
+						
+						$d->where('id', $productId);
+						$d->update('product', ['photo2' => $photo2]);
+					}
+				}
+				
+				// Upload ảnh 3 (file3 -> photo3)
+				if (isset($config['product'][$type]['images3']) && $config['product'][$type]['images3'] == true && $func->hasFile("file3")) {
+					$file_name = $func->uploadName($_FILES["file3"]["name"]);
+					
+					ob_start();
+					$photo3 = $func->uploadImage("file3", $imgType, UPLOAD_PRODUCT, $file_name);
+					ob_get_clean();
+					
+					if ($photo3) {
+						if ($id) {
+							$oldProduct = $d->rawQueryOne("SELECT photo3 FROM #_product WHERE id = ? LIMIT 0,1", [$productId]);
+							if ($oldProduct && !empty($oldProduct['photo3'])) {
+								$func->deleteFile(UPLOAD_PRODUCT . $oldProduct['photo3']);
+							}
+						}
+						
+						$d->where('id', $productId);
+						$d->update('product', ['photo3' => $photo3]);
+					}
+				}
+				
 				$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
 				// Build return URL using AdminURLHelper
 				$urlHelper->reset();

@@ -28,14 +28,12 @@ class StaticRepository
      */
     public function getByType(string $type): ?array
     {
-        $result = $this->cache->get(
+        $result = $this->d->rawQueryOne(
             "SELECT id, type, name{$this->lang}, content{$this->lang}, photo, date_created, date_updated, options 
              FROM #_static 
              WHERE type = ? AND find_in_set('hienthi',status) 
              LIMIT 0,1",
-            [$type],
-            'fetch',
-            7200
+            [$type]
         );
         return $result ?: null;
     }
@@ -74,15 +72,13 @@ class StaticRepository
             $where .= " AND find_in_set('hienthi',status)";
         }
 
-        return $this->cache->get(
+        return $this->d->rawQuery(
             "SELECT id, type, name{$this->lang}, content{$this->lang}, photo, date_created, date_updated 
              FROM #_static 
              WHERE {$where} 
              ORDER BY numb, id DESC",
-            $params,
-            'result',
-            7200
-        );
+            $params
+        ) ?: [];
     }
 
     /**

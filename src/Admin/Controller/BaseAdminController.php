@@ -46,7 +46,8 @@ abstract class BaseAdminController
      */
     protected function checkAuth(): bool
     {
-        return $this->authHelper->isAuthenticated();
+        // Chỉ cần kiểm tra isLoggedIn, checkLogin() có thể quá strict
+        return $this->authHelper->isLoggedIn();
     }
 
     /**
@@ -68,7 +69,8 @@ abstract class BaseAdminController
     protected function requireAuth(): void
     {
         if (!$this->checkAuth()) {
-            $this->redirect($this->config['database']['url'] . ADMIN . '/index.php');
+            // Redirect to login page, not index.php
+            $this->redirect($this->config['database']['url'] . ADMIN . '/index.php?com=user&act=login');
         }
     }
 

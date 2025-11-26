@@ -23,12 +23,10 @@ class LocationRepository
      */
     public function getCities(): array
     {
-        return $this->cache->get(
+        return $this->d->rawQuery(
             "SELECT name, id FROM #_city ORDER BY id ASC",
-            [],
-            'result',
-            7200
-        );
+            []
+        ) ?: [];
     }
 
     /**
@@ -39,12 +37,10 @@ class LocationRepository
      */
     public function getDistrictsByCity(int $cityId): array
     {
-        return $this->cache->get(
+        return $this->d->rawQuery(
             "SELECT name, id FROM #_district WHERE id_city = ? ORDER BY id ASC",
-            [$cityId],
-            'result',
-            7200
-        );
+            [$cityId]
+        ) ?: [];
     }
 
     /**
@@ -55,12 +51,10 @@ class LocationRepository
      */
     public function getWardsByDistrict(int $districtId): array
     {
-        return $this->cache->get(
+        return $this->d->rawQuery(
             "SELECT name, id FROM #_ward WHERE id_district = ? ORDER BY id ASC",
-            [$districtId],
-            'result',
-            7200
-        );
+            [$districtId]
+        ) ?: [];
     }
 
     /**

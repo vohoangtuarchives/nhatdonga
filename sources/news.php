@@ -14,7 +14,8 @@ use Tuezy\RequestHandler;
 
 // Initialize RequestHandler
 $params = RequestHandler::getParams();
-$id = (int)$params['id'];
+// Lấy ID trực tiếp từ $_GET vì router set $_GET['id'] sau khi RequestHandler được khởi tạo
+$id = (int)($_GET['id'] ?? $params['id'] ?? 0);
 $idl = (int)($_GET['idl'] ?? 0);
 $idc = (int)($_GET['idc'] ?? 0);
 $idi = (int)($_GET['idi'] ?? 0);
@@ -64,24 +65,3 @@ if ($id > 0) {
 	$news = $viewData['news'];
 	$paging = $viewData['paging'];
 }
-
-/* 
- * SO SÁNH:
- * 
- * CODE CŨ: ~665 dòng với nhiều rawQuery
- * CODE MỚI (với Repository): ~150 dòng
- * CODE MỚI (với Service): ~120 dòng
- * 
- * GIẢM: ~82% code!
- * 
- * LỢI ÍCH:
- * - Sử dụng NewsService để tách business logic
- * - Sử dụng NewsRepository cho data access
- * - Sử dụng CategoryRepository cho categories
- * - Sử dụng SEOHelper cho SEO
- * - Sử dụng BreadcrumbHelper cho breadcrumbs
- * - Sử dụng PaginationHelper cho pagination
- * - Code dễ đọc, maintain và test hơn
- * - Dễ tái sử dụng logic giữa frontend và admin
- */
-

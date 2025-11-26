@@ -32,7 +32,7 @@ class PhotoAdminController extends BaseAdminController
         $lang = $_SESSION['lang'] ?? 'vi';
         $sluglang = 'slugvi';
 
-        $this->photoRepo = new PhotoRepository($db, $cache, $lang, $sluglang);
+        $this->photoRepo = new PhotoRepository($db, $lang, $sluglang);
         $this->photoService = new PhotoService($this->photoRepo, $db);
         
         // Initialize CRUD helper for photos

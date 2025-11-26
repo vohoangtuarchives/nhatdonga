@@ -24,83 +24,90 @@
 
 		private $cacheSize = false;
 
-		private $cacheTime = 3600*24*30;
+	private $cacheTime = 3600*24*30;
 
-		private $file = [];
+	private $file = [];
+
+	private $scssCompiler = null;
 
 
 
-		public function __construct(private $debug, private $func)
+	public function __construct(private $debug, private $func)
+
+	{
+		// Khởi tạo SCSS Compiler nếu có thư viện
+		if (class_exists('ScssCompiler')) {
+			$this->scssCompiler = new ScssCompiler();
+		}
+	}
+
+
+
+	public function init($name)
+
+	{
+
+		if(!$this->debug && !file_exists($this->cacheLink.$this->access['server'].$this->access['folder']))
 
 		{
+
+			if(!mkdir($this->cacheLink.$this->access['server'].$this->access['folder'], 0777, true))
+
+			{
+
+				die('Failed to create folders...');
+
+			}
 
 		}
 
 
 
-		public function init($name)
+		$this->cacheName = $name;
 
-		{
+		$this->cacheFile = $this->cacheFile.$this->access['server'].$this->access['folder'].$this->cacheName.'.css';
 
-			if(!$this->debug && !file_exists($this->cacheLink.$this->access['server'].$this->access['folder']))
+		$this->cacheLink = $this->cacheLink.$this->access['asset'].$this->access['folder'].$this->cacheName.'.css';
 
-            {
+		$this->cacheSize = (file_exists($this->cacheFile)) ? filesize($this->cacheFile) : 0;
 
-                if(!mkdir($this->cacheLink.$this->access['server'].$this->access['folder'], 0777, true))
-
-                {
-
-                    die('Failed to create folders...');
-
-                }
-
-            }
+	}
 
 
 
-			$this->cacheName = $name;
+	public function set($path)
 
-			$this->cacheFile = $this->cacheFile.$this->access['server'].$this->access['folder'].$this->cacheName.'.css';
+	{
 
-			$this->cacheLink = $this->cacheLink.$this->access['asset'].$this->access['folder'].$this->cacheName.'.css';
+		$this->path[] = [
 
-			$this->cacheSize = (file_exists($this->cacheFile)) ? filesize($this->cacheFile) : 0;
+			'server' => $this->access['server'].$path,
 
-		}
+			'asset' => $this->access['asset'].$path
 
-
-
-		public function set($path)
-
-		{
-
-			$this->path[] = [
-
-				'server' => $this->access['server'].$path,
-
-				'asset' => $this->access['asset'].$path
-
-			];
+		];
 
 
 
-			$this->file[] = $path;
+		$this->file[] = $path;
 
-		}
+	}
 
 
 
-		public function get()
+	public function get()
 
-		{
+	{
+		// Tự động compile SCSS trước khi xử lý
+		$this->compileScssIfNeeded();
 
-			$this->init(md5(implode(",",$this->file)));
+		$this->init(md5(implode(",",$this->file)));
 
-			if(empty($this->path)) die("No files to optimize");
+		if(empty($this->path)) die("No files to optimize");
 
-			return ($this->debug) ? $this->links() : $this->minify();
+		return ($this->debug) ? $this->links() : $this->minify();
 
-		}
+	}
 
 
 
@@ -244,10 +251,67 @@
 
 
 
-			return $isExpire;
-
-		}
+		return $isExpire;
 
 	}
+
+	/**
+	 * Tự động compile SCSS nếu cần thiết
+	 * Kiểm tra và compile file main.scss nếu file CSS không tồn tại hoặc đã cũ
+	 */
+	private function compileScssIfNeeded()
+	{
+		// Kiểm tra config có cho phép auto compile không
+		global $config;
+		if (isset($config['website']['scss-auto-compile']) && !$config['website']['scss-auto-compile']) {
+			return;
+		}
+
+		if ($this->scssCompiler === null) {
+			return;
+		}
+
+		// Kiểm tra file main.scss và main.css
+		$scssFile = 'scss/main.scss';
+		$cssFile = 'css/main.css';
+		
+		$scssPath = $this->access['server'] . $scssFile;
+		$cssPath = $this->access['server'] . $cssFile;
+
+		// Nếu file SCSS tồn tại và (file CSS không tồn tại hoặc SCSS mới hơn CSS)
+		if (file_exists($scssPath)) {
+			$needsCompile = false;
+			
+			if (!file_exists($cssPath)) {
+				$needsCompile = true;
+			} else {
+				$scssTime = filemtime($scssPath);
+				$cssTime = filemtime($cssPath);
+				$needsCompile = $scssTime > $cssTime;
+			}
+
+			if ($needsCompile) {
+				$this->scssCompiler->compile('main.scss', 'main.css');
+			}
+		}
+	}
+
+	/**
+	 * Compile SCSS thủ công
+	 * 
+	 * @param string $scssFile File SCSS (từ assets/scss/)
+	 * @param string $cssFile File CSS output (từ assets/css/)
+	 * @return bool
+	 */
+	public function compileScss($scssFile, $cssFile = null)
+	{
+		if ($this->scssCompiler === null) {
+			return false;
+		}
+
+		return $this->scssCompiler->compile($scssFile, $cssFile);
+	}
+
+}
 
 ?>

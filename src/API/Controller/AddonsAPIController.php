@@ -19,7 +19,7 @@ class AddonsAPIController extends BaseAPIController
     {
         parent::__construct($db, $cache, $func, $config, $lang, $sluglang);
 
-        $this->photoRepo = new PhotoRepository($db, $cache, $lang, $sluglang);
+        $this->photoRepo = new PhotoRepository($db, $lang, $sluglang);
         $this->newsRepo = new NewsRepository($db, $lang, 'chi-nhanh');
         $this->settingRepo = new SettingRepository($db, $cache);
     }
@@ -57,6 +57,10 @@ class AddonsAPIController extends BaseAPIController
 
             case 'messages-facebook':
                 $this->renderMessagesFacebook();
+                break;
+
+            case 'messages-facebook-footer':
+                $this->renderMessagesFacebookFooter();
                 break;
 
             case 'script-main':
@@ -273,6 +277,47 @@ class AddonsAPIController extends BaseAPIController
                 });
             })
         </script>
+        <?php
+    }
+
+    /**
+     * Render Facebook messages widget for footer
+     * Width 100% and height 276px
+     */
+    private function renderMessagesFacebookFooter(): void
+    {
+        $setting = $this->settingRepo->getFirst();
+        $optsetting = !empty($setting['options']) ? json_decode($setting['options'], true) : null;
+        
+        if (empty($optsetting['fanpage'])) {
+            return;
+        }
+        ?>
+        <div style="width: 100%;">
+            <div style="width: 100%; height: 276px; overflow: hidden;">
+                <div class="fb-page" 
+                     data-href="<?= $optsetting['fanpage'] ?>" 
+                     data-tabs="messages" 
+                     data-small-header="true" 
+                     data-height="276" 
+                     data-adapt-container-width="true" 
+                     data-hide-cover="false" 
+                     data-show-facepile="true">
+                    <blockquote cite="<?= $optsetting['fanpage'] ?>" class="fb-xfbml-parse-ignore">
+                        <a href="<?= $optsetting['fanpage'] ?>">Facebook</a>
+                    </blockquote>
+                </div>
+            </div>
+            <style>
+                .fb-page {
+                    width: 100% !important;
+                }
+                .fb-page iframe {
+                    width: 100% !important;
+                    height: 276px !important;
+                }
+            </style>
+        </div>
         <?php
     }
 

@@ -141,6 +141,21 @@ class AdminAuthHelper
             'login_session' => md5(sha1($userData['password'] . $userData['username'])),
             'login_token' => md5(time()),
         ];
+        
+        // Đảm bảo TOKEN constant được define
+        if (!defined('TOKEN')) {
+            global $config;
+            if (empty($config)) {
+                $config = $this->config;
+            }
+            if (!defined('NN_CONTRACT')) {
+                define('NN_CONTRACT', $config['metadata']['contract'] ?? 'contract');
+            }
+            define('TOKEN', md5(NN_CONTRACT . $config['database']['url']));
+        }
+        
+        // Set session token
+        $_SESSION[TOKEN] = true;
     }
 
     /**
@@ -163,6 +178,18 @@ class AdminAuthHelper
     {
         if (!$this->isLoggedIn()) {
             return false;
+        }
+
+        // Đảm bảo TOKEN constant được define
+        if (!defined('TOKEN')) {
+            global $config;
+            if (empty($config)) {
+                $config = $this->config;
+            }
+            if (!defined('NN_CONTRACT')) {
+                define('NN_CONTRACT', $config['metadata']['contract'] ?? 'contract');
+            }
+            define('TOKEN', md5(NN_CONTRACT . $config['database']['url']));
         }
 
         $userId = $this->getUserId();
@@ -191,9 +218,10 @@ class AdminAuthHelper
             return false; // Someone else is logged in
         }
 
-        // Update session
+        // Update session và đảm bảo $_SESSION[TOKEN] được set
         $token = md5(time());
         $_SESSION[$this->loginAdmin]['login_token'] = $token;
+        $_SESSION[TOKEN] = true; // Đảm bảo TOKEN session được set lại
         $this->d->rawQuery(
             "UPDATE #_user SET lastlogin = ?, user_token = ? WHERE id = ?",
             [$timenow, $token, $userId]

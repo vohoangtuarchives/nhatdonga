@@ -6,8 +6,17 @@ if (!defined('BASE_PATH')) {
     define('BASE_PATH', dirname(__DIR__));
 }
 
-require_once BASE_PATH . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'helpers.php';
-loadEnv(BASE_PATH);
+// Helpers đã được load trong bootstrap/app.php, chỉ load lại nếu chưa có
+if (!function_exists('env')) {
+    require_once BASE_PATH . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'helpers.php';
+}
+
+if (!function_exists('loadEnv') || empty($_ENV)) {
+    if (!function_exists('loadEnv')) {
+        require_once BASE_PATH . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'helpers.php';
+    }
+    loadEnv(BASE_PATH);
+}
 
 $config = require BASE_PATH . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'app.php';
 
@@ -16,11 +25,15 @@ date_default_timezone_set($config['timezone'] ?? 'Asia/Ho_Chi_Minh');
 
 /* Cấu hình coder */
 $metadata = $config['metadata']['author'] ?? [];
-define('NN_CONTRACT', $config['metadata']['contract'] ?? 'contract');
-define('NN_AUTHOR', $metadata['email'] ?? 'support@example.com');
+if (!defined('NN_CONTRACT')) {
+	define('NN_CONTRACT', $config['metadata']['contract'] ?? 'contract');
+}
+if (!defined('NN_AUTHOR')) {
+	define('NN_AUTHOR', $metadata['email'] ?? 'support@example.com');
+}
 
 /* Error reporting */
-error_reporting(!empty($config['website']['error-reporting']) ? E_ALL : 0);
+
 
 /* Cấu hình http */
 if (
@@ -52,7 +65,9 @@ $configUrl = $config['database']['server-name'] . $config['database']['url'];
 $config_base = $configBase = $http . $configUrl;
 
 /* Token */
-define('TOKEN', md5(NN_CONTRACT . $config['database']['url']));
+if (!defined('TOKEN')) {
+	define('TOKEN', md5(NN_CONTRACT . $config['database']['url']));
+}
 
 /* Path */
 define('ROOT', str_replace(basename(__DIR__), '', __DIR__));
@@ -65,4 +80,6 @@ $loginMember = $config['login']['member'];
 
 /* Cấu hình upload */
 require_once LIBRARIES . "constant.php";
+
+error_reporting(0);
 

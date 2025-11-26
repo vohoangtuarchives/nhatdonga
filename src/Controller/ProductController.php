@@ -48,9 +48,21 @@ class ProductController extends BaseController
         $detailContext = $this->productService->getDetailContext($id, $type);
 
         if (!$detailContext) {
-            header('HTTP/1.0 404 Not Found', true, 404);
-            include("404.php");
-            exit;
+            // Return empty data structure instead of exit to allow template to handle
+            return [
+                'detail' => null,
+                'tags' => [],
+                'colors' => [],
+                'sizes' => [],
+                'list' => null,
+                'cat' => null,
+                'item' => null,
+                'sub' => null,
+                'brand' => null,
+                'photos' => [],
+                'related' => [],
+                'breadcrumbs' => ''
+            ];
         }
 
         $rowDetail = $detailContext['detail'];

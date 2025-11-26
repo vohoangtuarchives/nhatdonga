@@ -57,15 +57,13 @@ class TagsRepository
 
         $limitSql = $limit > 0 ? " LIMIT 0,{$limit}" : "";
 
-        return $this->cache->get(
+        return $this->d->rawQuery(
             "SELECT id, name{$this->lang}, slugvi, slugen, photo 
              FROM #_tags 
              WHERE {$where} 
              ORDER BY numb, id DESC {$limitSql}",
-            $params,
-            'result',
-            7200
-        );
+            $params
+        ) ?: [];
     }
 
     /**

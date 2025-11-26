@@ -45,15 +45,13 @@ class CategoryRepository
             $where .= " AND find_in_set('noibat',status)";
         }
 
-        return $this->cache->get(
+        return $this->d->rawQuery(
             "SELECT id, name{$this->lang}, slug{$this->lang}, type, photo 
              FROM #_{$this->tablePrefix}_list 
              WHERE {$where} 
              ORDER BY numb, id DESC",
-            $params,
-            'result',
-            7200
-        );
+            $params
+        ) ?: [];
     }
 
     /**
@@ -65,13 +63,14 @@ class CategoryRepository
      */
     public function getListById(int $id, string $type): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT id, name{$this->lang}, slug{$this->lang}, type, photo, options 
              FROM #_{$this->tablePrefix}_list 
              WHERE id = ? AND type = ? AND find_in_set('hienthi',status) 
              LIMIT 0,1",
             [$id, $type]
         );
+        return $result ?: null;
     }
 
     /**
@@ -84,13 +83,14 @@ class CategoryRepository
     public function getListBySlug(string $slug, string $type): ?array
     {
         $slugField = $this->sluglang;
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT id, name{$this->lang}, slug{$this->lang}, type, photo, options 
              FROM #_{$this->tablePrefix}_list 
              WHERE {$slugField} = ? AND type = ? AND find_in_set('hienthi',status) 
              LIMIT 0,1",
             [$slug, $type]
         );
+        return $result ?: null;
     }
 
     /**
@@ -115,15 +115,13 @@ class CategoryRepository
             $where .= " AND find_in_set('hienthi',status)";
         }
 
-        return $this->cache->get(
+        return $this->d->rawQuery(
             "SELECT id, name{$this->lang}, slug{$this->lang}, type, photo, id_list 
              FROM #_{$this->tablePrefix}_cat 
              WHERE {$where} 
              ORDER BY numb, id DESC",
-            $params,
-            'result',
-            7200
-        );
+            $params
+        ) ?: [];
     }
 
     /**
@@ -135,13 +133,14 @@ class CategoryRepository
      */
     public function getCatById(int $id, string $type): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT id, name{$this->lang}, slug{$this->lang}, type, photo, id_list, options 
              FROM #_{$this->tablePrefix}_cat 
              WHERE id = ? AND type = ? AND find_in_set('hienthi',status) 
              LIMIT 0,1",
             [$id, $type]
         );
+        return $result ?: null;
     }
 
     /**
@@ -166,15 +165,13 @@ class CategoryRepository
             $where .= " AND find_in_set('hienthi',status)";
         }
 
-        return $this->cache->get(
+        return $this->d->rawQuery(
             "SELECT id, name{$this->lang}, slug{$this->lang}, type, photo, id_cat 
              FROM #_{$this->tablePrefix}_item 
              WHERE {$where} 
              ORDER BY numb, id DESC",
-            $params,
-            'result',
-            7200
-        );
+            $params
+        ) ?: [];
     }
 
     /**
@@ -186,13 +183,14 @@ class CategoryRepository
      */
     public function getItemById(int $id, string $type): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT id, name{$this->lang}, slug{$this->lang}, type, photo, id_cat, options 
              FROM #_{$this->tablePrefix}_item 
              WHERE id = ? AND type = ? AND find_in_set('hienthi',status) 
              LIMIT 0,1",
             [$id, $type]
         );
+        return $result ?: null;
     }
 
     /**
@@ -217,15 +215,13 @@ class CategoryRepository
             $where .= " AND find_in_set('hienthi',status)";
         }
 
-        return $this->cache->get(
+        return $this->d->rawQuery(
             "SELECT id, name{$this->lang}, slug{$this->lang}, type, photo, id_item 
              FROM #_{$this->tablePrefix}_sub 
              WHERE {$where} 
              ORDER BY numb, id DESC",
-            $params,
-            'result',
-            7200
-        );
+            $params
+        ) ?: [];
     }
 
     /**
@@ -237,13 +233,14 @@ class CategoryRepository
      */
     public function getSubById(int $id, string $type): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT id, name{$this->lang}, slug{$this->lang}, type, photo, id_item, options 
              FROM #_{$this->tablePrefix}_sub 
              WHERE id = ? AND type = ? AND find_in_set('hienthi',status) 
              LIMIT 0,1",
             [$id, $type]
         );
+        return $result ?: null;
     }
 
     /**

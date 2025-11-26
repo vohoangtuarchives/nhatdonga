@@ -149,7 +149,7 @@ class NewsRepository
         $limitSql = $limit > 0 ? " LIMIT 0,{$limit}" : "";
 
         return $this->d->rawQuery(
-            "SELECT name{$this->lang}, id 
+            "SELECT name{$this->lang} , id, slug{$this->lang} 
              FROM #_news 
              WHERE {$where} 
              ORDER BY {$order} {$limitSql}",

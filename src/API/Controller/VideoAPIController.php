@@ -17,7 +17,7 @@ class VideoAPIController extends BaseAPIController
     {
         parent::__construct($db, $cache, $func, $config, $lang, $sluglang);
 
-        $this->photoRepo = new PhotoRepository($db, $cache, $lang, $sluglang);
+        $this->photoRepo = new PhotoRepository($db, $lang, $sluglang);
         $this->videoService = new VideoService($this->photoRepo, $db);
     }
 

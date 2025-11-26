@@ -13,12 +13,15 @@
 			(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'))
 			? 'https://' : 'http://';
 	}
+
 	if (!isset($configUrl)) {
 		$configUrl = $config['database']['server-name'] . $config['database']['url'];
 	}
+
 	if (!isset($configBase)) {
 		$configBase = $http . $configUrl;
 	}
+
 	if (!isset($loginAdmin)) {
 		$loginAdmin = $config['login']['admin'] ?? 'LoginAdmin' . ($config['metadata']['contract'] ?? '788922w');
 	}
@@ -38,6 +41,8 @@
 
 	/* Requick */
 	require_once LIBRARIES."requick.php";
+
+	dump($_SESSION[$loginAdmin]);
 ?>
 <!DOCTYPE html>
 <html lang="vi">

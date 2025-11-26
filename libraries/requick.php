@@ -9,7 +9,12 @@ use Tuezy\Helper\GlobalHelper;
 $func = GlobalHelper::func();
 $d = GlobalHelper::db();
 $cache = GlobalHelper::cache();
-$config = GlobalHelper::config();
+// Use global $config if available (from config-type.php), otherwise use GlobalHelper
+// Important: config-type.php modifies global $config, so we must use global variable
+global $config;
+if (empty($config) || !is_array($config)) {
+    $config = GlobalHelper::config();
+}
 
 // Get loginAdmin (should be set in admin/index.php)
 if (!isset($loginAdmin)) {
@@ -74,7 +79,8 @@ if ($adminPermission->isActive() && $adminAuth->isLoggedIn()) {
 	}
 	
 	/* Kiểm tra quyền - Sử dụng AdminPermissionHelper */
-	if ($adminPermission->hasRole()) {
+	// Chỉ set $is_permission nếu permission system active
+	if ($adminPermission->isActive() && $adminPermission->hasRole()) {
 		$is_permission = true;
 		
 		// Actions không cần kiểm tra quyền

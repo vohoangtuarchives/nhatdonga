@@ -14,35 +14,55 @@ use Tuezy\RequestHandler;
 
 // Initialize RequestHandler
 $params = RequestHandler::getParams();
-$id = (int)$params['id'];
+// Lấy ID trực tiếp từ $_GET vì router set $_GET['id'] sau khi RequestHandler được khởi tạo
+$id = (int)($_GET['id'] ?? $params['id'] ?? 0);
 $idl = (int)($_GET['idl'] ?? 0);
 $idc = (int)($_GET['idc'] ?? 0);
 $idi = (int)($_GET['idi'] ?? 0);
 $ids = (int)($_GET['ids'] ?? 0);
 $idb = (int)($_GET['idb'] ?? 0);
 
-// Initialize Controller
-$controller = new ProductController($d, $cache, $func, $seo, $config, $type ?? 'san-pham');
+// Đảm bảo $type được set đúng từ router
+if (empty($type)) {
+	$type = 'san-pham';
+}
 
+// Initialize Controller
+$controller = new ProductController($d, $cache, $func, $seo, $config, $type);
+
+// Initialize default variables
+$rowDetail = null;
+$rowTags = [];
+$rowColor = [];
+$rowSize = [];
+$productList = null;
+$productCat = null;
+$productItem = null;
+$productSub = null;
+$productBrand = null;
+$rowDetailPhoto = [];
+$relatedProducts = [];
+$breadcrumbs = '';
 // Determine action based on request
 if ($id > 0) {
-	// Product detail
-	$viewData = $controller->detail($id, $type ?? 'san-pham');
+	// Product detail - đảm bảo type được truyền đúng
+	$productType = !empty($type) ? $type : 'san-pham';
+	$viewData = $controller->detail($id, $productType);
 	
 	// Extract data for template
 	extract($viewData);
-	$rowDetail = $viewData['detail'];
-	$rowTags = $viewData['tags'];
-	$rowColor = $viewData['colors'];
-	$rowSize = $viewData['sizes'];
-	$productList = $viewData['list'];
-	$productCat = $viewData['cat'];
-	$productItem = $viewData['item'];
-	$productSub = $viewData['sub'];
-	$productBrand = $viewData['brand'];
-	$rowDetailPhoto = $viewData['photos'];
-	$relatedProducts = $viewData['related'];
-	$breadcrumbs = $viewData['breadcrumbs'];
+	$rowDetail = $viewData['detail'] ?? null;
+	$rowTags = $viewData['tags'] ?? [];
+	$rowColor = $viewData['colors'] ?? [];
+	$rowSize = $viewData['sizes'] ?? [];
+	$productList = $viewData['list'] ?? null;
+	$productCat = $viewData['cat'] ?? null;
+	$productItem = $viewData['item'] ?? null;
+	$productSub = $viewData['sub'] ?? null;
+	$productBrand = $viewData['brand'] ?? null;
+	$rowDetailPhoto = $viewData['photos'] ?? [];
+	$relatedProducts = $viewData['related'] ?? [];
+	$breadcrumbs = $viewData['breadcrumbs'] ?? '';
 	
 } elseif ($idc > 0) {
 	// Category page
@@ -86,21 +106,4 @@ if ($id > 0) {
 	$products = $viewData['products'];
 	$paging = $viewData['paging'];
 }
-
-/* 
- * SO SÁNH:
- * 
- * CODE CŨ: ~931 dòng với nhiều rawQuery
- * CODE MỚI: ~150 dòng với Repositories
- * 
- * GIẢM: ~84% code!
- * 
- * LỢI ÍCH:
- * - Sử dụng ProductRepository thay vì rawQuery
- * - Sử dụng CategoryRepository cho categories
- * - Sử dụng TagsRepository cho tags
- * - Sử dụng SEOHelper cho SEO
- * - Sử dụng BreadcrumbHelper cho breadcrumbs
- * - Code dễ đọc và maintain hơn
- */
 

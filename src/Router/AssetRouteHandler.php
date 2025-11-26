@@ -79,7 +79,6 @@ class AssetRouteHandler
 
         $photoRepo = new PhotoRepository(
             $this->d,
-            $this->cache,
             $lang ?? 'vi',
             $sluglang ?? 'slugvi'
         );
@@ -112,7 +111,6 @@ class AssetRouteHandler
 
         $photoRepo = new PhotoRepository(
             $this->d,
-            $this->cache,
             $lang ?? 'vi',
             $sluglang ?? 'slugvi'
         );

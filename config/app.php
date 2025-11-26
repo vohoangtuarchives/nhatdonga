@@ -43,6 +43,7 @@ return [
         'debug-developer' => (bool)env('APP_DEBUG_DEVELOPER', true),
         'debug-css' => (bool)env('APP_DEBUG_CSS', true),
         'debug-js' => (bool)env('APP_DEBUG_JS', true),
+        'scss-auto-compile' => (bool)env('APP_SCSS_AUTO_COMPILE', false),
         'index' => (bool)env('APP_INDEX', false),
         'image' => [
             'hasWebp' => (bool)env('APP_IMAGE_WEBP', false),
