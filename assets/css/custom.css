@@ -3017,3 +3017,10 @@ form.form-desktop-search input[type=text]{
     padding: 0 10px;
     background: var(--isp-primary-dark);
 }
+.menu{
+    position: relative;
+    z-index: 3;
+}
+.menu ul li a{
+    text-transform: uppercase;
+}

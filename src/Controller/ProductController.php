@@ -143,18 +143,34 @@ class ProductController extends BaseController
      * @param int $perPage Items per page
      * @return array View data
      */
-    public function index(string $type = 'san-pham', array $filters = [], int $page = 1, int $perPage = 12): array
+    public function index(string $type = 'san-pham', array $filters = [], int $page = 1, int $perPage = 12, string $sortBy = 'default', string $sortOrder = 'desc'): array
     {
-        $listResult = $this->productService->getListing($type, $filters, $page, $perPage);
+        $listResult = $this->productService->getListing($type, $filters, $page, $perPage, $sortBy, $sortOrder);
 
         // Pagination
         $url = $this->func->getCurrentPageURL();
         $paging = $this->paginationHelper->getPagination($listResult['total'], $url, '', $perPage);
 
+        // Get categories for sidebar
+        $productLists = $this->categoryRepo->getLists($type, true, false);
+        $categoriesTree = [];
+        foreach ($productLists as $list) {
+            $cats = $this->categoryRepo->getCats($type, $list['id'], true);
+            $categoriesTree[] = [
+                'list' => $list,
+                'cats' => $cats
+            ];
+        }
+
+        // Get brands for filter
+        $brands = $this->productRepo->getBrands($type);
+
         return [
             'products' => $listResult['items'],
             'total' => $listResult['total'],
             'paging' => $paging,
+            'categoriesTree' => $categoriesTree,
+            'brands' => $brands,
         ];
     }
 
@@ -211,12 +227,28 @@ class ProductController extends BaseController
         $url = $this->func->getCurrentPageURL();
         $paging = $this->paginationHelper->getPagination($listResult['total'], $url, '', $perPage);
 
+        // Get categories for sidebar
+        $productLists = $this->categoryRepo->getLists($type, true, false);
+        $categoriesTree = [];
+        foreach ($productLists as $list) {
+            $cats = $this->categoryRepo->getCats($type, $list['id'], true);
+            $categoriesTree[] = [
+                'list' => $list,
+                'cats' => $cats
+            ];
+        }
+
+        // Get brands for filter
+        $brands = $this->productRepo->getBrands($type);
+
         return [
             'category' => $category,
             'products' => $listResult['items'],
             'total' => $listResult['total'],
             'paging' => $paging,
             'breadcrumbs' => $this->breadcrumbHelper->render(),
+            'categoriesTree' => $categoriesTree,
+            'brands' => $brands,
         ];
     }
 
@@ -238,11 +270,27 @@ class ProductController extends BaseController
         $url = $this->func->getCurrentPageURL();
         $paging = $this->paginationHelper->getPagination($listResult['total'], $url, '', $perPage);
 
+        // Get categories for sidebar
+        $productLists = $this->categoryRepo->getLists($type, true, false);
+        $categoriesTree = [];
+        foreach ($productLists as $list) {
+            $cats = $this->categoryRepo->getCats($type, $list['id'], true);
+            $categoriesTree[] = [
+                'list' => $list,
+                'cats' => $cats
+            ];
+        }
+
+        // Get brands for filter
+        $brands = $this->productRepo->getBrands($type);
+
         return [
             'keyword' => $keyword,
             'products' => $listResult['items'],
             'total' => $listResult['total'],
             'paging' => $paging,
+            'categoriesTree' => $categoriesTree,
+            'brands' => $brands,
         ];
     }
 }

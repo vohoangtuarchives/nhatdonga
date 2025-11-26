@@ -69,7 +69,14 @@ class PhotoAdminController extends BaseAdminController
         $this->requireAuth();
 
         // Build WHERE conditions
-        $where = [];
+        // Loại trừ photo_static (logo) - chỉ lấy các ảnh quản lý nhiều (man_photo)
+        $where = [
+            [
+                'clause' => "(act IS NULL OR act = '' OR act != ?)",
+                'params' => ['photo_static']
+            ]
+        ];
+        
         if (!empty($filters['keyword'])) {
             $where[] = [
                 'clause' => '(namevi LIKE ? OR nameen LIKE ?)',
@@ -117,6 +124,16 @@ class PhotoAdminController extends BaseAdminController
     public function savePhoto(array $data, ?int $id = null): bool
     {
         $this->requireAuth();
+        
+        // Đảm bảo act không phải 'photo_static' cho man_photo
+        // photo_static chỉ dùng cho logo (1 ảnh duy nhất)
+        if (isset($data['act']) && $data['act'] === 'photo_static') {
+            unset($data['act']); // Để null hoặc empty cho man_photo
+        }
+        
+        // Set type
+        $data['type'] = $this->type;
+        
         return $this->crudHelper->save($data, $id);
     }
 

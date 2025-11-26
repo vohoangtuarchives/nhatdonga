@@ -44,13 +44,13 @@ class ProductService
         ];
     }
 
-    public function getListing(string $type, array $filters, int $page, int $perPage): array
+    public function getListing(string $type, array $filters, int $page, int $perPage, string $sortBy = 'default', string $sortOrder = 'desc'): array
     {
         $page = max($page, 1);
         $perPage = max($perPage, 1);
         $start = ($page - 1) * $perPage;
 
-        $items = $this->products->getProducts($type, $filters, $start, $perPage);
+        $items = $this->products->getProducts($type, $filters, $start, $perPage, $sortBy, $sortOrder);
         $total = $this->products->countProducts($type, $filters);
 
         return [

@@ -43,6 +43,8 @@ $productBrand = null;
 $rowDetailPhoto = [];
 $relatedProducts = [];
 $breadcrumbs = '';
+$products = []; // Initialize products array
+$paging = ''; // Initialize paging
 // Determine action based on request
 if ($id > 0) {
 	// Product detail - đảm bảo type được truyền đúng
@@ -73,6 +75,9 @@ if ($id > 0) {
 	$products = $viewData['products'];
 	$paging = $viewData['paging'];
 	$breadcrumbs = $viewData['breadcrumbs'];
+	$categoriesTree = $viewData['categoriesTree'] ?? [];
+	$brands = $viewData['brands'] ?? [];
+	$total = $viewData['total'] ?? 0;
 	
 } elseif (!empty($_GET['keyword'])) {
 	// Search page
@@ -83,6 +88,9 @@ if ($id > 0) {
 	extract($viewData);
 	$products = $viewData['products'];
 	$paging = $viewData['paging'];
+	$categoriesTree = $viewData['categoriesTree'] ?? [];
+	$brands = $viewData['brands'] ?? [];
+	$total = $viewData['total'] ?? 0;
 	
 } else {
 	// Product listing
@@ -99,11 +107,34 @@ if ($id > 0) {
 		$filters['status'] = $_GET['status'];
 	}
 	
+	// Handle filter params
+	if (!empty($_GET['brand'])) {
+		$filters['id_brand'] = (int)$_GET['brand'];
+	}
+	if (!empty($_GET['status_filter'])) {
+		$filters['status'] = $_GET['status_filter'];
+	}
+	if (!empty($_GET['has_discount']) && $_GET['has_discount'] == '1') {
+		$filters['has_discount'] = true;
+	}
+	if (!empty($_GET['price_min'])) {
+		$filters['price_min'] = (float)$_GET['price_min'];
+	}
+	if (!empty($_GET['price_max'])) {
+		$filters['price_max'] = (float)$_GET['price_max'];
+	}
+	
 	$curPage = (int)($_GET['p'] ?? 1);
-	$viewData = $controller->index($type ?? 'san-pham', $filters, $curPage, 12);
+	$perPage = (int)($_GET['per_page'] ?? 12);
+	$sortBy = $_GET['sort'] ?? 'default';
+	$sortOrder = $_GET['order'] ?? 'desc';
+	$viewData = $controller->index($type ?? 'san-pham', $filters, $curPage, $perPage, $sortBy, $sortOrder);
 	
 	extract($viewData);
 	$products = $viewData['products'];
 	$paging = $viewData['paging'];
+	$categoriesTree = $viewData['categoriesTree'] ?? [];
+	$brands = $viewData['brands'] ?? [];
+	$total = $viewData['total'] ?? 0;
 }
 

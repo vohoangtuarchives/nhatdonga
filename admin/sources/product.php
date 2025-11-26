@@ -355,8 +355,62 @@ switch ($act) {
 			$func->transfer("Không nhận được dữ liệu", "index.php?com=product&act=man_list&type=" . $type, false);
 		}
 		
-		$id = !empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null;
+		// Lấy id từ POST (form có hidden field name="id")
+		$id = !empty($_POST['id']) ? (int)$_POST['id'] : (!empty($_POST['data']['id']) ? (int)$_POST['data']['id'] : null);
 		$data = $_POST['data'] ?? [];
+		$data = SecurityHelper::sanitizeArray($data);
+		
+		// Loại bỏ id khỏi data vì id được truyền riêng
+		unset($data['id']);
+		
+		// Xử lý upload ảnh chính (file -> photo)
+		$imgType = $config['product'][$type]['img_type_list'] ?? '.jpg|.gif|.png|.jpeg|.webp';
+		
+		if ($func->hasFile("file")) {
+			$file_name = $func->uploadName($_FILES["file"]["name"]);
+			
+			// Bắt output buffer để tránh alert() output HTML/JS
+			ob_start();
+			$photo = $func->uploadImage("file", $imgType, UPLOAD_PRODUCT, $file_name);
+			ob_get_clean();
+			
+			if ($photo) {
+				// Xóa ảnh cũ nếu có (khi update)
+				if ($id) {
+					$oldList = $d->rawQueryOne("SELECT photo FROM #_product_list WHERE id = ? LIMIT 0,1", [$id]);
+					if ($oldList && !empty($oldList['photo'])) {
+						$func->deleteFile(UPLOAD_PRODUCT . $oldList['photo']);
+					}
+				}
+				$data['photo'] = $photo;
+			}
+		}
+		
+		// Xử lý upload ảnh 2 (file2 -> photo2)
+		if (isset($config['product'][$type]['images_list2']) && $config['product'][$type]['images_list2'] == true && $func->hasFile("file2")) {
+			$file_name = $func->uploadName($_FILES["file2"]["name"]);
+			
+			ob_start();
+			$photo2 = $func->uploadImage("file2", $imgType, UPLOAD_PRODUCT, $file_name);
+			ob_get_clean();
+			
+			if ($photo2) {
+				if ($id) {
+					$oldList = $d->rawQueryOne("SELECT photo2 FROM #_product_list WHERE id = ? LIMIT 0,1", [$id]);
+					if ($oldList && !empty($oldList['photo2'])) {
+						$func->deleteFile(UPLOAD_PRODUCT . $oldList['photo2']);
+					}
+				}
+				$data['photo2'] = $photo2;
+			}
+		}
+		
+		// Xử lý status (từ array thành string)
+		if (isset($_POST['status']) && is_array($_POST['status'])) {
+			$data['status'] = implode(',', $_POST['status']);
+		} elseif (empty($data['status'])) {
+			$data['status'] = 'hienthi';
+		}
 		
 		// Save using AdminCRUDHelper
 		try {

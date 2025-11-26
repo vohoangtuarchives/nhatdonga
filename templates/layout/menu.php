@@ -88,6 +88,9 @@
 
             <li class="line"></li>
 
+            <li><a class="<?php if ($com == 'kien-thuc') echo 'active'; ?> transition" href="kien-thuc" title="Kiến thức">Kiến Thức</a></li>
+            <li class="line"></li>
+
             <li>
 
                 <a class="has-child <?php if ($com == 'tin-tuc') echo 'active'; ?> transition" href="tin-tuc" title="<?= tintuc ?>"><?= tintuc ?></a>
@@ -172,10 +175,6 @@
 
             </li>
 
-            <li class="line"></li>
-
-            <li><a class="<?php if ($com == 'kien-thuc') echo 'active'; ?> transition" href="kien-thuc" title="Kiến thức">Kiến Thức</a></li>
-            <li><a class="<?php if ($com == 'tin-tuc') echo 'active'; ?> transition" href="tin-tuc" title="<?= tintuc ?>"><?= tintuc ?></a></li>
             <li class="line"></li>
             <li><a class="<?php if ($com == 'lien-he') echo 'active'; ?> transition" href="lien-he" title="<?= lienhe ?>"><?= lienhe ?></a></li>
         </ul>

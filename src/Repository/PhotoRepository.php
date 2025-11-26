@@ -212,12 +212,31 @@ class PhotoRepository
 
     /**
      * Lấy slider photos
+     * Lấy từ type='slide' (man_photo - act IS NULL hoặc act != 'photo_static')
+     * Hoặc type='slider' với act='photo_static' (tương thích cũ)
      * 
      * @return array
      */
     public function getSlider(): array
     {
-        return $this->getPhotosByType('slider', 'photo_static', "id, name{$this->lang}, photo, link, options");
+        // Ưu tiên lấy từ type='slide' (man_photo - act IS NULL hoặc act != 'photo_static')
+        $where = "type = ? AND (act IS NULL OR act = '' OR act != ?) AND find_in_set('hienthi',status)";
+        $params = ['slide', 'photo_static'];
+        
+        $slidePhotos = $this->d->rawQuery(
+            "SELECT id, name{$this->lang}, photo, link, options, status 
+             FROM #_photo 
+             WHERE {$where} 
+             ORDER BY numb, id DESC",
+            $params
+        ) ?: [];
+        
+        // Nếu không có, fallback về type='slider' với act='photo_static' (tương thích cũ)
+        if (empty($slidePhotos)) {
+            $slidePhotos = $this->getPhotosByType('slider', 'photo_static', "id, name{$this->lang}, photo, link, options");
+        }
+        
+        return $slidePhotos;
     }
 
     /**

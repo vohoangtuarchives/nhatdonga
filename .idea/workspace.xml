@@ -5,124 +5,255 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7cb2e1da-5a5f-45f9-b70d-b9da988d2d3d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/assets/images/bct.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/fb.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/leaf.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/logo_footer.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/tik.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/yt.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/zalo.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/product/layouts/product-twoLayout.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/api/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/api/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/api/upload.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/api/upload.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/assets/js/apps.js" beforeDir="false" afterPath="$PROJECT_DIR$/admin/assets/js/apps.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/sources/news.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/news.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/sources/photo.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/photo.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin/sources/product.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/product.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/sources/setting.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/setting.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/templates/layout/seo.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/layout/seo.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/templates/photo/man/photos_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/photo/man/photos_tpl.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/css/custom.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/custom.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/main.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/main.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/main.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/bg_award.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/bg_cauchuyen.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/bg_dknt.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/bg_footer.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/bg_item_cauchuyen.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/bg_title.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/c_casi.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/c_cogiao.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/c_kysu.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/c_laptrinhvien.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/c_mauanh.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/c_tiktoker.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/c_youtuber.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/cart-mobile.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/logo-border.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/logo_footer.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/scss/abstracts/_mixins.scss" beforeDir="false" afterPath="$PROJECT_DIR$/assets/scss/abstracts/_mixins.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/scss/abstracts/_variables.scss" beforeDir="false" afterPath="$PROJECT_DIR$/assets/scss/abstracts/_variables.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/scss/layout/_head.scss" beforeDir="false" afterPath="$PROJECT_DIR$/assets/scss/layout/_head.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/scss/main.scss" beforeDir="false" afterPath="$PROJECT_DIR$/assets/scss/main.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_03ad29bf4fb349b24f7553d1c2ba5747" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_170bfb39967c267cd3ab303d8044a8e7" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_173ff0d4059a65e8d1c5c101a59cfead" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_18313bb751918a7fb43ae00944944400" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_1b0fcf334cfed459d2c183f27f1e0929" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_2072d25280f35d74f36acb60ddc14077" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_22442ac9d2f0b47bfd1d02b7ec10100d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_2879280c8e4d8f401d09d9da0a541649" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_344287488d55448f8e64ca79188a7765" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_1b0fcf334cfed459d2c183f27f1e0929" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_1b0fcf334cfed459d2c183f27f1e0929" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_441a79c74de4df9ced257afb0e8bdbd5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_4e6f3687a0838b3e1c3a775adc8af6d8" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_6036fda74776cf4c24e318af048d71d4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_5934ccc26f429a641a3862d39d8ca05c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_6036fda74776cf4c24e318af048d71d4" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_6036fda74776cf4c24e318af048d71d4" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_6193eb9e9d365a565f2eea713c0d7867" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_82468cff532a1feb2c715b29fc1aa152" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_9dd2f4087ff62155c53d4d8d9f1a9a50" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_ab15a9a462cf07586a67c9b5f8ab0229" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_b137c62cc0903b27d0e75da07e166912" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_b3627021e85253e56939f9d9577361d4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_b692e88ad71025b75768b1e6cb599520" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_ba30d0d69e6844c705b9ff0413b13e47" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_c0631a621992dcf3073789471cbccb6a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_c191c4e3a24ab8b32a4820ac3c2beed1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_c55ac810c9fb0fb2adad855a18083eea" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_ccb580120a75b9227b8bab422085e7b4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_ce1f689b5a28b4b2cf3b606a7222bf86" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_d3040e7a1a379585d7f19784cc24a9ea" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_eda0c92bd551dbb6125b4e0e24319498" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_f5514d62fc9e08807c9f90ef5f6c2a26" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_f7207ce7bed43acaa5064d43a057d9ff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_f97445d2d047108f4e671b04e2459e62" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_fa52dca5147dcbea6d2faf543fd0126e" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/env.example" beforeDir="false" afterPath="$PROJECT_DIR$/config/env.example" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/ADMIN_REFACTORING.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/admin_product_refactored.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/allpage_refactored.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/api_cart_refactored.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/contact_refactored.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/middleware-usage.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/class/class.CssMinify.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.CssMinify.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/class/class.Functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Functions.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_ab15a9a462cf07586a67c9b5f8ab0229" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_ab15a9a462cf07586a67c9b5f8ab0229" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_ade88b845cfb09f64727369d5e58fc65" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_ade88b845cfb09f64727369d5e58fc65" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_b137c62cc0903b27d0e75da07e166912" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_b137c62cc0903b27d0e75da07e166912" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_b692e88ad71025b75768b1e6cb599520" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_b692e88ad71025b75768b1e6cb599520" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_eda0c92bd551dbb6125b4e0e24319498" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_eda0c92bd551dbb6125b4e0e24319498" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_f5514d62fc9e08807c9f90ef5f6c2a26" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_f5514d62fc9e08807c9f90ef5f6c2a26" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/config-type.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/config-type.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libraries/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/requick.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/requick.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/router.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/26-11-2025.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/26-11-2025.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sources/allpage.php" beforeDir="false" afterPath="$PROJECT_DIR$/sources/allpage.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sources/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/sources/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sources/news.php" beforeDir="false" afterPath="$PROJECT_DIR$/sources/news.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sources/photo.php" beforeDir="false" afterPath="$PROJECT_DIR$/sources/photo.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.bin/detect-libc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.bin/detect-libc.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.bin/detect-libc.ps1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.bin/sass" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.bin/sass.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.bin/sass.ps1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher-win32-x64/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher-win32-x64/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher-win32-x64/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher-win32-x64/watcher.node" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/binding.gyp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/index.js.flow" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/scripts/build-from-source.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/Backend.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/Backend.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/Debounce.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/Debounce.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/DirTree.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/DirTree.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/Event.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/Glob.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/Glob.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/PromiseRunner.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/Signal.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/Watcher.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/Watcher.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/binding.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/kqueue/KqueueBackend.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/kqueue/KqueueBackend.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/linux/InotifyBackend.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/linux/InotifyBackend.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/macos/FSEventsBackend.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/macos/FSEventsBackend.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/shared/BruteForceBackend.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/shared/BruteForceBackend.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/unix/fts.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/unix/legacy.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/wasm/WasmBackend.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/wasm/WasmBackend.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/wasm/include.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/watchman/BSER.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/watchman/BSER.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/watchman/IPC.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/watchman/WatchmanBackend.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/watchman/WatchmanBackend.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/windows/WindowsBackend.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/windows/WindowsBackend.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/windows/win_utils.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/src/windows/win_utils.hh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@parcel/watcher/wrapper.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/braces/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/braces/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/braces/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/braces/lib/compile.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/braces/lib/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/braces/lib/expand.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/braces/lib/parse.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/braces/lib/stringify.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/braces/lib/utils.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/braces/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/esm/handler.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/esm/handler.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/esm/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/esm/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/esm/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/handler.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/handler.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/chokidar/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/detect-libc/.npmignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/detect-libc/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/detect-libc/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/detect-libc/bin/detect-libc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/detect-libc/lib/detect-libc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/detect-libc/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/fill-range/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/fill-range/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/fill-range/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/fill-range/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/immutable/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/immutable/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/immutable/dist/immutable.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/immutable/dist/immutable.es.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/immutable/dist/immutable.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/immutable/dist/immutable.js.flow" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/immutable/dist/immutable.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/immutable/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-extglob/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-extglob/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-extglob/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-extglob/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-glob/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-glob/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-glob/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-glob/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-number/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-number/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-number/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/is-number/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/micromatch/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/micromatch/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/micromatch/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/micromatch/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/LICENSE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/common.gypi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/except.gypi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/napi-inl.deprecated.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/napi-inl.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/napi.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/node_addon_api.gyp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/node_api.gyp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/noexcept.gypi" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/nothing.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/package-support.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/tools/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/tools/check-napi.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/tools/clang-format.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/tools/conversion.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/node-addon-api/tools/eslint-format.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/picomatch/CHANGELOG.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/picomatch/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/picomatch/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/picomatch/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/picomatch/lib/constants.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/picomatch/lib/parse.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/picomatch/lib/picomatch.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/picomatch/lib/scan.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/picomatch/lib/utils.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/picomatch/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/readdirp/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/readdirp/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/readdirp/esm/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/readdirp/esm/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/readdirp/esm/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/readdirp/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/readdirp/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/readdirp/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/sass.dart.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/sass.default.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/sass.default.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/sass.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/sass.node.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/sass.node.mjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/compile.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/deprecations.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/exception.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/importer.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/legacy/exception.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/legacy/function.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/legacy/importer.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/legacy/options.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/legacy/plugin_this.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/legacy/render.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/logger/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/logger/source_location.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/logger/source_span.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/options.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/util/promise_or.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/argument_list.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/boolean.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/calculation.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/color.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/function.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/list.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/map.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/mixin.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/number.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/sass/types/value/string.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/array-set.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/base64-vlq.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/base64.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/binary-search.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/mapping-list.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/quick-sort.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/source-map-consumer.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/source-map-consumer.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/source-map-generator.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/source-map-generator.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/source-node.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/source-node.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/lib/util.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/source-map.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/source-map-js/source-map.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/to-regex-range/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/to-regex-range/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/to-regex-range/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/to-regex-range/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/sources/product.php" beforeDir="false" afterPath="$PROJECT_DIR$/sources/product.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sources/video.php" beforeDir="false" afterPath="$PROJECT_DIR$/sources/video.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/API/Controller/AddonsAPIController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/API/Controller/AddonsAPIController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/API/Controller/VideoAPIController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/API/Controller/VideoAPIController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Admin/AdminAuthHelper.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Admin/AdminAuthHelper.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Admin/Controller/BaseAdminController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Admin/Controller/BaseAdminController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/API/Controller/QuickviewAPIController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/API/Controller/QuickviewAPIController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Admin/Controller/PhotoAdminController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Admin/Controller/PhotoAdminController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Admin/Controller/SettingAdminController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Admin/Controller/SettingAdminController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/ProductController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/CategoryRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/CategoryRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/LocationRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/LocationRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/NewsRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/NewsRepository.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Repository/PhotoRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/PhotoRepository.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Repository/ProductRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/ProductRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/StaticRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/StaticRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/TagsRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/TagsRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Router/AssetRouteHandler.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Router/AssetRouteHandler.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/components/why.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/why.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index/index_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index/index_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/css.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/css.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/footer.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/footer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/head.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/head.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/header.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/header.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/header2.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/header2.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Service/ProductService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/ProductService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index/index_tpl_new.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index/index_tpl_new.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/layout/menu.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/menu.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/mmenu.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/mmenu.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/slide.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/slide.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/slide2.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/slide2.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/product/product_detail_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/product/product_detail_tpl.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout/topbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/topbar.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/news/news_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/news/news_tpl.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/product/product_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/product/product_tpl.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/photo/logo-7322.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,6 +271,13 @@
   <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="PHP File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -247,7 +385,7 @@
       <workItem from="1749779220088" duration="30037000" />
       <workItem from="1749865176756" duration="8134000" />
       <workItem from="1764131713362" duration="14583000" />
-      <workItem from="1764150656586" duration="3597000" />
+      <workItem from="1764150656586" duration="12396000" />
     </task>
     <servers />
   </component>

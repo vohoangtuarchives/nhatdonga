@@ -24,7 +24,7 @@
     </div>
     <div class="card card-primary card-outline text-sm mb-0">
         <div class="card-header">
-            <h3 class="card-title">Danh sách <?=$config['photo']['man_photo'][$type]['title_main_photo']?></h3>
+            <h3 class="card-title">Danh sách <?=isset($config['photo']['man_photo'][$type]['title_main_photo']) ? $config['photo']['man_photo'][$type]['title_main_photo'] : 'Hình ảnh'?></h3>
         </div>
         <div class="card-body table-responsive p-0">
             <table class="table table-hover">
@@ -108,7 +108,7 @@
             </table>
         </div>
     </div>
-    <?php if($paging) { ?>
+    <?php if(!empty($paging)) { ?>
         <div class="card-footer text-sm pb-0">
             <?=$paging?>
         </div>

@@ -122,7 +122,7 @@ $config['export']['category'] = false;
 
 /* Quản lý tài khoản */
 
-$config['user']['active'] = true;
+$config['user']['active'] = false;
 
 $config['user']['admin'] = false;
 
@@ -150,7 +150,7 @@ $config['contact']['check'] = array("hienthi" => "Xác nhận");
 
 /* Quản lý địa điểm */
 
-$config['places']['active'] = true;
+$config['places']['active'] = false;
 
 $config['places']['check_city'] = array("hienthi" => "Hiển thị");
 
@@ -172,7 +172,7 @@ $config['onesignal'] = false;
 
 /* Quản lý giỏ hàng */
 
-$config['order']['active'] = true;
+$config['order']['active'] = false;
 
 if($config['order']['active']){
 

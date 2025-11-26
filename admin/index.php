@@ -42,7 +42,6 @@
 	/* Requick */
 	require_once LIBRARIES."requick.php";
 
-	dump($_SESSION[$loginAdmin]);
 ?>
 <!DOCTYPE html>
 <html lang="vi">

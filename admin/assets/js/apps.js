@@ -593,10 +593,19 @@ function seoCreate()
 {
 	var flag = true;
 	var seolang = $("#seo-create").val();
+	
+	// Kiểm tra nếu seolang rỗng, không thể tạo SEO
+	if(!seolang || seolang.trim() === '') {
+		notifyDialog("Không tìm thấy cấu hình ngôn ngữ SEO. Vui lòng kiểm tra lại cấu hình.", "Lỗi", "fas fa-exclamation-triangle", "red");
+		return false;
+	}
+	
 	var seolangArray = seolang.split(",");
 	var seolangCount = seolangArray.length;
-	var inputArticle = $('.card-article input.for-seo');
-	var textareaArticle = $('.card-article textarea.for-seo');
+	
+	// Tìm input/textarea có class for-seo trong .card-article hoặc .card-body (tương thích với nhiều template)
+	var inputArticle = $('.card-article input.for-seo, .card-body input.for-seo');
+	var textareaArticle = $('.card-article textarea.for-seo, .card-body textarea.for-seo');
 	var textareaArticleCount = textareaArticle.length;
 	var count = 0;
 	var inputSeo = $('.card-seo input.check-seo');

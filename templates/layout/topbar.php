@@ -24,10 +24,10 @@
     </div>
 </div>
 <div id="section-logo">
-    <div class="wrapper d-flex justify-content-between align-center">
+    <div class="wrapper d-flex justify-content-between align-items-center">
         <a href="<?= $config_base ?>">
             <img class="img-fluid" onerror="this.src='thumbs/128x55x1/assets/images/noimage.png';"
-                 src="thumbs/128x55x1/upload/photo/<?= $logo['photo'] ?>" alt="<?= $logo['photo'] ?>">
+                 src="thumbs/124x50x1/upload/photo/<?= $logo['photo'] ?>" alt="<?= $logo['photo'] ?>">
         </a>
         <div class="section-menu">
             <?php include __DIR__."/menu.php" ?>

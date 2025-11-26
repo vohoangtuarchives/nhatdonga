@@ -81,5 +81,5 @@ $loginMember = $config['login']['member'];
 /* Cấu hình upload */
 require_once LIBRARIES . "constant.php";
 
-error_reporting(0);
+error_reporting(E_ALL);
 

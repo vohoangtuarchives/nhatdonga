@@ -141,23 +141,50 @@ class ProductRepository
         );
     }
 
-    public function getProducts(?string $type = null, array $filters = [], int $start = 0, int $perPage = 12): array
+    public function getProducts(?string $type = null, array $filters = [], int $start = 0, int $perPage = 12, string $sortBy = 'default', string $sortOrder = 'desc'): array
     {
         $type = $this->resolveType($type);
         [$where, $params] = $this->buildFilterClause($type, $filters);
+
+        // Build ORDER BY clause
+        $orderBy = $this->buildOrderBy($sortBy, $sortOrder);
 
         $params[] = $start;
         $params[] = $perPage;
 
         return $this->d->rawQuery(
             "select id, name{$this->lang}, slugvi, slugen, photo, sale_price, regular_price, discount,
-                    id_list, id_cat, id_item, id_sub, type, date_created
+                    id_list, id_cat, id_item, id_sub, type, date_created, view
              from #_product
              where {$where}
-             order by numb,id desc
+             {$orderBy}
              limit ?, ?",
             $params
         );
+    }
+
+    private function buildOrderBy(string $sortBy, string $sortOrder): string
+    {
+        $order = strtoupper($sortOrder) === 'ASC' ? 'ASC' : 'DESC';
+        
+        switch ($sortBy) {
+            case 'price_asc':
+                return "ORDER BY (CASE WHEN sale_price > 0 THEN sale_price ELSE regular_price END) ASC, numb ASC, id DESC";
+            case 'price_desc':
+                return "ORDER BY (CASE WHEN sale_price > 0 THEN sale_price ELSE regular_price END) DESC, numb ASC, id DESC";
+            case 'name_asc':
+                return "ORDER BY name{$this->lang} ASC, numb ASC, id DESC";
+            case 'name_desc':
+                return "ORDER BY name{$this->lang} DESC, numb ASC, id DESC";
+            case 'newest':
+                return "ORDER BY date_created DESC, numb ASC, id DESC";
+            case 'oldest':
+                return "ORDER BY date_created ASC, numb ASC, id DESC";
+            case 'popular':
+                return "ORDER BY view DESC, numb ASC, id DESC";
+            default:
+                return "ORDER BY numb ASC, id DESC";
+        }
     }
 
     public function countProducts(?string $type = null, array $filters = []): int
@@ -201,6 +228,25 @@ class ProductRepository
             }
         }
 
+        // Filter by discount (khuyến mãi)
+        if (!empty($filters['has_discount']) && $filters['has_discount'] == true) {
+            $where[] = "discount > 0";
+        }
+
+        // Filter by price range
+        if (!empty($filters['price_min'])) {
+            $priceMin = (float)$filters['price_min'];
+            $where[] = "(sale_price >= ? OR (sale_price = 0 AND regular_price >= ?))";
+            $params[] = $priceMin;
+            $params[] = $priceMin;
+        }
+        if (!empty($filters['price_max'])) {
+            $priceMax = (float)$filters['price_max'];
+            $where[] = "(sale_price <= ? OR (sale_price = 0 AND regular_price <= ?))";
+            $params[] = $priceMax;
+            $params[] = $priceMax;
+        }
+
         if (!empty($filters['keyword'])) {
             $keyword = '%' . $filters['keyword'] . '%';
             $where[] = "(name{$this->lang} like ? or slugvi like ? or slugen like ?)";
@@ -210,6 +256,26 @@ class ProductRepository
         }
 
         return [implode(' and ', $where), $params];
+    }
+
+    /**
+     * Get all brands for a product type
+     * 
+     * @param string $type Product type
+     * @return array
+     */
+    public function getBrands(string $type): array
+    {
+        return $this->d->rawQuery(
+            "SELECT DISTINCT pb.id, pb.name{$this->lang}, pb.slug{$this->lang}, pb.numb
+             FROM #_product_brand pb
+             INNER JOIN #_product p ON p.id_brand = pb.id
+             WHERE pb.type = ? AND p.type = ? 
+             AND find_in_set('hienthi', pb.status) 
+             AND find_in_set('hienthi', p.status)
+             ORDER BY pb.numb, pb.id DESC",
+            [$type, $type]
+        ) ?: [];
     }
 
     private function pluckIds(array $rows, string $key): array

@@ -12,6 +12,8 @@ if (!defined('SOURCES')) die("Error");
 use Tuezy\Admin\Controller\NewsAdminController;
 use Tuezy\Admin\AdminAuthHelper;
 use Tuezy\Admin\AdminPermissionHelper;
+use Tuezy\Admin\AdminCRUDHelper;
+use Tuezy\Repository\NewsRepository;
 use Tuezy\SecurityHelper;
 
 /* Kiểm tra active news */
@@ -37,6 +39,18 @@ if (!isset($sluglang)) {
 $adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
 $adminPermissionHelper = new AdminPermissionHelper($func, $config);
 $controller = new NewsAdminController($d, $cache, $func, $config, $adminAuthHelper, $adminPermissionHelper, $type ?? 'tin-tuc');
+
+// Initialize AdminCRUDHelper for news (for edit/delete operations)
+$adminCRUD = new AdminCRUDHelper(
+	$d, 
+	$func, 
+	'news', 
+	$type, 
+	$config['news'][$type] ?? []
+);
+
+// Initialize NewsRepository for gallery
+$newsRepo = new NewsRepository($d, $lang, $type);
 
 // Build URL parameters
 $strUrl = "";
@@ -110,18 +124,177 @@ switch ($act) {
 
 	case "save":
 	case "save_copy":
-		// Save logic - có thể sử dụng AdminCRUDHelper->saveItem()
-		// Nhưng cần xử lý thêm dataTags, etc.
-		// Giữ nguyên logic cũ cho phần này vì phức tạp
-		saveMan();
+		// Save news với đầy đủ dữ liệu liên quan
+		if (empty($_POST)) {
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+		}
+
+		// Lấy id từ POST (form có hidden field name="id")
+		$id = null;
+		if (!empty($_POST['id'])) {
+			$id = (int)$_POST['id'];
+		} elseif (!empty($_POST['data']['id'])) {
+			$id = (int)$_POST['data']['id'];
+		} elseif (!empty($_GET['id']) && ($act == 'save' || $act == 'save_copy')) {
+			$id = (int)$_GET['id'];
+		}
+		
+		$data = $_POST['data'] ?? [];
+		
+		// Loại bỏ 'id' khỏi $data
+		unset($data['id']);
+		
+		// Sanitize data
+		foreach ($data as $key => $value) {
+			if (is_string($value)) {
+				$data[$key] = SecurityHelper::sanitize($value);
+			} elseif (is_array($value)) {
+				$data[$key] = SecurityHelper::sanitizeArray($value);
+			}
+		}
+
+		// Tự động tạo slug từ tên nếu chưa có
+		// Ưu tiên slugvi, nếu không có thì tạo từ namevi
+		if (empty($data['slugvi']) && !empty($data['namevi'])) {
+			$data['slugvi'] = $func->changeTitle($data['namevi']);
+		}
+		// Tương tự cho slugen
+		if (empty($data['slugen']) && !empty($data['nameen'])) {
+			$data['slugen'] = $func->changeTitle($data['nameen']);
+		}
+
+		// Validate và kiểm tra slug uniqueness
+		if (!empty($data['slugvi'])) {
+			$checkSlugData = [
+				'slug' => $data['slugvi'],
+				'id' => $id ?? 0,
+				'table' => 'news',
+				'type' => $type,
+			];
+			$slugResult = $func->checkSlug($checkSlugData);
+			if ($slugResult === 'exist') {
+				// Nếu slug đã tồn tại, thêm số vào cuối
+				$baseSlug = $data['slugvi'];
+				$counter = 1;
+				do {
+					$data['slugvi'] = $baseSlug . '-' . $counter;
+					$checkSlugData['slug'] = $data['slugvi'];
+					$slugResult = $func->checkSlug($checkSlugData);
+					$counter++;
+				} while ($slugResult === 'exist' && $counter < 100);
+			}
+		}
+
+		// Get tags data
+		$dataTags = $_POST['dataTags'] ?? [];
+		$dataTags = array_map('intval', $dataTags);
+		$dataTags = array_filter($dataTags, function($v) { return $v > 0; });
+
+		// Save using adminCRUD
+		try {
+			// Set type
+			$data['type'] = $type;
+			
+			// Save main news
+			if ($id) {
+				$d->where('id', $id);
+				if (!$d->update('news', $data)) {
+					$func->transfer("Có lỗi xảy ra khi cập nhật dữ liệu", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+				}
+				$newsId = $id;
+			} else {
+				// Insert new news
+				if (!isset($data['date_created'])) {
+					$data['date_created'] = time();
+				}
+				if (!isset($data['numb'])) {
+					$data['numb'] = 0;
+				}
+				// Đảm bảo có status field (mặc định là 'hienthi' nếu không có)
+				if (!isset($data['status'])) {
+					$data['status'] = 'hienthi';
+				}
+				// Đảm bảo có view field (mặc định là 0)
+				if (!isset($data['view'])) {
+					$data['view'] = 0;
+				}
+				// Đảm bảo có options field (mặc định là rỗng)
+				if (!isset($data['options'])) {
+					$data['options'] = '';
+				}
+				
+				if (!$d->insert('news', $data)) {
+					$func->transfer("Có lỗi xảy ra khi thêm dữ liệu", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+				}
+				$newsId = $d->getLastInsertId();
+				
+				// Kiểm tra xem insert có thành công không
+				if (!$newsId || $newsId <= 0) {
+					$func->transfer("Có lỗi xảy ra khi thêm dữ liệu. Không lấy được ID sau khi insert.", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+				}
+			}
+
+			if ($newsId && $newsId > 0) {
+				// Save tags
+				if (!empty($dataTags)) {
+					// Xóa tags cũ
+					$d->rawQuery("DELETE FROM #_news_tags WHERE id_parent = ?", [$newsId]);
+					
+					// Thêm tags mới
+					foreach ($dataTags as $tagId) {
+						$tagId = (int)$tagId;
+						if ($tagId > 0) {
+							$d->rawQuery(
+								"INSERT INTO #_news_tags (id_parent, id_tags) VALUES (?, ?) 
+								 ON DUPLICATE KEY UPDATE id_tags = id_tags",
+								[$newsId, $tagId]
+							);
+						}
+					}
+				}
+				
+				// Xử lý upload ảnh chính (tương tự product)
+				if ($func->hasFile("file")) {
+					$file_name = $func->uploadName($_FILES["file"]["name"]);
+					$imgType = $config['news'][$type]['img_type'] ?? '.jpg|.gif|.png|.jpeg|.webp';
+					
+					ob_start();
+					$photo = $func->uploadImage("file", $imgType, UPLOAD_NEWS, $file_name);
+					ob_get_clean();
+					
+					if ($photo) {
+						if ($id) {
+							$oldNews = $d->rawQueryOne("SELECT photo FROM #_news WHERE id = ? LIMIT 0,1", [$newsId]);
+							if ($oldNews && !empty($oldNews['photo'])) {
+								$func->deleteFile(UPLOAD_NEWS . $oldNews['photo']);
+							}
+						}
+						
+						$d->where('id', $newsId);
+						$d->update('news', ['photo' => $photo]);
+					}
+				}
+				
+				$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+				$func->transfer($message, "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
+			}
+		} catch (\Exception $e) {
+			$func->transfer($e->getMessage(), "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+		}
 		break;
 
 	case "delete":
 		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $adminCRUD->delete($id)) {
-			$func->transfer("Xóa dữ liệu thành công", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
+		if ($id) {
+			// Sử dụng controller hoặc adminCRUD để xóa
+			// Tạm thời sử dụng adminCRUD
+			if ($adminCRUD->delete($id)) {
+				$func->transfer("Xóa dữ liệu thành công", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+			}
 		} else {
-			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+			$func->transfer("Không nhận được dữ liệu", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
 		}
 		break;
 
@@ -186,26 +359,4 @@ switch ($act) {
 	default:
 		$template = "404";
 }
-
-/* 
- * SO SÁNH:
- * 
- * CODE CŨ: ~1952 dòng với nhiều functions và logic
- * CODE MỚI: ~160 dòng với AdminCRUDHelper và NewsService
- * 
- * GIẢM: ~92% code cho phần man
- * 
- * LỢI ÍCH:
- * - Sử dụng AdminCRUDHelper cho CRUD operations
- * - Sử dụng NewsService và NewsRepository cho data access
- * - Sử dụng SecurityHelper cho sanitization
- * - Code dễ đọc và maintain hơn
- * - Type-safe với type hints
- * - Dễ tái sử dụng logic giữa frontend và admin
- * 
- * LƯU Ý:
- * - Phần save vẫn giữ nguyên logic cũ vì phức tạp
- * - Các phần khác (list, cat, item, sub, etc.) có thể refactor tương tự
- * - NewsService có thể được sử dụng thay thế AdminCRUDHelper cho listing nếu cần
- */
 

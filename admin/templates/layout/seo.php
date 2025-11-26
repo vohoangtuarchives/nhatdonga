@@ -13,21 +13,31 @@
             }
         }
     }
+    
+    // Khởi tạo $seo_create từ config['website']['seo']
+    if(isset($config['website']['seo']) && is_array($config['website']['seo'])) {
+        foreach($config['website']['seo'] as $k => $v) {
+            $seo_create .= $k.",";
+        }
+    }
 ?>
 <div class="card-seo">
     <div class="card card-primary card-outline card-outline-tabs">
         <div class="card-header p-0 border-bottom-0">
             <ul class="nav nav-tabs" id="custom-tabs-three-tab-lang" role="tablist">
-                <?php foreach($config['website']['seo'] as $k => $v) { $seo_create .= $k.","; ?>
+                <?php if(isset($config['website']['seo']) && is_array($config['website']['seo'])) { 
+                    foreach($config['website']['seo'] as $k => $v) { ?>
                     <li class="nav-item">
                         <a class="nav-link <?=($k=='vi')?'active':''?>" id="tabs-lang" data-toggle="pill" href="#tabs-seolang-<?=$k?>" role="tab" aria-controls="tabs-seolang-<?=$k?>" aria-selected="true">SEO (<?=$v?>)</a>
                     </li>
-                <?php } ?>
+                <?php } 
+                } ?>
             </ul>
         </div>
         <div class="card-body">
             <div class="tab-content" id="custom-tabs-three-tabContent-lang">
-                <?php foreach($config['website']['seo'] as $k => $v) { ?>
+                <?php if(isset($config['website']['seo']) && is_array($config['website']['seo'])) { 
+                    foreach($config['website']['seo'] as $k => $v) { ?>
                     <div class="tab-pane fade show <?=($k=='vi')?'active':''?>" id="tabs-seolang-<?=$k?>" role="tabpanel" aria-labelledby="tabs-lang">
                         <div class="form-group">
                             <div class="label-seo">
@@ -67,9 +77,10 @@
                             </div>
                         <?php } */ ?>
                     </div>
-                <?php } ?>
+                <?php } 
+                } ?>
             </div>
         </div>
-        <input type="hidden" id="seo-create" value="<?=(isset($seo_create)) ? rtrim($seo_create,",") : ''?>">
+        <input type="hidden" id="seo-create" value="<?=!empty($seo_create) ? rtrim($seo_create,",") : (isset($config['website']['seo']) && is_array($config['website']['seo']) ? implode(',', array_keys($config['website']['seo'])) : 'vi')?>">
     </div>
 </div>

@@ -59,6 +59,11 @@ class QuickviewAPIController extends BaseAPIController
         $rowColor = $detailContext['colors'];
         $rowSize = $detailContext['sizes'];
 
+        // Make variables available to template
+        $lang = $this->lang;
+        $configBase = $this->config->get('database.url', '');
+        $config = $this->config->all();
+
         // Include quickview template
         include TEMPLATE . "product/quickview.php";
         exit;

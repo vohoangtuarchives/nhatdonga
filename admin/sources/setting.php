@@ -42,6 +42,11 @@ switch($act) {
 		$data = $_POST['data'] ?? [];
 		$dataSeo = $_POST['dataSeo'] ?? null;
 		
+		// Sanitize SEO data nếu có
+		if ($dataSeo && is_array($dataSeo)) {
+			$dataSeo = SecurityHelper::sanitizeArray($dataSeo);
+		}
+		
 		$result = $controller->save($data, $dataSeo, $id);
 		
 		if ($result['success']) {
