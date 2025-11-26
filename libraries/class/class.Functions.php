@@ -158,11 +158,22 @@ class Functions
 
 	/* Check URL */
 
-	public function checkURL($index = false)
+	public function checkURL($index = false, $configBase = null)
 
 	{
 
-		global $configBase;
+		// Get configBase from parameter or helper function
+		if ($configBase === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+				$http = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ? 'https://' : 'http://';
+				$configUrl = $config['database']['server-name'] . $config['database']['url'];
+				$configBase = $http . $configUrl;
+			} else {
+				// Fallback to global for backward compatibility
+				global $configBase;
+			}
+		}
 
 
 
@@ -228,11 +239,22 @@ class Functions
 
 	/* Create sitemap */
 
-	public function createSitemap($com = '', $type = '', $field = '', $table = '', $time = '', $changefreq = '', $priority = '', $lang = 'vi', $orderby = '', $menu = true)
+	public function createSitemap($com = '', $type = '', $field = '', $table = '', $time = '', $changefreq = '', $priority = '', $lang = 'vi', $orderby = '', $menu = true, $configBase = null)
 
 	{
 
-		global $configBase;
+		// Get configBase from parameter or helper function
+		if ($configBase === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+				$http = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ? 'https://' : 'http://';
+				$configUrl = $config['database']['server-name'] . $config['database']['url'];
+				$configBase = $http . $configUrl;
+			} else {
+				// Fallback to global for backward compatibility
+				global $configBase;
+			}
+		}
 
 
 
@@ -568,11 +590,29 @@ class Functions
 
 	/* Kiểm tra phân quyền */
 
-	public function checkRole()
+	public function checkRole($config = null, $loginAdmin = null)
 
 	{
 
-		global $config, $loginAdmin;
+		// Get config from parameter or helper function
+		if ($config === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+			} else {
+				// Fallback to global for backward compatibility
+				global $config;
+			}
+		}
+
+		// Get loginAdmin from parameter or config
+		if ($loginAdmin === null) {
+			if (function_exists('Tuezy\config')) {
+				$loginAdmin = $config['login']['admin'] ?? 'login_admin';
+			} else {
+				// Fallback to global for backward compatibility
+				global $loginAdmin;
+			}
+		}
 
 
 
@@ -586,11 +626,19 @@ class Functions
 
 	/* Lấy tình trạng nhận tin */
 
-	public function getStatusNewsletter($confirm_status = 0, $type = '')
+	public function getStatusNewsletter($confirm_status = 0, $type = '', $config = null)
 
 	{
 
-		global $config;
+		// Get config from parameter or helper function
+		if ($config === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+			} else {
+				// Fallback to global for backward compatibility
+				global $config;
+			}
+		}
 
 
 
@@ -1000,11 +1048,19 @@ class Functions
 
 	/* Check title */
 
-	public function checkTitle($data = array())
+	public function checkTitle($data = array(), $config = null)
 
 	{
 
-		global $config;
+		// Get config from parameter or helper function
+		if ($config === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+			} else {
+				// Fallback to global for backward compatibility
+				global $config;
+			}
+		}
 
 
 
@@ -1164,11 +1220,19 @@ class Functions
 
 	/* Check recaptcha */
 
-	public function checkRecaptcha($response = '')
+	public function checkRecaptcha($response = '', $config = null)
 
 	{
 
-		global $config;
+		// Get config from parameter or helper function
+		if ($config === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+			} else {
+				// Fallback to global for backward compatibility
+				global $config;
+			}
+		}
 
 
 
@@ -1204,11 +1268,33 @@ class Functions
 
 	/* Login */
 
-	public function checkLoginMember()
+	public function checkLoginMember($configBase = null, $loginMember = null)
 
 	{
 
-		global $configBase, $loginMember;
+		// Get configBase from parameter or helper function
+		if ($configBase === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+				$http = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ? 'https://' : 'http://';
+				$configUrl = $config['database']['server-name'] . $config['database']['url'];
+				$configBase = $http . $configUrl;
+			} else {
+				// Fallback to global for backward compatibility
+				global $configBase;
+			}
+		}
+
+		// Get loginMember from parameter or config
+		if ($loginMember === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+				$loginMember = $config['login']['member'] ?? 'login_member';
+			} else {
+				// Fallback to global for backward compatibility
+				global $loginMember;
+			}
+		}
 
 
 
@@ -1318,11 +1404,31 @@ class Functions
 
 	/* Get image */
 
-	public function getImage($data = array())
+	public function getImage($data = array(), $config = null, $configBase = null)
 
 	{
 
-		global $config, $configBase;
+		// Get config from parameter or helper function
+		if ($config === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+			} else {
+				// Fallback to global for backward compatibility
+				global $config;
+			}
+		}
+
+		// Get configBase from parameter or helper function
+		if ($configBase === null) {
+			if (function_exists('Tuezy\config')) {
+				$http = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ? 'https://' : 'http://';
+				$configUrl = $config['database']['server-name'] . $config['database']['url'];
+				$configBase = $http . $configUrl;
+			} else {
+				// Fallback to global for backward compatibility
+				global $configBase;
+			}
+		}
 
 
 
@@ -1678,11 +1784,22 @@ class Functions
 
 	/* Transfer */
 
-	public function transfer($msg = '', $page = '', $numb = true)
+	public function transfer($msg = '', $page = '', $numb = true, $configBase = null)
 
 	{
 
-		global $configBase;
+		// Get configBase from parameter or helper function
+		if ($configBase === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+				$http = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ? 'https://' : 'http://';
+				$configUrl = $config['database']['server-name'] . $config['database']['url'];
+				$configBase = $http . $configUrl;
+			} else {
+				// Fallback to global for backward compatibility
+				global $configBase;
+			}
+		}
 
 
 
@@ -2152,11 +2269,19 @@ class Functions
 
 	/* Check file */
 
-	public function checkFile($file)
+	public function checkFile($file, $config = null)
 
 	{
 
-		global $config;
+		// Get config from parameter or helper function
+		if ($config === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+			} else {
+				// Fallback to global for backward compatibility
+				global $config;
+			}
+		}
 
 
 
@@ -2184,11 +2309,19 @@ class Functions
 
 	/* Check extension file */
 
-	public function checkExtFile($file)
+	public function checkExtFile($file, $config = null)
 
 	{
 
-		global $config;
+		// Get config from parameter or helper function
+		if ($config === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+			} else {
+				// Fallback to global for backward compatibility
+				global $config;
+			}
+		}
 
 
 
@@ -2626,11 +2759,19 @@ class Functions
 
 	/* Upload images */
 
-	public function uploadImage($file = '', $extension = '', $folder = '', $newname = '')
+	public function uploadImage($file = '', $extension = '', $folder = '', $newname = '', $config = null)
 
 	{
 
-		global $config;
+		// Get config from parameter or helper function
+		if ($config === null) {
+			if (function_exists('Tuezy\config')) {
+				$config = \Tuezy\config();
+			} else {
+				// Fallback to global for backward compatibility
+				global $config;
+			}
+		}
 
 
 

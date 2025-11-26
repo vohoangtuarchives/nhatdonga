@@ -19,7 +19,8 @@ $viewData = $controller->index();
 
 // Extract data for template
 extract($viewData);
-$breadcrumbs = $viewData['breadcrumbs'];
+$breadcrumbs = $viewData['breadcrumbs'] ?? '';
+$lienhe = $viewData['lienhe'] ?? [];
 
 /* 
  * SO SÁNH:

@@ -132,7 +132,7 @@ class ProductRepository
         $params[] = $limit;
 
         return $this->d->rawQuery(
-            "select id, name{$this->lang}, slug{$this->lang}, photo, sale_price, regular_price, discount
+            "select id, name{$this->lang}, slugvi, slugen, photo, sale_price, regular_price, discount
              from #_product
              where " . implode(' and ', $where) . "
              order by numb,id desc
@@ -150,7 +150,7 @@ class ProductRepository
         $params[] = $perPage;
 
         return $this->d->rawQuery(
-            "select id, name{$this->lang}, slug{$this->lang}, photo, sale_price, regular_price, discount,
+            "select id, name{$this->lang}, slugvi, slugen, photo, sale_price, regular_price, discount,
                     id_list, id_cat, id_item, id_sub, type, date_created
              from #_product
              where {$where}

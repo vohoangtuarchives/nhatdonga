@@ -10,9 +10,33 @@ use Tuezy\Repository\NewsRepository;
 use Tuezy\FormHandler;
 use Tuezy\ValidationHelper;
 use Tuezy\Config;
+use Tuezy\Helper\GlobalHelper;
+
+// Get dependencies using helper functions
+$d = GlobalHelper::db();
+$cache = GlobalHelper::cache();
+$func = GlobalHelper::func();
+$emailer = GlobalHelper::emailer();
+$flash = GlobalHelper::flash();
+$statistic = GlobalHelper::statistic();
+$config = GlobalHelper::config();
+$breadcr = GlobalHelper::breadcr();
+
+// Get language variables
+$lang = $_SESSION['lang'] ?? 'vi';
+$sluglang = 'slugvi';
 
 // Initialize Config
 $configObj = new Config($config);
+
+// Get configBase and setting
+$http = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ? 'https://' : 'http://';
+$configUrl = $config['database']['server-name'] . $config['database']['url'];
+$configBase = $http . $configUrl;
+
+// Get setting from cache
+$sqlCache = "select * from #_setting";
+$setting = $cache->get($sqlCache, null, 'fetch', 7200);
 
 // Initialize Repositories
 $photoRepo = new PhotoRepository($d, $cache, $lang, $sluglang);

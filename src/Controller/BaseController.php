@@ -7,9 +7,9 @@ use Tuezy\Repository\CategoryRepository;
 use Tuezy\Repository\NewsRepository;
 use Tuezy\Repository\TagsRepository;
 use Tuezy\Service\SeoService;
-use Tuezy\Helper\SEOHelper;
-use Tuezy\Helper\BreadcrumbHelper;
-use Tuezy\Helper\PaginationHelper;
+use Tuezy\SEOHelper;
+use Tuezy\BreadcrumbHelper;
+use Tuezy\PaginationHelper;
 use Tuezy\SecurityHelper;
 
 /**
@@ -39,9 +39,23 @@ abstract class BaseController
         $this->func = $func;
         $this->seo = $seo;
         $this->config = $config;
-        $this->seoHelper = new SEOHelper($db, $cache);
-        $this->breadcrumbHelper = new BreadcrumbHelper($db, $cache);
-        $this->paginationHelper = new PaginationHelper($func);
+        
+        // Initialize SEOHelper with required parameters
+        $lang = $_SESSION['lang'] ?? 'vi';
+        $seolang = 'vi';
+        $http = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ? 'https://' : 'http://';
+        $configUrl = $config['database']['server-name'] . $config['database']['url'];
+        $configBase = $http . $configUrl;
+        
+        $this->seoHelper = new SEOHelper($seo, $func, $db, $lang, $seolang, $configBase);
+        
+        // Initialize BreadcrumbHelper with required parameters
+        $breadcr = new \BreadCrumbs($db);
+        $this->breadcrumbHelper = new BreadcrumbHelper($breadcr, $configBase);
+        
+        // Initialize PaginationHelper with required parameters
+        $pagingAjax = new \PaginationsAjax();
+        $this->paginationHelper = new PaginationHelper($pagingAjax);
     }
 
     /**

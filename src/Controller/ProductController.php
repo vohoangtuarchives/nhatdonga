@@ -137,7 +137,7 @@ class ProductController extends BaseController
 
         // Pagination
         $url = $this->func->getCurrentPageURL();
-        $paging = $this->paginationHelper->getPagination($listResult['total'], $url, '');
+        $paging = $this->paginationHelper->getPagination($listResult['total'], $url, '', $perPage);
 
         return [
             'products' => $listResult['items'],
@@ -197,7 +197,7 @@ class ProductController extends BaseController
 
         // Pagination
         $url = $this->func->getCurrentPageURL();
-        $paging = $this->paginationHelper->getPagination($listResult['total'], $url, '');
+        $paging = $this->paginationHelper->getPagination($listResult['total'], $url, '', $perPage);
 
         return [
             'category' => $category,
@@ -224,7 +224,7 @@ class ProductController extends BaseController
 
         // Pagination
         $url = $this->func->getCurrentPageURL();
-        $paging = $this->paginationHelper->getPagination($listResult['total'], $url, '');
+        $paging = $this->paginationHelper->getPagination($listResult['total'], $url, '', $perPage);
 
         return [
             'keyword' => $keyword,

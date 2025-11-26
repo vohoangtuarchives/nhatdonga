@@ -26,8 +26,8 @@ class ProductAPIController extends BaseAPIController
         $this->productService = new ProductService($this->productRepo, $this->categoryRepo, new \Tuezy\Repository\TagsRepository($db, $cache, $lang, $sluglang), $db, $lang);
         
         // Initialize pagination helper
-        $pagingAjax = new \PaginationsAjax();
-        $this->paginationAjax = new PaginationAjaxHelper($pagingAjax, $func);
+        // PaginationAjaxHelper doesn't need constructor parameters
+        $this->paginationAjax = new PaginationAjaxHelper();
     }
 
     /**

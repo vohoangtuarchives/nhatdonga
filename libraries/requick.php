@@ -3,6 +3,18 @@
 use Tuezy\RequestHandler;
 use Tuezy\Admin\AdminAuthHelper;
 use Tuezy\Admin\AdminPermissionHelper;
+use Tuezy\Helper\GlobalHelper;
+
+// Get dependencies using helper functions (with fallback to global for backward compatibility)
+$func = GlobalHelper::func();
+$d = GlobalHelper::db();
+$cache = GlobalHelper::cache();
+$config = GlobalHelper::config();
+
+// Get loginAdmin (should be set in admin/index.php)
+if (!isset($loginAdmin)) {
+    $loginAdmin = $config['login']['admin'] ?? 'login_admin';
+}
 
 /* Request data handled by RequestHandler */
 $params = RequestHandler::getParams();

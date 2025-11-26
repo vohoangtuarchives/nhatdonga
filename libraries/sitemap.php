@@ -1,6 +1,21 @@
 <?php
 
 use Tuezy\SecurityHelper;
+use Tuezy\Helper\GlobalHelper;
+
+// Get dependencies using helper functions
+$func = GlobalHelper::func();
+$config = GlobalHelper::config();
+
+// Get configBase
+$http = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ? 'https://' : 'http://';
+$configUrl = $config['database']['server-name'] . $config['database']['url'];
+$configBase = $http . $configUrl;
+
+// Get requick from router (should be set in router.php)
+if (!isset($requick)) {
+    $requick = [];
+}
 
 header("Content-Type: text/xml; charset=utf-8");
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");

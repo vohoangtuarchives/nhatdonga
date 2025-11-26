@@ -132,5 +132,35 @@ class PaginationHelper
     {
         return ($this->currentPage - 1) * $this->perPage;
     }
+
+    /**
+     * Get pagination HTML
+     * 
+     * @param int $total Total items
+     * @param string $url Base URL
+     * @param string $elShow Element ID to show content (for AJAX pagination)
+     * @param int|null $perPage Items per page (optional, uses instance perPage if not provided)
+     * @return string Pagination HTML
+     */
+    public function getPagination(int $total, string $url, string $elShow = '', ?int $perPage = null): string
+    {
+        if ($total <= 0) {
+            return '';
+        }
+
+        // Use provided perPage or instance perPage
+        $itemsPerPage = $perPage ?? $this->perPage;
+        
+        // Set perPage for pagingAjax
+        $this->pagingAjax->perpage = $itemsPerPage;
+        
+        // Build page link
+        $urlpos = strpos($url, "?");
+        $pageLink = ($urlpos) ? $url . "&" : $url . "?";
+        $pageLink .= "p=";
+
+        // Generate pagination using pagingAjax
+        return $this->pagingAjax->getAllPageLinks($total, $pageLink, $elShow);
+    }
 }
 

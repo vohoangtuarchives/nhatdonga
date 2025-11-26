@@ -56,9 +56,17 @@ if (class_exists('AutoLoadRefactored')) {
 }
 
 require_once BASE_PATH . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Application.php';
+require_once BASE_PATH . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Context.php';
+require_once BASE_PATH . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Helper' . DIRECTORY_SEPARATOR . 'GlobalHelper.php';
 
 $app = new Application($config);
 
+// Initialize Context for dependency management
+use Tuezy\Context;
+$context = new Context($app);
+Context::setInstance($context);
+
+// Set globals for backward compatibility (will be phased out gradually)
 foreach ($app->getGlobals() as $name => $service) {
     if (!array_key_exists($name, $GLOBALS)) {
         $GLOBALS[$name] = $service;

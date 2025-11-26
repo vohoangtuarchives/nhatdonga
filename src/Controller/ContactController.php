@@ -77,8 +77,12 @@ class ContactController extends BaseController
         // Breadcrumbs
         $this->breadcrumbHelper->add('lienhe', '/lien-he');
 
+        // Get static content for contact page
+        $lienhe = $this->staticRepo->getByType('lienhe');
+
         return [
             'breadcrumbs' => $this->breadcrumbHelper->render(),
+            'lienhe' => $lienhe ?: [],
         ];
     }
 }

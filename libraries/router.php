@@ -18,6 +18,8 @@ use Tuezy\RouterHelper;
 use Tuezy\Config;
 use Tuezy\Repository\PhotoRepository;
 use Tuezy\SecurityHelper;
+use Tuezy\Context;
+use Tuezy\Helper\GlobalHelper;
 
 // Initialize Config
 $configObj = new Config($config);
@@ -28,6 +30,26 @@ $com = $params['com'];
 $act = $params['act'];
 $type = $params['type'];
 $getPage = $params['curPage'];
+
+// Ensure $http and $configUrl are defined (they should be from libraries/config.php)
+if (!isset($http)) {
+    if (
+        (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ||
+        (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+    ) {
+        $http = 'https://';
+    } else {
+        $http = 'http://';
+    }
+}
+
+if (!isset($configUrl)) {
+    $configUrl = $config['database']['server-name'] . $config['database']['url'];
+}
+
+if (!isset($configBase)) {
+    $configBase = $http . $configUrl;
+}
 
 /* Check HTTP */
 $func->checkHTTP($http, $config['arrayDomainSSL'], $configBase, $configUrl);
@@ -47,13 +69,15 @@ if (!defined('TEMPLATE')) {
 $router->setBasePath($config['database']['url']);
 
 $router->map('GET', array(ADMIN . '/', 'admin'), function () {
-	global $func, $config;
+	$func = GlobalHelper::func();
+	$config = GlobalHelper::config();
 	$func->redirect($config['database']['url'] . ADMIN . "/index.php");
 	exit;
 });
 
 $router->map('GET', array(ADMIN, 'admin'), function () {
-	global $func, $config;
+	$func = GlobalHelper::func();
+	$config = GlobalHelper::config();
 	$func->redirect($config['database']['url'] . ADMIN . "/index.php");
 	exit;
 });
@@ -66,7 +90,8 @@ $router->map('GET|POST', '[a:com]/[a:lang]/', 'allpagelang', 'lang');
 $router->map('GET|POST', '[a:com]/[a:action]', 'account', 'account');
 
 $router->map('GET', THUMBS . '/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z, $src) {
-	global $func, $config;
+	$func = GlobalHelper::func();
+	$config = GlobalHelper::config();
 	// Convert URL path to file system path
 	$src = str_replace('%20', ' ', $src);
 	// Remove leading slash if present
@@ -92,7 +117,12 @@ $router->map('GET', THUMBS . '/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z
 }, 'thumb');
 
 $router->map('GET', WATERMARK . '/product/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z, $src) {
-	global $func, $cache, $config, $d, $lang, $sluglang;
+	$func = GlobalHelper::func();
+	$cache = GlobalHelper::cache();
+	$config = GlobalHelper::config();
+	$d = GlobalHelper::db();
+	$lang = $_SESSION['lang'] ?? 'vi';
+	$sluglang = 'slugvi';
 	
 	// Convert URL path to file system path
 	$src = str_replace('%20', ' ', $src);
@@ -112,7 +142,12 @@ $router->map('GET', WATERMARK . '/product/[i:w]x[i:h]x[i:z]/[**:src]', function 
 }, 'watermark');
 
 $router->map('GET', WATERMARK . '/news/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z, $src) {
-	global $func, $cache, $config, $d, $lang, $sluglang;
+	$func = GlobalHelper::func();
+	$cache = GlobalHelper::cache();
+	$config = GlobalHelper::config();
+	$d = GlobalHelper::db();
+	$lang = $_SESSION['lang'] ?? 'vi';
+	$sluglang = 'slugvi';
 	
 	// Convert URL path to file system path
 	$src = str_replace('%20', ' ', $src);
@@ -271,13 +306,20 @@ $routeConfig = $routeHandler->getRouteConfig($com, [
 
 if ($routeConfig) {
 	// Sử dụng route config từ RouteHandler
-	$source = $routeConfig['source'] ?? null;
-	$template = $routeConfig['template'] ?? null;
-	$type = $routeConfig['type'] ?? $com;
-	$table = $routeConfig['table'] ?? null;
-	
-	if (!empty($routeConfig['titleMain'])) {
-		$titleMain = $routerHelper->resolveTitleMain($routeConfig['titleMain']);
+	// Nếu processRoute đã trả về kết quả, sử dụng nó (đã resolve titleMain)
+	if ($specialResult && !empty($specialResult['source'])) {
+		$source = $specialResult['source'];
+		$template = $specialResult['template'];
+		$type = $specialResult['type'] ?? $com;
+		$table = $specialResult['table'] ?? null;
+		$titleMain = $specialResult['titleMain'] ?? null;
+	} else {
+		// Fallback: sử dụng trực tiếp từ routeConfig
+		$source = $routeConfig['source'] ?? null;
+		$template = $routeConfig['template'] ?? null;
+		$type = $routeConfig['type'] ?? $com;
+		$table = $routeConfig['table'] ?? null;
+		$titleMain = $routeConfig['titleMain'] ?? null;
 	}
 	
 	if (isset($routeConfig['seoType'])) {
@@ -387,19 +429,3 @@ if (empty($template)) {
 	include("404.php");
 	exit;
 }
-
-/* 
- * SO SÁNH:
- * 
- * CODE CŨ: ~714 dòng với switch statement lớn
- * CODE MỚI: ~400 dòng với RouteHandler
- * 
- * GIẢM: ~44% code
- * 
- * LỢI ÍCH:
- * - Sử dụng RequestHandler thay vì htmlspecialchars trực tiếp
- * - Sử dụng RouteHandler cho routing logic
- * - Sử dụng PhotoRepository cho watermark
- * - Dễ maintain và extend hơn
- */
-
