@@ -5,6 +5,7 @@ require LIBRARIES . 'WebpConvert/vendor/autoload.php';
 
 
 use WebPConvert\WebPConvert;
+use Tuezy\Service\ThumbnailService;
 
 
 
@@ -21,12 +22,28 @@ class Functions
 
 	private $comlang;
 
+	private ?ThumbnailService $thumbnailService = null;
 
 
-	public function __construct(private $d, private $cache)
+
+	public function __construct(private $d, private $cache, ?ThumbnailService $thumbnailService = null)
 
 	{
-		
+		// Inject ThumbnailService if provided, otherwise lazy load
+		$this->thumbnailService = $thumbnailService;
+	}
+
+	/**
+	 * Get ThumbnailService instance (lazy loading)
+	 * 
+	 * @return ThumbnailService
+	 */
+	private function getThumbnailService(): ThumbnailService
+	{
+		if ($this->thumbnailService === null) {
+			$this->thumbnailService = new ThumbnailService();
+		}
+		return $this->thumbnailService;
 	}
 
 	public function get_comorigin($com = '')
@@ -1236,25 +1253,56 @@ class Functions
 
 
 
-		$result = null;
+		$result = [];
 
-		$active = $config['googleAPI']['recaptcha']['active'];
+		$active = $config['googleAPI']['recaptcha']['active'] ?? false;
 
 
 
 		if ($active == true && $response != '') {
 
-			$recaptcha = file_get_contents($config['googleAPI']['recaptcha']['urlapi'] . '?secret=' . $config['googleAPI']['recaptcha']['secretkey'] . '&response=' . $response);
+			$recaptchaResponse = @file_get_contents($config['googleAPI']['recaptcha']['urlapi'] . '?secret=' . $config['googleAPI']['recaptcha']['secretkey'] . '&response=' . $response);
 
-			$recaptcha = json_decode($recaptcha);
+			if ($recaptchaResponse === false) {
+				$result['success'] = false;
+				$result['error'] = 'Failed to connect to reCAPTCHA service';
+				return $result;
+			}
 
-			$result['score'] = $recaptcha->score;
+			$recaptcha = json_decode($recaptchaResponse);
 
-			$result['action'] = $recaptcha->action;
+			// Kiểm tra xem response có hợp lệ không
+			if ($recaptcha === null || !is_object($recaptcha)) {
+				$result['success'] = false;
+				$result['error'] = 'Invalid reCAPTCHA response';
+				return $result;
+			}
+
+			// Kiểm tra success
+			$result['success'] = isset($recaptcha->success) ? (bool)$recaptcha->success : false;
+
+			// reCAPTCHA v3 có score và action
+			if (isset($recaptcha->score)) {
+				$result['score'] = (float)$recaptcha->score;
+			}
+			if (isset($recaptcha->action)) {
+				$result['action'] = (string)$recaptcha->action;
+			}
+
+			// Lưu error codes nếu có
+			if (isset($recaptcha->{'error-codes'})) {
+				$result['error-codes'] = $recaptcha->{'error-codes'};
+			}
 
 		} else if (!$active) {
 
 			$result['test'] = true;
+			$result['success'] = true;
+
+		} else {
+
+			$result['success'] = false;
+			$result['error'] = 'reCAPTCHA response is empty';
 
 		}
 
@@ -3177,297 +3225,103 @@ class Functions
 
 
 
-	/* Create thumb */
+	/* Create thumb - Refactored version */
 
 	public function createThumb($width_thumb = 0, $height_thumb = 0, $zoom_crop = '1', $src = '', $watermark = null, $path = THUMBS, $preview = false, $args = array(), $quality = 100)
-
 	{
-
 		global $config;
 
+		$thumbService = $this->getThumbnailService();
 
+		// Validate inputs
+		$thumbService->validateInputs($width_thumb, $height_thumb, $src);
 
-		$webp = false;
+		// Prepare source image
+		$imageData = $thumbService->prepareSource($src);
+		$src = $imageData['src'];
+		$webp = $imageData['webp'];
 
-		$t = 3600 * 24 * 30;
+		// Cleanup old temp files
+		$thumbService->cleanupTempFiles(
+			[$this, 'RemoveFilesFromDirInXSeconds'],
+			[$this, 'RemoveEmptySubFolders'],
+			$watermark,
+			$path
+		);
 
+		// Get image dimensions
+		$imageInfo = $thumbService->getImageInfo($src);
+		$image_w = $imageInfo['width'];
+		$image_h = $imageInfo['height'];
+		$mime_type = $imageInfo['mime'];
 
-
-		if (strpos($src, ".webp") !== false) {
-
-			$webp = true;
-
-			$src = str_replace(".webp", "", $src);
-
-		}
-
-
-
-		$this->RemoveFilesFromDirInXSeconds(UPLOAD_TEMP_L, 1);
-
-
-
-		if ($watermark != null) {
-
-			$this->RemoveFilesFromDirInXSeconds(WATERMARK . '/' . $path . "/", $t);
-
-			$this->RemoveEmptySubFolders(WATERMARK . '/' . $path . "/");
-
-		} else {
-
-			$this->RemoveFilesFromDirInXSeconds($path . "/", $t);
-
-			$this->RemoveEmptySubFolders($path . "/");
-
-		}
-
-
-
-		$src = str_replace("%20", " ", $src);
-
-		if (!file_exists($src)) die("NO IMAGE $src");
-
-
-
-		$image_url = $src;
-
-		$origin_x = 0;
-
-		$origin_y = 0;
-
-		$new_width = $width_thumb;
-
-		$new_height = $height_thumb;
-
-
-
-		if ($new_width < 10 && $new_height < 10) {
-
-			header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-
-			die("Width and height larger than 10px");
-
-		}
-
-		if ($new_width > 2000 || $new_height > 2000) {
-
-			header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-
-			die("Width and height less than 2000px");
-
-		}
-
-
-
-		$array = getimagesize($image_url);
-
-		if ($array) list($image_w, $image_h) = $array;
-
-		else die("NO IMAGE $image_url");
-
-
-
+		// Calculate thumbnail dimensions
+		$dimensions = $thumbService->calculateDimensions($width_thumb, $height_thumb, $image_w, $image_h);
+		$new_width = $dimensions['width'];
+		$new_height = $dimensions['height'];
 		$width = $image_w;
-
 		$height = $image_h;
 
+		// Create image resource from source
+		$imageResource = $thumbService->createImageResource($src, $mime_type);
+		$image = $imageResource['image'];
+		$func = $imageResource['func'];
+		$mime_type = $imageResource['mime'];
 
-
-		if ($new_height && !$new_width) $new_width = $width * ($new_height / $height);
-
-		else if ($new_width && !$new_height) $new_height = $height * ($new_width / $width);
-
-
-
-		$image_ext = explode('.', $image_url);
-
-		$image_ext = trim(strtolower(end($image_ext)));
-
-		$image_name = explode('/', $image_url);
-
-		$image_name = trim(basename($image_url), "/");
+		// Get image name
+		$image_name = basename($src);
 
 
 
-		switch ($array['mime']) {
-
-			case 'image/jpeg':
-
-			case 'image/jpg':
-
-				$image = imagecreatefromjpeg($image_url);
-
-				$func = 'imagejpeg';
-
-				$mime_type = 'jpeg';
-
-				break;
-
-
-
-			case 'image/x-ms-bmp':
-
-			case 'image/png':
-
-				$image = imagecreatefrompng($image_url);
-
-				$func = 'imagepng';
-
-				$mime_type = 'png';
-
-				break;
-
-
-
-			case 'image/gif':
-
-				$image = imagecreatefromgif($image_url);
-
-				$func = 'imagegif';
-
-				$mime_type = 'png';
-
-				break;
-
-
-
-			default:
-
-				die("UNKNOWN IMAGE TYPE: $image_url");
-
-		}
-
-
-
+		// Store original dimensions for watermark calculation
 		$_new_width = $new_width;
-
 		$_new_height = $new_height;
 
-
-
+		// Apply zoom crop mode 3 (fit to dimensions)
 		if ($zoom_crop == 3) {
-
 			$final_height = $height * ($new_width / $width);
-
-			if ($final_height > $new_height) $new_width = $width * ($new_height / $height);
-
-			else $new_height = $final_height;
-
+			if ($final_height > $new_height) {
+				$new_width = $width * ($new_height / $height);
+			} else {
+				$new_height = $final_height;
+			}
 		}
 
-
-
+		// Create canvas
 		$canvas = imagecreatetruecolor($new_width, $new_height);
-
 		imagealphablending($canvas, false);
-
 		$color = imagecolorallocatealpha($canvas, 255, 255, 255, 0);
-
 		imagefill($canvas, 0, 0, $color);
 
-
-
+		// Apply zoom crop mode 2 (center crop)
+		$origin_x = 0;
+		$origin_y = 0;
 		if ($zoom_crop == 2) {
-
-			$final_height = $height * ($new_width / $width);
-
-			if ($final_height > $new_height) {
-
-				$origin_x = $new_width / 2;
-
-				$new_width = $width * ($new_height / $height);
-
-				$origin_x = round($origin_x - ($new_width / 2));
-
-			} else {
-
-				$origin_y = $new_height / 2;
-
-				$new_height = $final_height;
-
-				$origin_y = round($origin_y - ($new_height / 2));
-
-			}
-
+			$cropData = $thumbService->calculateCenterCrop($new_width, $new_height, $width, $height);
+			$new_width = $cropData['width'];
+			$new_height = $cropData['height'];
+			$origin_x = $cropData['origin_x'];
+			$origin_y = $cropData['origin_y'];
 		}
-
-
 
 		imagesavealpha($canvas, true);
 
 
 
-		if ($zoom_crop > 0) {
-
-			$align = '';
-
-			$src_x = $src_y = 0;
-
-			$src_w = $width;
-
-			$src_h = $height;
-
-
-
-			$cmp_x = $width / $new_width;
-
-			$cmp_y = $height / $new_height;
-
-
-
-			if ($cmp_x > $cmp_y) {
-
-				$src_w = round($width / $cmp_x * $cmp_y);
-
-				$src_x = round(($width - ($width / $cmp_x * $cmp_y)) / 2);
-
-			} else if ($cmp_y > $cmp_x) {
-
-				$src_h = round($height / $cmp_y * $cmp_x);
-
-				$src_y = round(($height - ($height / $cmp_y * $cmp_x)) / 2);
-
-			}
-
-
-
-			if ($align) {
-
-				if (strpos($align, 't') !== false) {
-
-					$src_y = 0;
-
-				}
-
-				if (strpos($align, 'b') !== false) {
-
-					$src_y = $height - $src_h;
-
-				}
-
-				if (strpos($align, 'l') !== false) {
-
-					$src_x = 0;
-
-				}
-
-				if (strpos($align, 'r') !== false) {
-
-					$src_x = $width - $src_w;
-
-				}
-
-			}
-
-
-
-			imagecopyresampled($canvas, $image, $origin_x, $origin_y, $src_x, $src_y, $new_width, $new_height, $src_w, $src_h);
-
-		} else {
-
-			imagecopyresampled($canvas, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-
-		}
+		// Apply zoom crop (mode 1) or simple resize
+		$cropParams = $thumbService->calculateCropParams($zoom_crop, $width, $height, $new_width, $new_height, '');
+		imagecopyresampled(
+			$canvas, 
+			$image, 
+			$origin_x, 
+			$origin_y, 
+			$cropParams['src_x'], 
+			$cropParams['src_y'], 
+			$new_width, 
+			$new_height, 
+			$cropParams['src_w'], 
+			$cropParams['src_h']
+		);
 
 
 
@@ -3485,44 +3339,14 @@ class Functions
 
 
 
-		$upload_dir = '';
-
-		$folder_old = dirname($image_url) . '/';
-		
-		// Normalize folder_old - remove absolute path if present, keep only relative path
-		$folder_old = str_replace('\\', '/', $folder_old);
-		if (strpos($folder_old, $_SERVER['DOCUMENT_ROOT']) === 0) {
-			$folder_old = str_replace($_SERVER['DOCUMENT_ROOT'], '', $folder_old);
-		}
-		// Remove leading slashes and normalize
-		$folder_old = ltrim($folder_old, '/\\');
-		if (!empty($folder_old) && substr($folder_old, -1) !== '/') {
-			$folder_old .= '/';
-		}
+		// Calculate upload directory path
+		$folder_old = $thumbService->calculateFolderPath($src, $args);
+		$upload_dir = $thumbService->buildUploadPath($width_thumb, $height_thumb, $zoom_crop, $folder_old, $watermark, $path);
 
 
 
-		if (!empty($watermark['status']) && strpos('hienthi', $watermark['status']) !== false) {
-
-			$upload_dir = WATERMARK . '/' . $path . '/' . $width_thumb . 'x' . $height_thumb . 'x' . $zoom_crop . '/' . $folder_old;
-
-		} else {
-
-			if ($watermark != null) $upload_dir = WATERMARK . '/' . $path . '/' . $width_thumb . 'x' . $height_thumb . 'x' . $zoom_crop . '/' . $folder_old;
-
-			else $upload_dir = $path . '/' . $width_thumb . 'x' . $height_thumb . 'x' . $zoom_crop . '/' . $folder_old;
-
-		}
-		
-		// Normalize upload_dir path for Windows compatibility
-		$upload_dir = str_replace('\\', '/', $upload_dir);
-		$upload_dir = str_replace('//', '/', $upload_dir);
-		$upload_dir = rtrim($upload_dir, '/');
-
-
-
+		// Create upload directory if not exists
 		if (!file_exists($upload_dir)) {
-			// Try to create directory with better error handling
 			if (!@mkdir($upload_dir, 0777, true)) {
 				$error = error_get_last();
 				$errorMsg = $error ? $error['message'] : 'Unknown error';
@@ -3530,8 +3354,7 @@ class Functions
 			}
 		}
 
-
-
+		// Apply watermark if needed
 		if (!empty($watermark['status']) && strpos('hienthi', $watermark['status']) !== false) {
 
 			$options = (isset($options)) ? $options : json_decode($watermark['options'], true)['watermark'];
@@ -3826,38 +3649,50 @@ class Functions
 
 
 
+		// Save thumbnail to file
 		if ($upload_dir) {
-
 			if (!isset($_GET['preview'])) {
-
-				if ($func == 'imagejpeg') $func($canvas, $upload_dir . $image_name, 100);
-
-				else $func($canvas, $upload_dir . $image_name, floor($quality * 0.09));
-
+				$thumbPath = $upload_dir . '/' . $image_name;
+				if ($func == 'imagejpeg') {
+					$func($canvas, $thumbPath, 100);
+				} else {
+					$func($canvas, $thumbPath, floor($quality * 0.09));
+				}
 			}
-
-
-
 			$this->removeZeroByte($path);
-
 		}
 
-
-
+		// Set response headers
 		header('Content-Type: image/' . $mime_type);
+		
+		// Set cache headers for better performance
+		$cacheMaxAge = 31536000; // 1 year
+		header('Cache-Control: public, max-age=' . $cacheMaxAge . ', immutable');
+		header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $cacheMaxAge) . ' GMT');
+		
+		// Set ETag and Last-Modified if file was saved
+		if ($upload_dir) {
+			$thumbPath = $upload_dir . '/' . $image_name;
+			if (file_exists($thumbPath)) {
+				$lastModified = filemtime($thumbPath);
+				$etag = md5_file($thumbPath);
+				header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
+				header('ETag: ' . $etag);
+			}
+		}
 
-		if ($func == 'imagejpeg') $func($canvas, NULL, 100);
-
-		else $func($canvas, NULL, floor($quality * 0.09));
+		// Output image
+		if ($func == 'imagejpeg') {
+			$func($canvas, NULL, 100);
+		} else {
+			$func($canvas, NULL, floor($quality * 0.09));
+		}
 
 		imagedestroy($canvas);
 
-
-
-		if ($config['website']['image']['hasWebp'] && ($webp || !$preview)) {
-
-			$this->converWebp($upload_dir . $image_name);
-
+		// Convert to WebP if enabled
+		if ($config['website']['image']['hasWebp'] && ($webp || !$preview) && $upload_dir) {
+			$this->converWebp($upload_dir . '/' . $image_name);
 		}
 
 
@@ -3865,6 +3700,7 @@ class Functions
 		exit;
 
 	}
+
 
 
 

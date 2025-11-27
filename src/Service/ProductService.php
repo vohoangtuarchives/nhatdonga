@@ -44,11 +44,17 @@ class ProductService
         ];
     }
 
-    public function getListing(string $type, array $filters, int $page, int $perPage, string $sortBy = 'default', string $sortOrder = 'desc'): array
+    public function getListing(string $type, array $filters, int $page, int $perPage, string $sortBy = 'default', string $sortOrder = 'desc', bool $activeOnly = true): array
     {
         $page = max($page, 1);
         $perPage = max($perPage, 1);
         $start = ($page - 1) * $perPage;
+
+        // Frontend: tự động thêm filter status 'hienthi' nếu chưa có filter status
+        // Admin: không thêm filter (để hiển thị tất cả)
+        if ($activeOnly && empty($filters['status'])) {
+            $filters['status'] = 'hienthi';
+        }
 
         $items = $this->products->getProducts($type, $filters, $start, $perPage, $sortBy, $sortOrder);
         $total = $this->products->countProducts($type, $filters);

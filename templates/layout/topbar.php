@@ -6,12 +6,13 @@
 
                 </div>
                 <div class="d-flex">
-                    <div class="col-auto d-flex align-items-center">
+                    <div class="col-auto d-flex align-items-center me-3">
                         <span class="icon icon-45"><i class="fa fa-home"></i></span>
                         <div>
                             <p><?= $optsetting["email"] ?></p>
                         </div>
                     </div>
+
                     <div class="col-auto d-flex align-items-center">
                         <span class="icon icon-45"><i class="fa fa-phone"></i></span>
                         <div>

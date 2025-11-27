@@ -63,7 +63,8 @@ class ProductAdminController extends BaseAdminController
     {
         $this->requireAuth();
 
-        $listing = $this->productService->getListing($this->type, $filters, $page, $perPage);
+        // Admin: không filter theo status mặc định (activeOnly = false)
+        $listing = $this->productService->getListing($this->type, $filters, $page, $perPage, 'default', 'desc', false);
 
         // Build URL for pagination
         $this->urlHelper->reset();

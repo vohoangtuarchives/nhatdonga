@@ -60,7 +60,8 @@ class NewsAdminController extends BaseAdminController
     {
         $this->requireAuth();
 
-        $listing = $this->newsService->getListing($this->type, $filters, $page, $perPage);
+        // Admin: không filter theo status mặc định (activeOnly = false)
+        $listing = $this->newsService->getListing($this->type, $filters, $page, $perPage, false);
 
         // Build URL for pagination
         $this->urlHelper->reset();

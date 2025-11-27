@@ -44,9 +44,9 @@
 
     $config['product'][$nametype]['check'] = array(
         "noibat" => "Nổi bật", 
-        "maumoi" => "Mẫu mới", 
-        "banchay" => "Bán chạy", 
-        "yeuthich" => "Yêu thích", 
+//        "maumoi" => "Mẫu mới",
+//        "banchay" => "Bán chạy",
+//        "yeuthich" => "Yêu thích",
         "hienthi" => "Hiển thị"
     );
 

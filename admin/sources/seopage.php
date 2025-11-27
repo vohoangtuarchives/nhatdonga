@@ -17,6 +17,14 @@ use Tuezy\Config;
 use Tuezy\SecurityHelper;
 use Tuezy\UploadHandler;
 
+// Initialize language variables
+if (!isset($lang)) {
+	$lang = $_SESSION['lang'] ?? 'vi';
+}
+if (!isset($sluglang)) {
+	$sluglang = 'slugvi';
+}
+
 // Initialize Config
 $configObj = new Config($config);
 

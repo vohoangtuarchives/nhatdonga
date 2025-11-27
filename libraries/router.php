@@ -113,7 +113,71 @@ $router->map('GET', THUMBS . '/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z
 		$filePath = ROOT . $srcClean;
 		$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
 	}
-	$func->createThumb($w, $h, $z, $filePath, null, THUMBS);
+	
+	// Build thumb file path
+	$folder_old = dirname($src) . '/';
+	$folder_old = str_replace('\\', '/', $folder_old);
+	if (strpos($folder_old, $_SERVER['DOCUMENT_ROOT']) === 0) {
+		$folder_old = str_replace($_SERVER['DOCUMENT_ROOT'], '', $folder_old);
+	}
+	$folder_old = ltrim($folder_old, '/\\');
+	if (!empty($folder_old) && substr($folder_old, -1) !== '/') {
+		$folder_old .= '/';
+	}
+	
+	$image_name = basename($filePath);
+	$thumb_dir = THUMBS . '/' . $w . 'x' . $h . 'x' . $z . '/' . $folder_old;
+	$thumb_dir = str_replace('\\', '/', $thumb_dir);
+	$thumb_dir = str_replace('//', '/', $thumb_dir);
+	$thumb_dir = rtrim($thumb_dir, '/');
+	$thumb_file = $thumb_dir . '/' . $image_name;
+	
+	// Check if thumb file already exists
+	if (file_exists($thumb_file)) {
+		// Serve existing file with cache headers
+		$mime_type = 'jpeg';
+		$ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
+		if ($ext == 'png') $mime_type = 'png';
+		elseif ($ext == 'gif') $mime_type = 'gif';
+		
+		$lastModified = filemtime($thumb_file);
+		$etag = md5_file($thumb_file);
+		
+		// Check if client has cached version
+		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $lastModified) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified', true, 304);
+			exit;
+		}
+		
+		if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified', true, 304);
+			exit;
+		}
+		
+		// Set cache headers
+		header('Content-Type: image/' . $mime_type);
+		header('Cache-Control: public, max-age=31536000, immutable');
+		header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 31536000) . ' GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
+		header('ETag: ' . $etag);
+		header('Content-Length: ' . filesize($thumb_file));
+		
+		// Output file
+		readfile($thumb_file);
+		exit;
+	}
+	
+	// Thumb doesn't exist, create it
+	// Lưu $folder_old vào biến global hoặc tính lại từ $src (đường dẫn tương đối)
+	// Sửa: Tính $folder_old từ $src (đường dẫn tương đối) thay vì từ $filePath
+	$relativeFolder = dirname($src);
+	$relativeFolder = str_replace('\\', '/', $relativeFolder);
+	$relativeFolder = ltrim($relativeFolder, '/\\');
+	if (!empty($relativeFolder) && substr($relativeFolder, -1) !== '/') {
+		$relativeFolder .= '/';
+	}
+	// Gọi createThumb với đường dẫn đầy đủ, nhưng sẽ tính lại folder_old từ $src
+	$func->createThumb($w, $h, $z, $filePath, null, THUMBS, false, ['folder_old' => $relativeFolder]);
 }, 'thumb');
 
 $router->map('GET', WATERMARK . '/product/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z, $src) {
@@ -134,6 +198,60 @@ $router->map('GET', WATERMARK . '/product/[i:w]x[i:h]x[i:z]/[**:src]', function 
 		$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
 	}
 	
+	// Build watermark thumb file path
+	$folder_old = dirname($src) . '/';
+	$folder_old = str_replace('\\', '/', $folder_old);
+	if (strpos($folder_old, $_SERVER['DOCUMENT_ROOT']) === 0) {
+		$folder_old = str_replace($_SERVER['DOCUMENT_ROOT'], '', $folder_old);
+	}
+	$folder_old = ltrim($folder_old, '/\\');
+	if (!empty($folder_old) && substr($folder_old, -1) !== '/') {
+		$folder_old .= '/';
+	}
+	
+	$image_name = basename($filePath);
+	$thumb_dir = WATERMARK . '/product/' . $w . 'x' . $h . 'x' . $z . '/' . $folder_old;
+	$thumb_dir = str_replace('\\', '/', $thumb_dir);
+	$thumb_dir = str_replace('//', '/', $thumb_dir);
+	$thumb_dir = rtrim($thumb_dir, '/');
+	$thumb_file = $thumb_dir . '/' . $image_name;
+	
+	// Check if watermark thumb file already exists
+	if (file_exists($thumb_file)) {
+		// Serve existing file with cache headers
+		$mime_type = 'jpeg';
+		$ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
+		if ($ext == 'png') $mime_type = 'png';
+		elseif ($ext == 'gif') $mime_type = 'gif';
+		
+		$lastModified = filemtime($thumb_file);
+		$etag = md5_file($thumb_file);
+		
+		// Check if client has cached version
+		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $lastModified) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified', true, 304);
+			exit;
+		}
+		
+		if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified', true, 304);
+			exit;
+		}
+		
+		// Set cache headers
+		header('Content-Type: image/' . $mime_type);
+		header('Cache-Control: public, max-age=31536000, immutable');
+		header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 31536000) . ' GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
+		header('ETag: ' . $etag);
+		header('Content-Length: ' . filesize($thumb_file));
+		
+		// Output file
+		readfile($thumb_file);
+		exit;
+	}
+	
+	// Thumb doesn't exist, create it
 	// Sử dụng PhotoRepository thay vì cache trực tiếp
 	$photoRepo = new PhotoRepository($d, $lang ?? 'vi', $sluglang ?? 'slugvi');
 	$wtm = $photoRepo->getByTypeAndAct('watermark', 'photo_static');
@@ -159,6 +277,60 @@ $router->map('GET', WATERMARK . '/news/[i:w]x[i:h]x[i:z]/[**:src]', function ($w
 		$filePath = str_replace('/', DIRECTORY_SEPARATOR, $filePath);
 	}
 	
+	// Build watermark thumb file path
+	$folder_old = dirname($src) . '/';
+	$folder_old = str_replace('\\', '/', $folder_old);
+	if (strpos($folder_old, $_SERVER['DOCUMENT_ROOT']) === 0) {
+		$folder_old = str_replace($_SERVER['DOCUMENT_ROOT'], '', $folder_old);
+	}
+	$folder_old = ltrim($folder_old, '/\\');
+	if (!empty($folder_old) && substr($folder_old, -1) !== '/') {
+		$folder_old .= '/';
+	}
+	
+	$image_name = basename($filePath);
+	$thumb_dir = WATERMARK . '/news/' . $w . 'x' . $h . 'x' . $z . '/' . $folder_old;
+	$thumb_dir = str_replace('\\', '/', $thumb_dir);
+	$thumb_dir = str_replace('//', '/', $thumb_dir);
+	$thumb_dir = rtrim($thumb_dir, '/');
+	$thumb_file = $thumb_dir . '/' . $image_name;
+	
+	// Check if watermark thumb file already exists
+	if (file_exists($thumb_file)) {
+		// Serve existing file with cache headers
+		$mime_type = 'jpeg';
+		$ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
+		if ($ext == 'png') $mime_type = 'png';
+		elseif ($ext == 'gif') $mime_type = 'gif';
+		
+		$lastModified = filemtime($thumb_file);
+		$etag = md5_file($thumb_file);
+		
+		// Check if client has cached version
+		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $lastModified) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified', true, 304);
+			exit;
+		}
+		
+		if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) {
+			header($_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified', true, 304);
+			exit;
+		}
+		
+		// Set cache headers
+		header('Content-Type: image/' . $mime_type);
+		header('Cache-Control: public, max-age=31536000, immutable');
+		header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 31536000) . ' GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
+		header('ETag: ' . $etag);
+		header('Content-Length: ' . filesize($thumb_file));
+		
+		// Output file
+		readfile($thumb_file);
+		exit;
+	}
+	
+	// Thumb doesn't exist, create it
 	// Sử dụng PhotoRepository
 	$photoRepo = new PhotoRepository($d, $lang ?? 'vi', $sluglang ?? 'slugvi');
 	$wtm = $photoRepo->getByTypeAndAct('watermark-news', 'photo_static');

@@ -41,9 +41,18 @@ class Application
             return new \Cache($this->container->get('db'));
         }, true);
 
-        // Register functions
+        // Register ThumbnailService
+        $this->container->register('thumbnailService', function() {
+            return new \Tuezy\Service\ThumbnailService();
+        }, true);
+
+        // Register functions (with ThumbnailService injection)
         $this->container->register('func', function() {
-            return new \Functions($this->container->get('db'), $this->container->get('cache'));
+            return new \Functions(
+                $this->container->get('db'), 
+                $this->container->get('cache'),
+                $this->container->get('thumbnailService')
+            );
         }, true);
 
         // Register SEO

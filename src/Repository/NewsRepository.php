@@ -219,8 +219,8 @@ class NewsRepository
         $params[] = $perPage;
 
         return $this->d->rawQuery(
-            "select id, name{$this->lang}, slug{$this->lang}, desc{$this->lang}, photo, 
-                    id_list, id_cat, id_item, id_sub, type, date_created, view
+            "select id, numb, name{$this->lang}, slug{$this->lang}, desc{$this->lang}, photo, 
+                    id_list, id_cat, id_item, id_sub, type, date_created, view, status
              from #_news
              where {$where}
              order by numb,id desc
@@ -258,7 +258,8 @@ class NewsRepository
      */
     private function buildFilterClause(string $type, array $filters): array
     {
-        $where = ["type = ?", "find_in_set('hienthi',status)"];
+        // KHÔNG có điều kiện status mặc định - hiển thị tất cả kể cả status rỗng
+        $where = ["type = ?"];
         $params = [$type];
 
         // Category filters

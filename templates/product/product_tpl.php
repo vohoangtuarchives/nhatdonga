@@ -369,13 +369,17 @@
                                                 <div class="product-list-image">
                                                     <a href="<?= $configBase . $v['slug' . $lang] ?>">
                                                         <?php
+                                                        // Kiểm tra và sử dụng ảnh sản phẩm
+                                                        $productPhoto = !empty($v['photo']) ? $v['photo'] : '';
+                                                        $productName = !empty($v['name' . $lang]) ? $v['name' . $lang] : 'Sản phẩm';
+                                                        
                                                         $image = $func->getImage([
                                                                 'sizes' => '300x300x2',
                                                                 'isWatermark' => false,
                                                                 'prefix' => 'product',
                                                                 'upload' => UPLOAD_PRODUCT_L,
-                                                                'image' => $v['photo'],
-                                                                'alt' => $v['name' . $lang],
+                                                                'image' => $productPhoto,
+                                                                'alt' => $productName,
                                                                 'class' => 'img-fluid w-100'
                                                         ]);
                                                         echo $image;

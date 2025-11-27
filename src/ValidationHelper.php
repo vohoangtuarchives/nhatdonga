@@ -90,16 +90,36 @@ class ValidationHelper
     public function recaptcha(string $response, string $action, float $minScore = 0.5): bool
     {
         $result = $this->func->checkRecaptcha($response);
-        $score = $result['score'] ?? 0;
-        $resultAction = $result['action'] ?? '';
-        $test = $result['test'] ?? false;
-
+        
+        // Kiểm tra nếu result là null hoặc không phải array
+        if ($result === null || !is_array($result)) {
+            return false;
+        }
+        
         // Allow test mode
-        if ($test) {
+        if (!empty($result['test'])) {
             return true;
         }
-
-        return ($score >= $minScore && $resultAction === $action);
+        
+        // Kiểm tra success trước
+        if (isset($result['success']) && $result['success'] === false) {
+            return false;
+        }
+        
+        // reCAPTCHA v3: có score và action
+        if (isset($result['score']) && isset($result['action'])) {
+            $score = $result['score'] ?? 0;
+            $resultAction = $result['action'] ?? '';
+            return ($score >= $minScore && $resultAction === $action);
+        }
+        
+        // reCAPTCHA v2: chỉ có success
+        if (isset($result['success'])) {
+            return $result['success'] === true;
+        }
+        
+        // Fallback: nếu không có gì, coi như thất bại
+        return false;
     }
 
     /**

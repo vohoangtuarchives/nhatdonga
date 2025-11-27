@@ -2,47 +2,30 @@
 
 include "news/config-tintuc.php";
 
-include "news/config-dichvu.php";
+//include "news/config-dichvu.php";
 
 
 
-$config['news']['tuyen-dung'] = array_merge(include "news/config-news-no-category.php", [
+//$config['news']['tuyen-dung'] = array_merge(include "news/config-news-no-category.php", [
+//    'title_main' => 'Tuyển Dụng',
+//    'width' => 320,
+//    'height' => 240,
+//]);
+//$config['news']['dich-vu'] = array_merge(include "news/config-news-no-category.php", [
+//
+//    'title_main' => 'Dịch Vụ',
+//
+//    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
+//
+//    'width' => 320,
+//
+//    'height' => 240,
+//
+//]);
 
-    'title_main' => 'Tuyển Dụng',
+ $config['news']['kien-thuc'] = array_merge(include "news/config-news-no-category.php", [
 
-    'width' => 320,
-
-    'height' => 240,
-
-]);
-
-$config['news']['dich-vu'] = array_merge(include "news/config-news-no-category.php", [
-
-    'title_main' => 'Dịch Vụ',
-
-    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
-
-    'width' => 320,
-
-    'height' => 240,
-
-]);
-
-// $config['news']['kien-thuc'] = array_merge(include "news/config-news-no-category.php", [
-
-//     'title_main' => 'Kiến Thức',
-
-//     'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
-
-//     'width' => 320,
-
-//     'height' => 240,
-
-// ]);
-
- $config['news']['blog'] = array_merge(include "news/config-news-no-category.php", [
-
-     'title_main' => 'Blog',
+     'title_main' => 'Kiến Thức',
 
      'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
 
@@ -51,6 +34,18 @@ $config['news']['dich-vu'] = array_merge(include "news/config-news-no-category.p
      'height' => 240,
 
  ]);
+
+// $config['news']['blog'] = array_merge(include "news/config-news-no-category.php", [
+//
+//     'title_main' => 'Blog',
+//
+//     'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
+//
+//     'width' => 320,
+//
+//     'height' => 240,
+//
+// ]);
 
 // $config['news']['tuyen-dung'] = array_merge(include "news/config-news-no-category.php", [
 
@@ -102,67 +97,58 @@ $config['news']['dich-vu'] = array_merge(include "news/config-news-no-category.p
 
 //
 //
-//$config['news']['tai-sao-chon'] = array_merge(include "news/config-news-no-category.php", [
-//
-//    'title_main' => 'Tại Sao Chọn',
-//
-//    'width' => 65,
-//
-//    'height' => 65,
-//
-//    'slug' => false,
-//
-//    'copy' => false,
-//
-//    'images' => true,
-//
-//    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
-//
-//]);
-//
-//
-//
-//$config['news']['khach-hang'] = array_merge(include "news/config-news-no-category.php", [
-//
-//    'title_main' => 'Khách Hàng',
-//
-//    'width' => 105,
-//
-//    'height' => 105,
-//
-//    'slug' => false,
-//
-//    'content' => false,
-//
-//    'copy' => TRUE,
-//
-//    'images' => true,
-//
-//    'career' => true,
-//
-//    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
-//
-//]);
+$config['news']['tai-sao-chon'] = array_merge(include "news/config-news-no-category.php", [
 
+    'title_main' => 'Tại Sao Chọn',
 
+    'width' => 65,
 
-$config['news']['catalogue'] = array_merge(include "news/config-news-no-category.php", [
+    'height' => 65,
 
-    'title_main' => 'Catalogue',
-
-    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
-
-    'width' => 260,
-
-    'height' => 260,
-
-    'slug' => true,
+    'slug' => false,
 
     'copy' => false,
 
-    'images' => false,
+    'images' => true,
+
+    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
 
 ]);
+//
+//
+//
+$baseConfig = include "news/config-news-no-category.php";
+$config['news']['khach-hang'] = array_merge($baseConfig, [
+    'title_main' => 'Khách Hàng',
+    'width' => 105,
+    'height' => 105,
+    'slug' => false,
+    'content' => false,
+    'copy' => false,
+    'images' => true,
+    'career' => false,
+    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
+]);
+
+
+
+//$config['news']['catalogue'] = array_merge(include "news/config-news-no-category.php", [
+//
+//    'title_main' => 'Catalogue',
+//
+//    'check' => ["hienthi" => "Hiển thị", "noibat" => "Nổi Bật"],
+//
+//    'width' => 260,
+//
+//    'height' => 260,
+//
+//    'slug' => true,
+//
+//    'copy' => false,
+//
+//    'images' => false,
+//
+//]);
 
 // $config['news']['ket-qua'] = array_merge(include "news/config-news-no-category.php", [
 

@@ -58,13 +58,20 @@ class NewsService
      * @param array $filters Filters (id_list, id_cat, id_item, id_sub, keyword, status)
      * @param int $page Current page
      * @param int $perPage Items per page
+     * @param bool $activeOnly Chỉ lấy news có status 'hienthi' (mặc định true cho frontend)
      * @return array ['items' => array, 'total' => int, 'perPage' => int, 'page' => int, 'start' => int]
      */
-    public function getListing(string $type, array $filters, int $page, int $perPage): array
+    public function getListing(string $type, array $filters, int $page, int $perPage, bool $activeOnly = true): array
     {
         $page = max($page, 1);
         $perPage = max($perPage, 1);
         $start = ($page - 1) * $perPage;
+
+        // Frontend: tự động thêm filter status 'hienthi' nếu chưa có filter status
+        // Admin: không thêm filter (để hiển thị tất cả)
+        if ($activeOnly && empty($filters['status'])) {
+            $filters['status'] = 'hienthi';
+        }
 
         $items = $this->news->getNewsItems($type, $filters, $start, $perPage);
         $total = $this->news->countNewsItems($type, $filters);
@@ -98,6 +105,8 @@ class NewsService
         if (!empty($detail['id_list'])) {
             $filters['id_list'] = $detail['id_list'];
         }
+        // Frontend: chỉ lấy news có status 'hienthi'
+        $filters['status'] = 'hienthi';
 
         $items = $this->news->getNewsItems($type, $filters, 0, $limit + 1);
         

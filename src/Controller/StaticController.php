@@ -70,7 +70,8 @@ class StaticController extends BaseController
 
         // Breadcrumbs
         $sluglang = 'slugvi';
-        $this->breadcrumbHelper->add($static['name' . $lang], $static[$sluglang]);
+        $slug = $static[$sluglang] ?? $static['type'] ?? '';
+        $this->breadcrumbHelper->add($static['name' . $lang], $slug);
 
         return [
             'static' => $static,

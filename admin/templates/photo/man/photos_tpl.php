@@ -27,6 +27,44 @@
             <h3 class="card-title">Danh sách <?=isset($config['photo']['man_photo'][$type]['title_main_photo']) ? $config['photo']['man_photo'][$type]['title_main_photo'] : 'Hình ảnh'?></h3>
         </div>
         <div class="card-body table-responsive p-0">
+            <?php 
+            // Thu thập tất cả status unique từ tất cả items (trước khi render table)
+            $allStatusKeys = [];
+            if (!empty($items)) {
+                foreach ($items as $item) {
+                    if (!empty($item['status'])) {
+                        $statusArray = explode(',', $item['status']);
+                        foreach ($statusArray as $statusKey) {
+                            $statusKey = trim($statusKey);
+                            if (!empty($statusKey) && !in_array($statusKey, $allStatusKeys)) {
+                                $allStatusKeys[] = $statusKey;
+                            }
+                        }
+                    }
+                }
+            }
+            // Merge với config check_photo nếu có
+            $checkFields = isset($config['photo']['man_photo'][$type]['check_photo']) ? $config['photo']['man_photo'][$type]['check_photo'] : [];
+            // Thêm các status từ config vào danh sách nếu chưa có
+            foreach ($checkFields as $key => $value) {
+                if (!in_array($key, $allStatusKeys)) {
+                    $allStatusKeys[] = $key;
+                }
+            }
+            // Sắp xếp để đảm bảo thứ tự nhất quán
+            sort($allStatusKeys);
+            // Tạo mảng checkFields với tất cả status
+            $allCheckFields = [];
+            foreach ($allStatusKeys as $statusKey) {
+                // Ưu tiên label từ config, nếu không có thì tự tạo
+                if (isset($checkFields[$statusKey])) {
+                    $allCheckFields[$statusKey] = $checkFields[$statusKey];
+                } else {
+                    // Tự tạo label từ key (ucfirst, thay - bằng space)
+                    $allCheckFields[$statusKey] = ucfirst(str_replace(['-', '_'], ' ', $statusKey));
+                }
+            }
+            ?>
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -49,9 +87,11 @@
 				        <?php if(isset($config['photo']['man_photo'][$type]['video_photo']) && $config['photo']['man_photo'][$type]['video_photo'] == true) { ?>
 				        	<th class="align-middle">Link video</th>
 				        <?php } ?>
-				        <?php if(isset($config['photo']['man_photo'][$type]['check_photo'])) { foreach($config['photo']['man_photo'][$type]['check_photo'] as $key => $value) { ?>
+				        <?php 
+				        // Hiển thị header cho tất cả status
+				        foreach($allCheckFields as $key => $value) { ?>
 						  	<th class="align-middle text-center"><?=$value?></th>
-						<?php } } ?>
+						<?php } ?>
                         <th class="align-middle text-center">Thao tác</th>
                     </tr>
                 </thead>
@@ -73,7 +113,20 @@
                                 <?php if(isset($config['photo']['man_photo'][$type]['avatar_photo']) && $config['photo']['man_photo'][$type]['avatar_photo'] == true) { ?>
 	                                <td class="align-middle text-center">
 	                                    <a href="<?=$linkEdit?>&id=<?=$items[$i]['id']?>" title="<?=$items[$i]['namevi']?>">
-                                            <?=$func->getImage(['class' => 'rounded img-preview', 'sizes' => $config['photo']['man_photo'][$type]['thumb_photo'], 'upload' => UPLOAD_PHOTO_L, 'image' => $items[$i]['photo'], 'alt' => $items[$i]['namevi']])?>
+                                            <?php
+                                            // Sử dụng thumb nhỏ để tối ưu tốc độ load
+                                            // Nếu có thumb_photo trong config thì dùng, nếu không thì dùng 100x100x1
+                                            $thumbSize = isset($config['photo']['man_photo'][$type]['thumb_photo']) 
+                                                ? $config['photo']['man_photo'][$type]['thumb_photo'] 
+                                                : '100x100x1';
+                                            echo $func->getImage([
+                                                'class' => 'rounded img-preview', 
+                                                'sizes' => $thumbSize, 
+                                                'upload' => UPLOAD_PHOTO_L, 
+                                                'image' => $items[$i]['photo'], 
+                                                'alt' => $items[$i]['namevi']
+                                            ]);
+                                            ?>
                                         </a>
 	                                </td>
 	                            <?php } ?>
@@ -88,15 +141,25 @@
                                 <?php if(isset($config['photo']['man_photo'][$type]['video_photo']) && $config['photo']['man_photo'][$type]['video_photo'] == true) { ?>
                                 	<td class="align-middle"><?=$items[$i]['link_video']?></td>
                                 <?php } ?>
-                                <?php $status_array = (!empty($items[$i]['status'])) ? explode(',', $items[$i]['status']) : array(); ?>
-                                <?php if(isset($config['photo']['man_photo'][$type]['check_photo'])) { foreach($config['photo']['man_photo'][$type]['check_photo'] as $key => $value) { ?>
+                                <?php 
+                                // Parse status string (dạng "hienthi,noibat" hoặc "hienthi") thành array
+                                $status_string = !empty($items[$i]['status']) ? trim($items[$i]['status']) : '';
+                                $status_array = [];
+                                if (!empty($status_string)) {
+                                    // Tách các status bằng dấu phẩy và loại bỏ khoảng trắng
+                                    $status_array = array_map('trim', explode(',', $status_string));
+                                    $status_array = array_filter($status_array); // Loại bỏ phần tử rỗng
+                                }
+                                // Sử dụng cùng allCheckFields đã tạo ở header
+                                // Hiển thị checkbox cho tất cả status
+                                foreach($allCheckFields as $key => $value) { ?>
                                     <td class="align-middle text-center">
                                         <div class="custom-control custom-checkbox my-checkbox">
                                             <input type="checkbox" class="custom-control-input show-checkbox" id="show-checkbox-<?=$key?>-<?=$items[$i]['id']?>" data-table="photo" data-id="<?=$items[$i]['id']?>" data-attr="<?=$key?>" <?=(in_array($key, $status_array)) ? 'checked' : ''?>>
                                             <label for="show-checkbox-<?=$key?>-<?=$items[$i]['id']?>" class="custom-control-label"></label>
                                         </div>
                                     </td>
-                                <?php } } ?>
+                                <?php } ?>
                                 <td class="align-middle text-center text-md text-nowrap">
                                     <a class="text-primary mr-2" href="<?=$linkEdit?>&id=<?=$items[$i]['id']?>" title="Chỉnh sửa"><i class="fas fa-edit"></i></a>
                                     <a class="text-danger" id="delete-item" data-url="<?=$linkDelete?>&id=<?=$items[$i]['id']?>" title="Xóa"><i class="fas fa-trash-alt"></i></a>

@@ -13,11 +13,6 @@
         }
     ],
     "require": {
-        "illuminate/support": "*",
-        "illuminate/config": "*",
-        "illuminate/container": "*",
-        "illuminate/database": "*",
-        "illuminate/view": "*",
         "scssphp/scssphp": "^2.1",
         "phpoption/phpoption": "^1.9",
         "symfony/var-dumper": "^7.3"

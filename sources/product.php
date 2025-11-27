@@ -66,6 +66,11 @@ if ($id > 0) {
 	$relatedProducts = $viewData['related'] ?? [];
 	$breadcrumbs = $viewData['breadcrumbs'] ?? '';
 	
+	// Set template riêng cho ga-dabaco
+	// if ($productType == 'ga-dabaco' && empty($template)) {
+	// 	$template = 'product/product_detail_ga_dabaco';
+	// }
+	
 } elseif ($idc > 0) {
 	// Category page
 	$curPage = (int)($_GET['p'] ?? 1);

@@ -17,7 +17,7 @@ class StaticRepository
         $this->d = $d;
         $this->cache = $cache;
         $this->lang = $lang;
-        $this->sluglang = $sluglang;
+        $this->sluglang = $lang;
     }
 
     /**
@@ -29,7 +29,7 @@ class StaticRepository
     public function getByType(string $type): ?array
     {
         $result = $this->d->rawQueryOne(
-            "SELECT id, type, name{$this->lang}, content{$this->lang}, photo, date_created, date_updated, options 
+            "SELECT id, type, name{$this->lang}, content{$this->lang}, slug{$this->sluglang}, photo, date_created, date_updated, options 
              FROM #_static 
              WHERE type = ? AND find_in_set('hienthi',status) 
              LIMIT 0,1",
@@ -47,7 +47,7 @@ class StaticRepository
     public function getById(int $id): ?array
     {
         $result = $this->d->rawQueryOne(
-            "SELECT id, type, name{$this->lang}, content{$this->lang}, photo, date_created, date_updated, options 
+            "SELECT id, type, name{$this->lang}, content{$this->lang}, slug{$this->sluglang}, photo, date_created, date_updated, options 
              FROM #_static 
              WHERE id = ? 
              LIMIT 0,1",

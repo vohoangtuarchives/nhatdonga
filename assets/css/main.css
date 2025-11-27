@@ -237,9 +237,9 @@ img.img-max {
 .menu ul li ul {
     position: absolute;
     min-width: 250px;
-    margin-top: -5px;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+    /* margin-top: -5px; */
+    /* padding-top: 0.75rem; */
+    /* padding-bottom: 0.75rem; */
     background-color: #fafafa;
     border-radius: 0.25rem;
     -webkit-box-shadow: 1px 1px 15px rgba(0, 0, 0, 0.15);
@@ -263,15 +263,15 @@ img.img-max {
 }
 
 .menu ul li ul li {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    /* padding-left: 0.75rem; */
+    /* padding-right: 0.75rem; */
 }
 
 .menu ul li ul li a {
-    font-weight: 400;
-    font-size: 14px;
+    font-weight: 700;
+    font-size: 17px;
     text-align: left;
-    color: #313131;
+    color: #089139;
     border-bottom: 1px solid #ececec;
 }
 
@@ -294,7 +294,8 @@ img.img-max {
 
 .menu ul li ul li a.active,
 .menu ul li ul li:hover > a {
-    color: var(--hover-color);
+    /* color: var(--hover-color); */
+    background: #cff5e0;
 }
 
 .menu ul li ul li:hover > a.has-child:after,
@@ -303,7 +304,7 @@ img.img-max {
 }
 
 .menu ul li ul li a {
-    padding: 10px 0px 9px 0px;
+    padding: 15px;
     text-transform: capitalize;
 }
 
@@ -1330,47 +1331,7 @@ coccocgrammar {
     margin: 20px -10px 0 -10px;
 }
 
-/* Cart Fix */
-.cart-fixed {
-    position: fixed;
-    right: 25px;
-    bottom: 420px;
-    z-index: 10;
-    background: var(--main-color);
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    color: #fff !important;
-    border-radius: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-@media screen and (max-width: 991px) {
-    .cart-fixed {
-        bottom: 140px;
-    }
-}
-
-.cart-fixed i {
-    font-size: 20px;
-    position: relative;
-    z-index: 9;
-}
-.cart-fixed span {
-    position: absolute;
-    top: 0px;
-    right: -5px;
-    color: #ffffff;
-    width: 20px;
-    height: 20px;
-    background: #ec2d3f;
-    text-align: center;
-    line-height: 20px;
-    font-size: 11px;
-    border-radius: 100%;
-    z-index: 10;
-}
+/* Cart Fix - Removed */
 
 #popup-cart .modal-title {
     text-transform: uppercase;

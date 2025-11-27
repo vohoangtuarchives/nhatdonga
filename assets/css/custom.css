@@ -1,3 +1,4 @@
+
 @font-face {
 
     font-family: 'Poppins';
@@ -395,7 +396,7 @@ body {
 
 .news-item .news-name{font-weight: 600;font-size: 16px;color: #555;text-transform: uppercase;line-height: 1.5;}
 
-.news-item .date{display: flex;align-items:center;/* margin-top: 20px; */font-size: 15px;font-weight: 400;color: #9D9D9D;}
+.news-item .date{display: flex;align-items:center;/* margin-top: 20px; */font-size: 15px;font-weight: 400;color: #9D9D9D;margin: 10px 0;}
 
 .news-item .date img{margin-right: 5px;width: 12px;}
 
@@ -431,6 +432,75 @@ body {
 
     transform: scale(1.2);
 
+}
+
+/* Cải thiện giao diện trang tin-tuc - phân rõ đường khối */
+.featured-news-item {
+    transition: all 0.3s ease;
+}
+
+.featured-news-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.featured-news-image {
+    overflow: hidden;
+}
+
+.featured-news-image img {
+    transition: all 0.3s ease;
+}
+
+.featured-news-item:hover .featured-news-image img {
+    transform: scale(1.05);
+}
+
+.featured-news-title a {
+    transition: color 0.3s ease;
+}
+
+.featured-news-title a:hover {
+    color: #df0000 !important;
+}
+
+.news-card-wrapper {
+    transition: all 0.3s ease;
+}
+
+.news-card-wrapper .news-item {
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.news-card-wrapper:hover .news-item {
+    border-color: #df0000;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+}
+
+.news-card-wrapper .news-item .scale-img {
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.news-card-wrapper .news-item .news-name {
+    flex-grow: 1;
+    margin-bottom: 10px;
+}
+
+.news-card-wrapper .news-item .news-desc {
+    flex-grow: 1;
+    margin-bottom: 15px;
+}
+
+.row-news {
+    margin-top: 2rem;
 }
 .mw-50{
     max-width: 400px!important;
@@ -1835,13 +1905,15 @@ body {
 }
 
 .main-news__detail .name-news a{
-    font-size: 17px;
+    font-size: 23px;
     font-weight: 500;
     text-decoration: none;
+    margin-bottom: 15px;
 }
 
 .main-news__detail .desc-news{
-    font-size: 15px;
+    font-size: 18px;
+    font-weight: 400;
 }
 
 .block-thieves-news{
@@ -1859,14 +1931,15 @@ body {
 }
 
 .item-news .name-news a{
-    font-size: 17px;
+    font-size: 18px;
     text-decoration: none;
     text-transform: uppercase;
     /* line-height: 1.5; */
-    height: 40px;
+    /* height: 40px; */
     display: inline-block;
-    line-height: 40px;
-
+    /* line-height: 40px; */
+    font-weight: 500;
+    margin-bottom: 15px;
 }
 .item-news:not(.item-news-desktop) .name-news a{
     font-size: 17px;
@@ -1882,7 +1955,7 @@ body {
 
 
 .item-news .desc-news{
-    font-size: 14px;
+    /* font-size: 14px; */
     text-decoration: none;
     line-height: 1.5;
 }
@@ -1978,9 +2051,9 @@ body {
 
 }
 
-.news__photo{border-radius: 15px;width: 180px;}
+.news__photo{border-radius: 15px;/* width: 180px; */}
 .news__info{
-    width: calc(100% - 195px);
+    /* width: calc(100% - 195px); */
 }
 .btn-xemthem{
     background: #17529e;
@@ -2090,17 +2163,21 @@ body {
 
 }
 
-.info-container .icon.icon-45{
+.header-topbar .icon.icon-45{
 
     width: 40px!important;
 
     height: 40px!important;
-
     margin-right: 10px;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--isp-secondary);
 
 }
 
-.info-container .icon.icon-45 i::before{
+.header-topbar .icon.icon-45 i::before{
 
     font-size: 17px;
 
@@ -2108,7 +2185,7 @@ body {
 
 .header-topbar{
 
-    background: #17529E;
+    background: #01a859;
 
     color: #fff;
 
@@ -2116,6 +2193,10 @@ body {
 
     padding: 10px 0;
 
+    font-weight: 700;
+}
+.icon{
+    /* background: var(--isp-secondary); */
 }
 
 .block-khachhang{
@@ -2683,11 +2764,12 @@ form.form-desktop-search input[type=text]{
 
 .section-title-isp {
     font-size: 30px;
-    font-weight: 400;
+    font-weight: 700;
     color: var(--isp-secondary);
     position: relative;
     display: inline-block;
     padding-bottom: 8px;
+    text-transform: uppercase;
 }
 
 .section-title-isp::before {

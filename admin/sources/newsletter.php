@@ -18,6 +18,14 @@ use Tuezy\EmailTemplateHelper;
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
+// Initialize language variables
+if (!isset($lang)) {
+	$lang = $_SESSION['lang'] ?? 'vi';
+}
+if (!isset($sluglang)) {
+	$sluglang = 'slugvi';
+}
+
 // Initialize Config
 $configObj = new Config($config);
 
@@ -33,16 +41,13 @@ if (!count($arrCheck) || !in_array($type, $arrCheck)) {
 }
 
 // Initialize AdminCRUDHelper for newsletter
+// Constructor: __construct($d, $func, string $table, string $type, array $configType)
 $adminCRUD = new AdminCRUDHelper(
 	$d, 
 	$func, 
-	$flash, 
 	'newsletter', 
 	$type, 
-	'newsletter', 
-	UPLOAD_FILE_L, 
-	$lang, 
-	$sluglang
+	$config['newsletter'][$type] ?? []
 );
 
 /* Send email - Sử dụng EmailTemplateHelper */
@@ -81,11 +86,16 @@ switch($act) {
 	case "man":
 		// Get filters
 		$filters = [];
+		$where = [];
 		if (!empty($_REQUEST['keyword'])) {
-			$filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
+			$keyword = SecurityHelper::sanitize($_REQUEST['keyword']);
+			$where[] = [
+				'clause' => '(fullname LIKE ? OR email LIKE ? OR phone LIKE ?)',
+				'params' => ["%{$keyword}%", "%{$keyword}%", "%{$keyword}%"]
+			];
 		}
 
-		$result = $adminCRUD->getItems($filters, 10, $curPage);
+		$result = $adminCRUD->getList($curPage, 10, $where);
 		$items = $result['items'];
 		$paging = $result['paging'];
 		$template = "newsletter/man/mans";
@@ -116,7 +126,7 @@ switch($act) {
 		
 	case "delete":
 		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $adminCRUD->deleteItem($id)) {
+		if ($id && $adminCRUD->delete($id)) {
 			$func->transfer("Xóa dữ liệu thành công", "index.php?com=newsletter&act=man&type=" . $type);
 		} else {
 			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=newsletter&act=man&type=" . $type, false);

@@ -4,15 +4,33 @@ include "config.php";
 use Tuezy\Config;
 use Tuezy\SecurityHelper;
 
-// Initialize Config
-$configObj = new Config($config);
+// Đảm bảo các biến global được khởi tạo
+if(isset($app) && method_exists($app, 'getGlobals')) {
+	$globals = $app->getGlobals();
+	foreach($globals as $name => $value) {
+		$GLOBALS[$name] = $value;
+	}
+}
+
+// Đảm bảo các biến local được set từ GLOBALS
+$requiredVars = ['d', 'func', 'cache', 'config'];
+foreach($requiredVars as $varName) {
+	if(isset($GLOBALS[$varName])) {
+		$$varName = $GLOBALS[$varName];
+	}
+}
+
+// Initialize Config nếu chưa có
+if (!isset($configObj) && isset($config)) {
+	$configObj = new Config($config);
+}
 
 $result = 0;
 $table = SecurityHelper::sanitizePost('table', '');
 $id = (int)SecurityHelper::sanitizePost('id', 0);
 $attr = SecurityHelper::sanitizePost('attr', '');
 
-if ($id && $table && $attr) {
+if ($id && $table && $attr && isset($d) && isset($cache)) {
 	$status_detail = $d->rawQueryOne(
 		"SELECT status FROM #_{$table} WHERE id = ? LIMIT 0,1",
 		[$id]

@@ -154,7 +154,7 @@ class ProductRepository
 
         return $this->d->rawQuery(
             "select id, name{$this->lang}, slugvi, slugen, photo, sale_price, regular_price, discount,
-                    id_list, id_cat, id_item, id_sub, type, date_created, view
+                    id_list, id_cat, id_item, id_sub, type, date_created, view, id_brand, numb, status
              from #_product
              where {$where}
              {$orderBy}
@@ -202,7 +202,8 @@ class ProductRepository
 
     private function buildFilterClause(string $type, array $filters): array
     {
-        $where = ["type = ?", "find_in_set('hienthi',status)"];
+        // KHÔNG có điều kiện status mặc định - hiển thị tất cả kể cả status rỗng
+        $where = ["type = ?"];
         $params = [$type];
 
         foreach (['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'] as $field) {
