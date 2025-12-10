@@ -33,7 +33,15 @@ if (!defined('NN_AUTHOR')) {
 }
 
 /* Error reporting */
-
+if (!empty($config['website']['error-reporting'])) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+} else {
+    error_reporting(0);
+    ini_set('display_errors', '0');
+    ini_set('display_startup_errors', '0');
+}
 
 /* Cấu hình http */
 if (
@@ -80,6 +88,4 @@ $loginMember = $config['login']['member'];
 
 /* Cấu hình upload */
 require_once LIBRARIES . "constant.php";
-
-error_reporting(E_ALL);
 

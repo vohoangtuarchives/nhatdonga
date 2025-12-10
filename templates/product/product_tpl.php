@@ -26,6 +26,11 @@
                 } else {
                     $titleProduct = $titleMain ?? '';
                 }
+                
+                // Nếu titleProduct là 'sanpham' hoặc empty, sử dụng constant
+                if (empty($titleProduct) || $titleProduct === 'sanpham') {
+                    $titleProduct = sanpham;
+                }
                 ?>
 
                 <?= $custom->titleContainer($titleProduct) ?>
@@ -44,7 +49,7 @@
                             <div class="product-sidebar">
                                 <!-- Mobile sidebar toggle -->
                                 <button class="btn btn-outline-primary d-lg-none w-100 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#productSidebar" aria-expanded="false" aria-controls="productSidebar">
-                                    <i class="fas fa-filter me-2"></i> Bộ lọc & Danh mục
+                                    <i class="fas fa-filter me-2"></i> <?= bolocvadanhmuc ?>
                                 </button>
 
                                 <div class="collapse d-lg-block" id="productSidebar">
@@ -53,14 +58,14 @@
                                         <div class="sidebar-widget mb-4">
                                             <h4 class="sidebar-widget-title">
                                                 <i class="fas fa-list me-2"></i>
-                                                Danh mục sản phẩm
+                                                <?= danhmucsanpham ?>
                                             </h4>
                                             <div class="sidebar-categories">
                                                 <ul class="category-list">
                                                     <li class="category-item <?= empty($idl) && empty($idc) ? 'active' : '' ?>">
                                                         <a href="/san-pham" class="category-link">
                                                             <i class="fas fa-th me-2"></i>
-                                                            Tất cả sản phẩm
+                                                            <?= tatsansanpham ?>
                                                         </a>
                                                     </li>
                                                     <?php foreach ($categoriesTree as $treeItem):
@@ -101,7 +106,7 @@
                                     <div class="sidebar-widget mb-4">
                                         <h4 class="sidebar-widget-title">
                                             <i class="fas fa-filter me-2"></i>
-                                            Bộ lọc
+                                            <?= boloc ?>
                                         </h4>
 
                                         <form method="GET" action="" id="productFiltersForm" class="product-filters">
@@ -240,7 +245,7 @@
                                     <?php if (!empty($activeFilters)): ?>
                                         <div class="active-filters mb-3">
                                             <div class="d-flex flex-wrap align-items-center gap-2">
-                                                <span class="text-muted small"><i class="fas fa-filter me-1"></i> Bộ lọc đang áp dụng:</span>
+                                                <span class="text-muted small"><i class="fas fa-filter me-1"></i> <?= bolocdangapdung ?></span>
                                                 <?php foreach ($activeFilters as $filter): ?>
                                                     <span class="badge bg-primary">
                                             <?= htmlspecialchars($filter['label']) ?>
@@ -258,7 +263,7 @@
                                         <div class="col-md-4 col-12 mb-2 mb-md-0">
                                             <p class="mb-0 text-muted">
                                                 <i class="fas fa-box me-2"></i>
-                                                Hiển thị <strong><?= count($products) ?></strong> / <strong><?= $totalProducts ?></strong> sản phẩm
+                                                <?= hienthi ?> <strong><?= count($products) ?></strong> / <strong><?= $totalProducts ?></strong> <?= sanphamthuong ?>
                                             </p>
                                         </div>
                                         <div class="col-md-8 col-12">
@@ -279,9 +284,9 @@
                                                 <div class="col-md-4 col-6">
                                                     <label class="form-label small mb-1">Hiển thị:</label>
                                                     <select class="form-select form-select-sm" name="per_page" id="productPerPage" onchange="updateProductPerPage()">
-                                                        <option value="12" <?= (empty($_GET['per_page']) || $_GET['per_page'] == '12') ? 'selected' : '' ?>>12 sản phẩm</option>
-                                                        <option value="24" <?= (!empty($_GET['per_page']) && $_GET['per_page'] == '24') ? 'selected' : '' ?>>24 sản phẩm</option>
-                                                        <option value="48" <?= (!empty($_GET['per_page']) && $_GET['per_page'] == '48') ? 'selected' : '' ?>>48 sản phẩm</option>
+                                                        <option value="12" <?= (empty($_GET['per_page']) || $_GET['per_page'] == '12') ? 'selected' : '' ?>>12 <?= sanphamthuong ?></option>
+                                                        <option value="24" <?= (!empty($_GET['per_page']) && $_GET['per_page'] == '24') ? 'selected' : '' ?>>24 <?= sanphamthuong ?></option>
+                                                        <option value="48" <?= (!empty($_GET['per_page']) && $_GET['per_page'] == '48') ? 'selected' : '' ?>>48 <?= sanphamthuong ?></option>
                                                         <option value="999" <?= (!empty($_GET['per_page']) && $_GET['per_page'] == '999') ? 'selected' : '' ?>>Tất cả</option>
                                                     </select>
                                                 </div>
@@ -346,14 +351,6 @@
                                                         <span class="price-contact">Liên hệ</span>
                                                     <?php endif; ?>
                                                 </div>
-                                                <div class="product-actions d-flex gap-2">
-                                                    <a href="<?= $configBase . $v['slug' . $lang] ?>" class="btn-buy-isp flex-grow-1">
-                                                        MUA NGAY
-                                                    </a>
-                                                    <button type="button" class="btn btn-outline-primary btn-sm quick-view-btn" data-product-id="<?= $v['id'] ?>" title="Xem nhanh">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -371,7 +368,7 @@
                                                         <?php
                                                         // Kiểm tra và sử dụng ảnh sản phẩm
                                                         $productPhoto = !empty($v['photo']) ? $v['photo'] : '';
-                                                        $productName = !empty($v['name' . $lang]) ? $v['name' . $lang] : 'Sản phẩm';
+                                                        $productName = !empty($v['name' . $lang]) ? $v['name' . $lang] : sanpham;
                                                         
                                                         $image = $func->getImage([
                                                                 'sizes' => '300x300x2',
@@ -411,14 +408,7 @@
                                                             <span class="price-contact fs-5">Liên hệ</span>
                                                         <?php endif; ?>
                                                     </div>
-                                                    <div class="product-actions d-flex gap-2">
-                                                        <a href="<?= $configBase . $v['slug' . $lang] ?>" class="btn-buy-isp flex-grow-1">
-                                                            MUA NGAY
-                                                        </a>
-                                                        <button type="button" class="btn btn-outline-primary btn-sm quick-view-btn" data-product-id="<?= $v['id'] ?>" title="Xem nhanh">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                    </div>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -443,12 +433,12 @@
                     </div>
                     <h3 class="mb-3"><?= khongtimthayketqua ?></h3>
                     <p class="text-muted mb-4">
-                        Chúng tôi không tìm thấy sản phẩm nào phù hợp với yêu cầu của bạn.<br>
-                        Vui lòng thử lại với bộ lọc khác hoặc quay lại sau.
+                        <?= chungtoikhongtimthaysanpham ?><br>
+                        <?= vuilongthulaivoibolockhac ?>
                     </p>
                     <a href="/san-pham" class="btn btn-primary">
                         <i class="fas fa-arrow-left me-2"></i>
-                        Xem tất cả sản phẩm
+                        <?= xemtatcasanpham ?>
                     </a>
                 </div>
 
@@ -578,7 +568,7 @@ function loadQuickView(productId) {
             modalBody.innerHTML = html;
         })
         .catch(error => {
-            modalBody.innerHTML = '<div class="alert alert-danger">Không thể tải thông tin sản phẩm. Vui lòng thử lại.</div>';
+            modalBody.innerHTML = '<div class="alert alert-danger"><?= khongthetaitthongtinsanpham ?></div>';
         });
 }
 
@@ -588,7 +578,7 @@ function createQuickViewModal() {
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="quickViewModalLabel">Xem nhanh sản phẩm</h5>
+                        <h5 class="modal-title" id="quickViewModalLabel"><?= xemnhanhsanpham ?></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">

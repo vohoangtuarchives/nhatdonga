@@ -82,6 +82,12 @@ class ProductController extends BaseController
         if (!empty($seoDB['description' . $seolang])) {
             $this->seo->set('description', $seoDB['description' . $seolang]);
         }
+        if (empty($this->seo->get('description'))) {
+            $src = $rowDetail['desc' . $lang] ?? $rowDetail['content' . $lang] ?? '';
+            $src = strip_tags($src);
+            $src = preg_replace('/\s+/', ' ', $src);
+            $this->seo->set('description', mb_substr($src, 0, 160));
+        }
         $this->seo->set('h1', $rowDetail['name' . $lang]);
         $this->seo->set('url', $this->func->getPageURL());
 
@@ -165,12 +171,20 @@ class ProductController extends BaseController
         // Get brands for filter
         $brands = $this->productRepo->getBrands($type);
 
+        // Get titleMain from global or use default constant
+        $titleMain = $GLOBALS['titleMain'] ?? null;
+        // If titleMain is 'sanpham' or empty, use constant
+        if (empty($titleMain) || $titleMain === 'sanpham') {
+            $titleMain = null; // Will use constant in template
+        }
+
         return [
             'products' => $listResult['items'],
             'total' => $listResult['total'],
             'paging' => $paging,
             'categoriesTree' => $categoriesTree,
             'brands' => $brands,
+            'titleMain' => $titleMain,
         ];
     }
 

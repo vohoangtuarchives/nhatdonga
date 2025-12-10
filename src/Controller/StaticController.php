@@ -38,11 +38,15 @@ class StaticController extends BaseController
     public function index(string $type): array
     {
         $static = $this->staticService->getByType($type);
-
+        
         if (!$static) {
-            header('HTTP/1.0 404 Not Found', true, 404);
-            include("404.php");
-            exit;
+            $lang = $_SESSION['lang'] ?? 'vi';
+            $name = str_replace('-', ' ', ucfirst($type));
+            $this->breadcrumbHelper->add($name, $type);
+            return [
+                'static' => null,
+                'breadcrumbs' => $this->breadcrumbHelper->render(),
+            ];
         }
 
         $lang = $_SESSION['lang'] ?? 'vi';

@@ -2,6 +2,11 @@
 
 if (!defined('SOURCES')) die("Error");
 
+// Ensure ROOT is defined
+if (!defined('ROOT')) {
+	define('ROOT', dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR);
+}
+
 use Tuezy\Admin\AdminCRUDHelper;
 use Tuezy\SecurityHelper;
 
@@ -206,7 +211,12 @@ function deleteMan()
 			$row = $d->rawQueryOne("SELECT id, photo FROM #_filter WHERE id = ? AND type = ? LIMIT 0,1", [$idItem, $type]);
 			if (!empty($row['id'])) {
 				if (!empty($row['photo'])) {
-					$func->deleteFile(UPLOAD_FILTER . $row['photo']);
+					$uploadPath = defined('UPLOAD_FILTER_L') ? UPLOAD_FILTER_L : 'upload/filter/';
+					$filePath = ROOT . $uploadPath . $row['photo'];
+					$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+					if (file_exists($filePath)) {
+						$func->deleteFile($filePath);
+					}
 				}
 				$d->rawQuery("DELETE FROM #_filter WHERE id = ?", [$idItem]);
 			}

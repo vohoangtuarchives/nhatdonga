@@ -5,7 +5,7 @@
  */
 
 if (empty($rowDetail)) {
-    echo '<div class="alert alert-warning">Sản phẩm không tồn tại hoặc đã bị xóa.</div>';
+    echo '<div class="alert alert-warning">' . sanphamkhongtontai . '</div>';
     return;
 }
 

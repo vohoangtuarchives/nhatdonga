@@ -17,9 +17,9 @@ class ProductService
     ) {
     }
 
-    public function getDetailContext(int $id, string $type, bool $increaseView = true): ?array
+    public function getDetailContext(int $id, string $type, bool $increaseView = true, bool $activeOnly = true): ?array
     {
-        $detail = $this->products->getProductDetail($id, $type);
+        $detail = $this->products->getProductDetail($id, $type, $activeOnly);
 
         if (!$detail) {
             return null;

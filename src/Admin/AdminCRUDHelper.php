@@ -175,9 +175,19 @@ class AdminCRUDHelper
      */
     public function delete(int $id): bool
     {
-        $this->d->where('id', $id);
-        $this->d->where('type', $this->type);
-        return $this->d->delete($this->table);
+        // Sử dụng rawQuery để đảm bảo chính xác
+        // rawQuery trả về số dòng bị ảnh hưởng hoặc false nếu có lỗi
+        $result = $this->d->rawQuery("DELETE FROM #_{$this->table} WHERE id = ? AND type = ?", [$id, $this->type]);
+        // Kiểm tra xem có dòng nào bị xóa không (result có thể là array hoặc số)
+        if ($result === false) {
+            return false;
+        }
+        // Nếu result là array (PDODb có thể trả về array), kiểm tra số dòng bị ảnh hưởng
+        if (is_array($result)) {
+            return count($result) > 0 || (isset($result['affected_rows']) && $result['affected_rows'] > 0);
+        }
+        // Nếu result là số (số dòng bị ảnh hưởng)
+        return (int)$result > 0;
     }
 
     /**

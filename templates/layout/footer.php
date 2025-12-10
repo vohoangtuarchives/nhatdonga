@@ -58,21 +58,21 @@
                                                         'link' => 'https://www.facebook.com/',
                                                         'icon' => 'fb',
                                                ],
-                                                   [
-                                                           'title' => 'youtube',
-                                                           'link' => '',
-                                                           'icon' => 'yt',
-                                                   ],
-                                                   [
-                                                           'title' => 'Tiktok',
-                                                           'link' => 'https://www.facebook.com/',
-                                                           'icon' => 'tik',
-                                                   ],
-                                                   [
-                                                           'title' => 'Zalo',
-                                                           'link' => 'https://www.facebook.com/',
-                                                           'icon' => 'zalo',
-                                                   ],
+                                               [
+                                                       'title' => 'youtube',
+                                                       'link' => '',
+                                                       'icon' => 'yt',
+                                               ],
+                                               [
+                                                       'title' => 'Tiktok',
+                                                       'link' => 'https://www.facebook.com/',
+                                                       'icon' => 'tik',
+                                               ],
+                                               [
+                                                       'title' => 'Zalo',
+                                                       'link' => 'https://www.facebook.com/',
+                                                       'icon' => 'zalo',
+                                               ],
                                            ]as $it): ?>
                                 <span>
                                     <a href="<?=$it["link"]?>" class="ft-icon">

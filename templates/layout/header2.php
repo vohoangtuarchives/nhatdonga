@@ -88,7 +88,7 @@
 
 							<div class="on-bar divLeft">
 
-								<span class="text-on-bar">  <i class="fa fa-bars me-3"></i> Danh mục sản phẩm</span>
+								<span class="text-on-bar">  <i class="fa fa-bars me-3"></i> <?= danhmucsanpham ?></span>
 
 								<?php include TEMPLATE . LAYOUT . 'second-menu.php' ?>
 

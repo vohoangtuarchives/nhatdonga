@@ -90,11 +90,44 @@ switch($act) {
 		break;
 		
 	case "delete":
-		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $controller->delete($id)) {
-			$func->transfer("Xóa dữ liệu thành công", "index.php?com=tags&act=man&type=" . $type);
+		// Xử lý xóa nhiều items (listid)
+		if (!empty($_GET['listid'])) {
+			$listid = SecurityHelper::sanitizeGet('listid', '');
+			$ids = explode(',', $listid);
+			$ids = array_filter(array_map('intval', $ids)); // Loại bỏ giá trị rỗng và convert sang int
+			
+			if (empty($ids)) {
+				$func->transfer("Không nhận được dữ liệu", "index.php?com=tags&act=man&type=" . $type, false);
+			}
+			
+			$successCount = 0;
+			$failedCount = 0;
+			
+			foreach ($ids as $tagId) {
+				if ($tagId > 0 && $controller->delete($tagId)) {
+					$successCount++;
+				} else {
+					$failedCount++;
+				}
+			}
+			
+			if ($successCount > 0) {
+				$message = "Đã xóa thành công {$successCount} tag";
+				if ($failedCount > 0) {
+					$message .= " ({$failedCount} tag xóa thất bại)";
+				}
+				$func->transfer($message, "index.php?com=tags&act=man&type=" . $type);
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=tags&act=man&type=" . $type, false);
+			}
 		} else {
-			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=tags&act=man&type=" . $type, false);
+			// Xóa một item (id)
+			$id = (int)($_GET['id'] ?? 0);
+			if ($id && $controller->delete($id)) {
+				$func->transfer("Xóa dữ liệu thành công", "index.php?com=tags&act=man&type=" . $type);
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=tags&act=man&type=" . $type, false);
+			}
 		}
 		break;
 

@@ -1,5 +1,5 @@
 <?php
-
+include __DIR__ .  "/constant.php";
 use Tuezy\RequestHandler;
 use Tuezy\Admin\AdminAuthHelper;
 use Tuezy\Admin\AdminPermissionHelper;

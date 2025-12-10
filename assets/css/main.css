@@ -178,7 +178,7 @@ img.img-max {
     width: 100%;
     padding: 0;
     margin: 0;
-    list-style: none;
+    /* list-style: none; */
 }
 .menu ul.primary-menu {
     display: flex;
@@ -198,13 +198,14 @@ img.img-max {
 .menu ul li {
     position: relative;
     z-index: 1;
+    list-style: none;
 }
 .menu ul li a {
     display: block;
     position: relative;
     font-size: 20px;
     color: var(--main-color);
-    padding: 22px 12px 22px 12px;
+    padding: 40px 12px 40px 12px;
     text-decoration: none !important;
     font-weight: 700;
 }
@@ -236,7 +237,7 @@ img.img-max {
 
 .menu ul li ul {
     position: absolute;
-    min-width: 250px;
+    min-width: 280px;
     /* margin-top: -5px; */
     /* padding-top: 0.75rem; */
     /* padding-bottom: 0.75rem; */
@@ -265,6 +266,7 @@ img.img-max {
 .menu ul li ul li {
     /* padding-left: 0.75rem; */
     /* padding-right: 0.75rem; */
+    /* padding: 20px 15px; */
 }
 
 .menu ul li ul li a {

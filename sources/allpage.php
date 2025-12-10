@@ -113,6 +113,19 @@ if (isset($_POST['submit-newsletter'])) {
     $formHandler = new FormHandler($d, $func, $emailer, $flash, $validator, $configBase, $lang, $setting);
     
     $dataNewsletter = $_POST['dataNewsletter'] ?? [];
+    // Normalize keys from forms
+    if (!empty($dataNewsletter)) {
+        // Map form fields to expected keys
+        if (isset($dataNewsletter['name']) && !isset($dataNewsletter['fullname'])) {
+            $dataNewsletter['fullname'] = $dataNewsletter['name'];
+        }
+        if (isset($dataNewsletter['services']) && !isset($dataNewsletter['subject'])) {
+            $dataNewsletter['subject'] = $dataNewsletter['services'];
+        }
+        if (isset($_POST['type-newsletter'])) {
+            $dataNewsletter['type'] = $_POST['type-newsletter'];
+        }
+    }
     $recaptchaResponse = $_POST['recaptcha_response_newsletter'] ?? '';
     
     $formHandler->handleNewsletter($dataNewsletter, $recaptchaResponse);

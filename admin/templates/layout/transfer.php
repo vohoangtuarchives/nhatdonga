@@ -4,7 +4,7 @@
     <base href="<?=$basehref?>"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="REFRESH" content="4.5; url=<?=$basehref.ADMIN."/".$page_transfer?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
     <meta name="robots" content="noodp,noindex,nofollow" />
     <link rel="stylesheet" href="assets/bootstrap/bootstrap.css">
 

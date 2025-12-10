@@ -31,16 +31,18 @@ class ProductRepository
         return $type ?: $this->defaultType;
     }
 
-    public function getProductDetail(int $id, ?string $type = null): ?array
+    public function getProductDetail(int $id, ?string $type = null, bool $activeOnly = true): ?array
     {
         $type = $this->resolveType($type);
+
+        $statusClause = $activeOnly ? " and find_in_set('hienthi',status)" : "";
 
         return $this->d->rawQueryOne(
             "select type, id, name{$this->lang}, slugvi, slugen, desc{$this->lang}, content{$this->lang},
                     code, view, id_brand, id_list, id_cat, id_item, id_sub, photo, options, discount,
-                    sale_price, regular_price, status, date_created
+                    sale_price, regular_price, status, date_created, status
              from #_product
-             where id = ? and type = ? and find_in_set('hienthi',status)
+             where id = ? and type = ?{$statusClause}
              limit 0,1",
             [$id, $type]
         );

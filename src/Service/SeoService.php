@@ -58,20 +58,22 @@ class SeoService
         }
 
         if ($id) {
-            return $this->db->rawQueryOne(
+            $row = $this->db->rawQueryOne(
                 "SELECT * FROM #_seo 
                  WHERE id_parent = ? AND com = ? AND act = ? AND type = ? 
                  LIMIT 0,1",
                 [$id, $com, $act, $type]
             );
+            return $row ?: null;
         }
 
-        return $this->db->rawQueryOne(
+        $row = $this->db->rawQueryOne(
             "SELECT * FROM #_seo 
              WHERE com = ? AND act = ? AND type = ? 
              LIMIT 0,1",
             [$com, $act, $type]
         );
+        return $row ?: null;
     }
 
     /**
@@ -114,9 +116,11 @@ class SeoService
 
         // Merge SEO fields
         foreach ($data as $key => $value) {
+            if (!is_string($value)) continue;
             if (strpos($key, 'title') !== false || 
                 strpos($key, 'keywords') !== false || 
-                strpos($key, 'description') !== false) {
+                strpos($key, 'description') !== false ||
+                strpos($key, 'schema') !== false) {
                 $seoData[$key] = $value;
             }
         }

@@ -92,11 +92,44 @@ switch($act) {
 		break;
 		
 	case "delete":
-		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $controller->delete($id)) {
-			$func->transfer("Xóa dữ liệu thành công", "index.php?com=order&act=man" . $strUrl);
+		// Xử lý xóa nhiều items (listid)
+		if (!empty($_GET['listid'])) {
+			$listid = SecurityHelper::sanitizeGet('listid', '');
+			$ids = explode(',', $listid);
+			$ids = array_filter(array_map('intval', $ids)); // Loại bỏ giá trị rỗng và convert sang int
+			
+			if (empty($ids)) {
+				$func->transfer("Không nhận được dữ liệu", "index.php?com=order&act=man" . $strUrl, false);
+			}
+			
+			$successCount = 0;
+			$failedCount = 0;
+			
+			foreach ($ids as $orderId) {
+				if ($orderId > 0 && $controller->delete($orderId)) {
+					$successCount++;
+				} else {
+					$failedCount++;
+				}
+			}
+			
+			if ($successCount > 0) {
+				$message = "Đã xóa thành công {$successCount} đơn hàng";
+				if ($failedCount > 0) {
+					$message .= " ({$failedCount} đơn hàng xóa thất bại)";
+				}
+				$func->transfer($message, "index.php?com=order&act=man" . $strUrl);
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=order&act=man" . $strUrl, false);
+			}
 		} else {
-			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=order&act=man" . $strUrl, false);
+			// Xóa một item (id)
+			$id = (int)($_GET['id'] ?? 0);
+			if ($id && $controller->delete($id)) {
+				$func->transfer("Xóa dữ liệu thành công", "index.php?com=order&act=man" . $strUrl);
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=order&act=man" . $strUrl, false);
+			}
 		}
 		break;
 		

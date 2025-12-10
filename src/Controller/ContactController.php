@@ -80,9 +80,13 @@ class ContactController extends BaseController
         // Get static content for contact page
         $lienhe = $this->staticRepo->getByType('lienhe');
 
+        // Get title from static content or use constant
+        $titleMain = !empty($lienhe['name' . $lang]) ? $lienhe['name' . $lang] : null;
+
         return [
             'breadcrumbs' => $this->breadcrumbHelper->render(),
             'lienhe' => $lienhe ?: [],
+            'titleMain' => $titleMain,
         ];
     }
 }

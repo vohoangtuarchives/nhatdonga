@@ -4,7 +4,7 @@
         <div class="product-sidebar">
             <!-- Mobile sidebar toggle -->
             <button class="btn btn-outline-primary d-lg-none w-100 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#productSidebar" aria-expanded="false" aria-controls="productSidebar">
-                <i class="fas fa-filter me-2"></i> Bộ lọc & Danh mục
+                <i class="fas fa-filter me-2"></i> <?= bolocvadanhmuc ?>
             </button>
 
             <div class="collapse d-lg-block" id="productSidebar">
@@ -13,14 +13,14 @@
                     <div class="sidebar-widget mb-4">
                         <h4 class="sidebar-widget-title">
                             <i class="fas fa-list me-2"></i>
-                            Danh mục sản phẩm
+                            <?= danhmucsanpham ?>
                         </h4>
                         <div class="sidebar-categories">
                             <ul class="category-list">
                                 <li class="category-item <?= empty($idl) && empty($idc) ? 'active' : '' ?>">
                                     <a href="/san-pham" class="category-link">
                                         <i class="fas fa-th me-2"></i>
-                                        Tất cả sản phẩm
+                                        <?= tatsansanpham ?>
                                     </a>
                                 </li>
                                 <?php foreach ($categoriesTree as $treeItem):
@@ -61,7 +61,7 @@
                 <div class="sidebar-widget mb-4">
                     <h4 class="sidebar-widget-title">
                         <i class="fas fa-filter me-2"></i>
-                        Bộ lọc
+                        <?= boloc ?>
                     </h4>
 
                     <form method="GET" action="" id="productFiltersForm" class="product-filters">
@@ -200,7 +200,7 @@
                 <?php if (!empty($activeFilters)): ?>
                     <div class="active-filters mb-3">
                         <div class="d-flex flex-wrap align-items-center gap-2">
-                            <span class="text-muted small"><i class="fas fa-filter me-1"></i> Bộ lọc đang áp dụng:</span>
+                            <span class="text-muted small"><i class="fas fa-filter me-1"></i> <?= bolocdangapdung ?></span>
                             <?php foreach ($activeFilters as $filter): ?>
                                 <span class="badge bg-primary">
                                             <?= htmlspecialchars($filter['label']) ?>

@@ -16,7 +16,7 @@
                             <?php if (!empty($rowDetail['view'])) { ?>
                                 <div class="news-meta-item">
                                     <i class="fas fa-eye me-2"></i>
-                                    <span><?= number_format($rowDetail['view']) ?> lượt xem</span>
+                                    <span><?= number_format($rowDetail['view']) ?> <?= luotxem ?></span>
                                 </div>
                             <?php } ?>
                         </div>
@@ -43,7 +43,7 @@
                             <div class="toc-wrapper">
                                 <div class="toc-header">
                                     <i class="fas fa-list me-2"></i>
-                                    <strong>Mục lục</strong>
+                                    <strong><?= mucluc ?></strong>
                                 </div>
                                 <ul class="toc-list" data-toc="article" data-toc-headings="h1, h2, h3"></ul>
                             </div>
@@ -97,7 +97,7 @@
                     <div class="news-empty-state">
                         <div class="empty-state-content">
                             <i class="fas fa-newspaper fa-4x mb-3 text-muted"></i>
-                            <h3 class="empty-state-title">Bài viết không tồn tại</h3>
+                            <h3 class="empty-state-title"><?= baivietkhongtontai ?></h3>
                             <p class="empty-state-message text-muted">
                                 Bài viết bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.
                             </p>

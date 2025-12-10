@@ -5,10 +5,10 @@
                 <!-- Page Title -->
                 <div class="contact-page-header mb-4">
                     <h1 class="contact-page-title">
-                        <?= $titleMain ?? 'Liên hệ' ?>
+                        <?= $titleMain ?? lienhe ?>
                     </h1>
                     <p class="contact-page-subtitle text-muted">
-                        Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn
+                        <?= chungtoiluonsansanglangnghe ?>
                     </p>
                 </div>
 
@@ -38,7 +38,7 @@
                         <div class="col-lg-7">
                             <div class="contact-form-wrapper-modern">
                                 <h3 class="contact-form-title mb-4">
-                                    <i class="fas fa-paper-plane me-2"></i>Gửi tin nhắn
+                                    <i class="fas fa-paper-plane me-2"></i><?= guitinnhan ?>
                                 </h3>
                                 <form class="contact-form-modern validation-contact" novalidate method="post" action="" enctype="multipart/form-data">
                                     <div class="row g-3">
@@ -145,7 +145,7 @@
                                                    class="form-control form-control-modern" 
                                                    id="file_attach" 
                                                    name="file_attach">
-                                            <small class="form-text text-muted">Chọn file đính kèm (nếu có)</small>
+                                            <small class="form-text text-muted"><?= chonfiledinhkem ?></small>
                                         </div>
                                     </div>
 
@@ -169,7 +169,7 @@
                 <?php if (!empty($optsetting['coords_iframe'])) { ?>
                     <div class="contact-map-modern mt-5">
                         <h3 class="contact-map-title mb-4">
-                            <i class="fas fa-map-marked-alt me-2"></i>Bản đồ
+                            <i class="fas fa-map-marked-alt me-2"></i><?= map ?>
                         </h3>
                         <div class="map-wrapper-modern">
                             <?= htmlspecialchars_decode($optsetting['coords_iframe']) ?>

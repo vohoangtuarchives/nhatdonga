@@ -1,6 +1,41 @@
 <?php
 
+// Start session and validate token
+session_start();
+$token = (!empty($_GET['token'])) ? $_GET['token'] : '';
+if(empty($token) || empty($_SESSION[$token]))
+{
+    header('HTTP/1.0 403 Forbidden');
+    die(json_encode(array('error' => 'Access denied')));
+}
+
 error_reporting(0); // Set E_ALL for debuging
+
+// Define base path for elFinder files
+if (!defined('ELFINDER_FILES_PATH')) {
+    // Path relative to connector.php location (admin/elfinder/php/connector.php -> admin/elfinder/files/)
+    $elfinderFilesPath = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR;
+    // Convert to absolute path
+    $elfinderFilesPath = realpath($elfinderFilesPath);
+    if (!$elfinderFilesPath) {
+        // If path doesn't exist, try to create it
+        $elfinderFilesPath = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR;
+        if (!is_dir($elfinderFilesPath)) {
+            @mkdir($elfinderFilesPath, 0755, true);
+        }
+        $elfinderFilesPath = realpath($elfinderFilesPath) ?: $elfinderFilesPath;
+    }
+    $elfinderFilesPath = rtrim($elfinderFilesPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    define('ELFINDER_FILES_PATH', $elfinderFilesPath);
+}
+
+if (!defined('ELFINDER_FILES_URL')) {
+    // URL relative to connector.php
+    $elfinderFilesUrl = dirname(dirname($_SERVER['PHP_SELF'])) . '/files/';
+    // Normalize URL
+    $elfinderFilesUrl = str_replace('\\', '/', $elfinderFilesUrl);
+    define('ELFINDER_FILES_URL', $elfinderFilesUrl);
+}
 
 // // Optional exec path settings (Default is called with command name only)
 // define('ELFINDER_TAR_PATH',      '/PATH/TO/tar');
@@ -249,13 +284,13 @@ $logger = new elFinderSimpleLogger('.log.txt');
 // Documentation for connector options:
 // https://github.com/Studio-42/elFinder/wiki/Connector-configuration-options
 $opts = array(
-    'debug' => true, // enable debug mode
+    'debug' => false, // disable debug mode
     'roots' => array(
         // Items volume
         array(
             'driver'        => 'LocalFileSystem',           // driver for accessing file system (REQUIRED)
-            'path'          => '../files/',                 // path to files (REQUIRED)
-            'URL'           => dirname($_SERVER['PHP_SELF']) . '/../files/', // URL to files (REQUIRED)
+            'path'          => ELFINDER_FILES_PATH,         // path to files (REQUIRED)
+            'URL'           => ELFINDER_FILES_URL,          // URL to files (REQUIRED)
             'trashHash'     => 't1_Lw',                     // elFinder's hash of trash folder
             'winHashFix'    => DIRECTORY_SEPARATOR !== '/', // to make hash same to Linux one on windows too
             'uploadDeny'    => array('all'),                // All Mimetypes not allowed to upload
@@ -273,8 +308,8 @@ $opts = array(
         array(
             'id'            => '1',
             'driver'        => 'Trash',
-            'path'          => '../files/.trash/',
-            'tmbURL'        => dirname($_SERVER['PHP_SELF']) . '/../files/.trash/.tmb/',
+            'path'          => ELFINDER_FILES_PATH . '.trash' . DIRECTORY_SEPARATOR,
+            'tmbURL'        => ELFINDER_FILES_URL . '.trash/.tmb/',
             'winHashFix'    => DIRECTORY_SEPARATOR !== '/', // to make hash same to Linux one on windows too
             'uploadDeny'    => array('all'),                // Recomend the same settings as the original volume that uses the trash
             'uploadAllow'   => array('image/x-ms-bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/x-icon', 'text/plain'), // Same as above

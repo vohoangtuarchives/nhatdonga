@@ -28,11 +28,11 @@
 
     ?>
 
-    <div class="wrap-main <?= ($source == 'index') ? 'wrap-home' : '' ?> w-clear">
+    <main class="wrap-main <?= ($source == 'index') ? 'wrap-home' : '' ?> w-clear" role="main">
 
         <?php include TEMPLATE . $template . "_tpl.php"; ?>
 
-    </div>
+    </main>
 
     <?php
 

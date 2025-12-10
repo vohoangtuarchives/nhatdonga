@@ -65,11 +65,44 @@ switch($act) {
 		break;
 		
 	case "delete":
-		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $controller->delete($id)) {
-			$func->transfer("Xóa dữ liệu thành công", "index.php?com=contact&act=man");
+		// Xử lý xóa nhiều items (listid)
+		if (!empty($_GET['listid'])) {
+			$listid = SecurityHelper::sanitizeGet('listid', '');
+			$ids = explode(',', $listid);
+			$ids = array_filter(array_map('intval', $ids)); // Loại bỏ giá trị rỗng và convert sang int
+			
+			if (empty($ids)) {
+				$func->transfer("Không nhận được dữ liệu", "index.php?com=contact&act=man", false);
+			}
+			
+			$successCount = 0;
+			$failedCount = 0;
+			
+			foreach ($ids as $contactId) {
+				if ($contactId > 0 && $controller->delete($contactId)) {
+					$successCount++;
+				} else {
+					$failedCount++;
+				}
+			}
+			
+			if ($successCount > 0) {
+				$message = "Đã xóa thành công {$successCount} liên hệ";
+				if ($failedCount > 0) {
+					$message .= " ({$failedCount} liên hệ xóa thất bại)";
+				}
+				$func->transfer($message, "index.php?com=contact&act=man");
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=contact&act=man", false);
+			}
 		} else {
-			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=contact&act=man", false);
+			// Xóa một item (id)
+			$id = (int)($_GET['id'] ?? 0);
+			if ($id && $controller->delete($id)) {
+				$func->transfer("Xóa dữ liệu thành công", "index.php?com=contact&act=man");
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=contact&act=man", false);
+			}
 		}
 		break;
 		

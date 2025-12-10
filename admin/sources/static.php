@@ -12,6 +12,8 @@ if (!defined('SOURCES')) die("Error");
 use Tuezy\Admin\Controller\StaticAdminController;
 use Tuezy\Admin\AdminAuthHelper;
 use Tuezy\Admin\AdminPermissionHelper;
+use Tuezy\Repository\StaticRepository;
+use Tuezy\Service\StaticService;
 use Tuezy\SecurityHelper;
 
 // Initialize language variables
@@ -32,6 +34,10 @@ if (isset($config['static'])) {
 } else {
 	$func->transfer("Trang không tồn tại", "index.php", false);
 }
+
+// Initialize Repository and Service
+$staticRepo = new StaticRepository($d, $cache, $lang, $sluglang);
+$staticService = new StaticService($staticRepo);
 
 // Initialize Controller
 $adminAuthHelper = new AdminAuthHelper($func, $d, $loginAdmin, $config);
@@ -58,7 +64,7 @@ switch($act) {
 /* Save static - Refactored version */
 function saveStatic()
 {
-	global $d, $config, $func, $flash, $com, $type, $staticRepo;
+	global $d, $config, $func, $flash, $com, $type, $staticRepo, $staticService, $seo;
 	
 	/* Check post */
 	if(empty($_POST)) {
@@ -89,6 +95,9 @@ function saveStatic()
 		}
 
 		$data['type'] = $type;
+		
+		// Remove 'numb' if it exists - static table doesn't have this column
+		unset($data['numb']);
 	}
 
 	/* Post Seo */
@@ -99,10 +108,84 @@ function saveStatic()
 		}
 	}
 
-	// Save logic - giữ nguyên vì phức tạp (file upload, SEO, etc.)
-	// Có thể refactor thêm sau
-	
-	// ... rest of save logic ...
+	/* Save static content */
+	if (!empty($static)) {
+		// Update existing static
+		if ($staticRepo->update($static['id'], $data)) {
+			/* Photo upload */
+			if (isset($config['static'][$type]['photo']) && $config['static'][$type]['photo'] == true && $func->hasFile("file")) {
+				$file_name = $func->uploadName($_FILES["file"]["name"]);
+				$imgType = $config['static'][$type]['img_type'] ?? ['jpg', 'png', 'gif', 'jpeg'];
+				$uploadPath = defined('UPLOAD_STATIC') ? UPLOAD_STATIC : '../upload/static/';
+				
+				if ($photo = $func->uploadImage("file", $imgType, $uploadPath, $file_name)) {
+					$row = $staticRepo->getByType($type);
+					
+					if (!empty($row['photo'])) {
+						$deletePath = defined('UPLOAD_STATIC') ? UPLOAD_STATIC : '../upload/static/';
+						$func->deleteFile($deletePath . $row['photo']);
+					}
+					
+					$staticRepo->update($static['id'], ['photo' => $photo]);
+				}
+			}
+			
+			/* Save SEO */
+			if (isset($config['static'][$type]['seo']) && $config['static'][$type]['seo'] == true && !empty($dataSeo)) {
+				$seoRow = $d->rawQueryOne("SELECT * FROM #_seo WHERE id_parent = ? AND com = ? AND act = ? AND type = ? LIMIT 0,1", [0, $com, 'update', $type]);
+				if (!empty($seoRow)) {
+					$d->where('id', $seoRow['id']);
+					$d->update('seo', $dataSeo);
+				} else {
+					$dataSeo['id_parent'] = 0;
+					$dataSeo['com'] = $com;
+					$dataSeo['act'] = 'update';
+					$dataSeo['type'] = $type;
+					$d->insert('seo', $dataSeo);
+				}
+			}
+			
+			$func->transfer("Cập nhật dữ liệu thành công", "index.php?com=static&act=update&type=" . $type);
+		} else {
+			$func->transfer("Cập nhật dữ liệu bị lỗi", "index.php?com=static&act=update&type=" . $type, false);
+		}
+	} else {
+		// Create new static
+		$data['date_created'] = time();
+		if ($staticRepo->create($data)) {
+			$newStatic = $staticRepo->getByType($type);
+			
+			/* Photo upload */
+			if (isset($config['static'][$type]['photo']) && $config['static'][$type]['photo'] == true && $func->hasFile("file")) {
+				$file_name = $func->uploadName($_FILES["file"]["name"]);
+				$imgType = $config['static'][$type]['img_type'] ?? ['jpg', 'png', 'gif', 'jpeg'];
+				$uploadPath = defined('UPLOAD_STATIC') ? UPLOAD_STATIC : '../upload/static/';
+				
+				if ($photo = $func->uploadImage("file", $imgType, $uploadPath, $file_name)) {
+					$staticRepo->update($newStatic['id'], ['photo' => $photo]);
+				}
+			}
+			
+			/* Save SEO */
+			if (isset($config['static'][$type]['seo']) && $config['static'][$type]['seo'] == true && !empty($dataSeo)) {
+				$seoRow = $d->rawQueryOne("SELECT * FROM #_seo WHERE id_parent = ? AND com = ? AND act = ? AND type = ? LIMIT 0,1", [0, $com, 'update', $type]);
+				if (!empty($seoRow)) {
+					$d->where('id', $seoRow['id']);
+					$d->update('seo', $dataSeo);
+				} else {
+					$dataSeo['id_parent'] = 0;
+					$dataSeo['com'] = $com;
+					$dataSeo['act'] = 'update';
+					$dataSeo['type'] = $type;
+					$d->insert('seo', $dataSeo);
+				}
+			}
+			
+			$func->transfer("Tạo dữ liệu thành công", "index.php?com=static&act=update&type=" . $type);
+		} else {
+			$func->transfer("Tạo dữ liệu bị lỗi", "index.php?com=static&act=update&type=" . $type, false);
+		}
+	}
 }
 
 /* 

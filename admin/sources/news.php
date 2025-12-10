@@ -9,6 +9,11 @@
 
 if (!defined('SOURCES')) die("Error");
 
+// Ensure ROOT is defined
+if (!defined('ROOT')) {
+	define('ROOT', dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR);
+}
+
 use Tuezy\Admin\Controller\NewsAdminController;
 use Tuezy\Admin\AdminAuthHelper;
 use Tuezy\Admin\AdminPermissionHelper;
@@ -145,13 +150,25 @@ switch ($act) {
 		unset($data['id']);
 		
 		// Sanitize data
-		foreach ($data as $key => $value) {
-			if (is_string($value)) {
-				$data[$key] = SecurityHelper::sanitize($value);
-			} elseif (is_array($value)) {
-				$data[$key] = SecurityHelper::sanitizeArray($value);
-			}
-		}
+        foreach ($data as $key => $value) {
+            if (is_string($value)) {
+                $data[$key] = SecurityHelper::sanitize($value);
+            } elseif (is_array($value)) {
+                $data[$key] = SecurityHelper::sanitizeArray($value);
+            }
+        }
+
+        if (!empty($config['website']['slug']) && is_array($config['website']['slug'])) {
+            foreach ($config['website']['slug'] as $k => $_) {
+                $slugKey = 'slug' . $k;
+                if (isset($_POST[$slugKey])) {
+                    $data[$slugKey] = SecurityHelper::sanitize($_POST[$slugKey]);
+                }
+            }
+        } else {
+            if (isset($_POST['slugvi'])) { $data['slugvi'] = SecurityHelper::sanitize($_POST['slugvi']); }
+            if (isset($_POST['slugen'])) { $data['slugen'] = SecurityHelper::sanitize($_POST['slugen']); }
+        }
 
 		// Tự động tạo slug từ tên nếu chưa có
 		// Ưu tiên slugvi, nếu không có thì tạo từ namevi
@@ -265,9 +282,14 @@ switch ($act) {
 					if ($photo) {
 						if ($id) {
 							$oldNews = $d->rawQueryOne("SELECT photo FROM #_news WHERE id = ? LIMIT 0,1", [$newsId]);
-							if ($oldNews && !empty($oldNews['photo'])) {
-								$func->deleteFile(UPLOAD_NEWS . $oldNews['photo']);
+						if ($oldNews && !empty($oldNews['photo'])) {
+							$uploadPath = defined('UPLOAD_NEWS_L') ? UPLOAD_NEWS_L : 'upload/news/';
+							$filePath = ROOT . $uploadPath . $oldNews['photo'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
 							}
+						}
 						}
 						
 						$d->where('id', $newsId);
@@ -275,8 +297,37 @@ switch ($act) {
 					}
 				}
 				
-				$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
-				$func->transfer($message, "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
+                // Save SEO and Schema
+                $dataSeo = $_POST['dataSeo'] ?? [];
+                $dataSchema = $_POST['dataSchema'] ?? [];
+                if (is_array($dataSeo)) { $dataSeo = SecurityHelper::sanitizeArray($dataSeo); }
+                if (is_array($dataSchema)) { $dataSchema = SecurityHelper::sanitizeArray($dataSchema); }
+                $seoPayload = array_merge($dataSeo ?: [], $dataSchema ?: []);
+
+                $seoService = new \Tuezy\Service\SeoService($d);
+                if (!empty($seoPayload)) {
+                    $seoService->saveSeo($newsId, 'news', 'man', $type, $seoPayload);
+                }
+
+                // Auto-generate minimal Article schema if empty
+                if (empty($seoPayload) || (empty($seoPayload['schemavi']) && empty($seoPayload['schemaen']))) {
+                    $row = $d->rawQueryOne("SELECT name{$lang}, desc{$lang}, content{$lang}, photo, slug{$lang}, date_created, date_updated, type FROM #_news WHERE id = ? LIMIT 0,1", [$newsId]);
+                    if ($row) {
+                        $imageUrl = (defined('UPLOAD_NEWS_L') ? UPLOAD_NEWS_L : 'upload/news/') . ($row['photo'] ?? '');
+                        $schema = json_encode([
+                            '@context' => 'https://schema.org',
+                            '@type' => 'Article',
+                            'headline' => $row['name' . $lang] ?? '',
+                            'image' => [$imageUrl],
+                            'datePublished' => !empty($row['date_created']) ? date('c', (int)$row['date_created']) : date('c'),
+                            'dateModified' => !empty($row['date_updated']) ? date('c', (int)$row['date_updated']) : date('c')
+                        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                        $seoService->saveSeo($newsId, 'news', 'man', $type, ['schemavi' => $schema]);
+                    }
+                }
+
+                $message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+                $func->transfer($message, "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
 			}
 		} catch (\Exception $e) {
 			$func->transfer($e->getMessage(), "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
@@ -284,17 +335,72 @@ switch ($act) {
 		break;
 
 	case "delete":
-		$id = (int)($_GET['id'] ?? 0);
-		if ($id) {
-			// Sử dụng controller hoặc adminCRUD để xóa
-			// Tạm thời sử dụng adminCRUD
-			if ($adminCRUD->delete($id)) {
-				$func->transfer("Xóa dữ liệu thành công", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
+		// Xử lý xóa nhiều items (listid)
+		if (!empty($_GET['listid'])) {
+			$listid = SecurityHelper::sanitizeGet('listid', '');
+			$ids = explode(',', $listid);
+			$ids = array_filter(array_map('intval', $ids)); // Loại bỏ giá trị rỗng và convert sang int
+			
+			if (empty($ids)) {
+				$func->transfer("Không nhận được dữ liệu", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+			}
+			
+			$successCount = 0;
+			$failedCount = 0;
+			
+			foreach ($ids as $newsId) {
+				if ($newsId > 0) {
+					// Lấy thông tin news để xóa ảnh nếu cần
+					$news = $d->rawQueryOne("SELECT photo FROM #_news WHERE id = ? AND type = ? LIMIT 0,1", [$newsId, $type]);
+					if ($adminCRUD->delete($newsId)) {
+						// Xóa file ảnh nếu có
+						if ($news && !empty($news['photo'])) {
+							$uploadPath = defined('UPLOAD_NEWS_L') ? UPLOAD_NEWS_L : 'upload/news/';
+							$filePath = ROOT . $uploadPath . $news['photo'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
+							}
+						}
+						$successCount++;
+					} else {
+						$failedCount++;
+					}
+				}
+			}
+			
+			if ($successCount > 0) {
+				$message = "Đã xóa thành công {$successCount} tin tức";
+				if ($failedCount > 0) {
+					$message .= " ({$failedCount} tin tức xóa thất bại)";
+				}
+				$func->transfer($message, "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
 			} else {
 				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
 			}
 		} else {
-			$func->transfer("Không nhận được dữ liệu", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+			// Xóa một item (id)
+			$id = (int)($_GET['id'] ?? 0);
+			if ($id) {
+				// Lấy thông tin news để xóa ảnh nếu cần
+				$news = $d->rawQueryOne("SELECT photo FROM #_news WHERE id = ? AND type = ? LIMIT 0,1", [$id, $type]);
+				if ($adminCRUD->delete($id)) {
+					// Xóa file ảnh nếu có
+					if ($news && !empty($news['photo'])) {
+						$uploadPath = defined('UPLOAD_NEWS_L') ? UPLOAD_NEWS_L : 'upload/news/';
+						$filePath = ROOT . $uploadPath . $news['photo'];
+						$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+						if (file_exists($filePath)) {
+							$func->deleteFile($filePath);
+						}
+					}
+					$func->transfer("Xóa dữ liệu thành công", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
+				} else {
+					$func->transfer("Xóa dữ liệu thất bại", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+				}
+			} else {
+				$func->transfer("Không nhận được dữ liệu", "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+			}
 		}
 		break;
 
@@ -345,11 +451,44 @@ switch ($act) {
 		break;
 
 	case "delete_list":
-		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $controller->deleteList($id)) {
-			$func->transfer("Xóa dữ liệu thành công", "index.php?com=news&act=man_list&type=" . $type);
+		// Xử lý xóa nhiều items (listid)
+		if (!empty($_GET['listid'])) {
+			$listid = SecurityHelper::sanitizeGet('listid', '');
+			$ids = explode(',', $listid);
+			$ids = array_filter(array_map('intval', $ids)); // Loại bỏ giá trị rỗng và convert sang int
+			
+			if (empty($ids)) {
+				$func->transfer("Không nhận được dữ liệu", "index.php?com=news&act=man_list&type=" . $type, false);
+			}
+			
+			$successCount = 0;
+			$failedCount = 0;
+			
+			foreach ($ids as $listId) {
+				if ($listId > 0 && $controller->deleteList($listId)) {
+					$successCount++;
+				} else {
+					$failedCount++;
+				}
+			}
+			
+			if ($successCount > 0) {
+				$message = "Đã xóa thành công {$successCount} danh mục";
+				if ($failedCount > 0) {
+					$message .= " ({$failedCount} danh mục xóa thất bại)";
+				}
+				$func->transfer($message, "index.php?com=news&act=man_list&type=" . $type);
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=news&act=man_list&type=" . $type, false);
+			}
 		} else {
-			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=news&act=man_list&type=" . $type, false);
+			// Xóa một item (id)
+			$id = (int)($_GET['id'] ?? 0);
+			if ($id && $controller->deleteList($id)) {
+				$func->transfer("Xóa dữ liệu thành công", "index.php?com=news&act=man_list&type=" . $type);
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=news&act=man_list&type=" . $type, false);
+			}
 		}
 		break;
 

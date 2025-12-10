@@ -99,13 +99,13 @@ if ((isset($config['product'][$type]['images_list']) && $config['product'][$type
                                             <?php if (isset($config['product'][$type]['desc_list']) && $config['product'][$type]['desc_list'] == true) { ?>
                                                 <div class="form-group">
                                                     <label for="desc<?= $k ?>">Mô tả (<?= $k ?>):</label>
-                                                    <textarea class="form-control for-seo text-sm <?= (isset($config['product'][$type]['desc_cke_list']) && $config['product'][$type]['desc_cke_list'] == true) ? 'form-control-ckeditor' : '' ?>" name="data[desc<?= $k ?>]" id="desc<?= $k ?>" rows="5" placeholder="Mô tả (<?= $k ?>)"><?= htmlspecialchars_decode((!empty($flash->has('desc' . $k))) ? $flash->get('desc' . $k) : @$item['desc' . $k]) ?></textarea>
+                                                    <textarea class="form-control for-seo text-sm <?= (isset($config['product'][$type]['desc_cke_list']) && $config['product'][$type]['desc_cke_list'] == true) ? 'form-control-ckeditor' : '' ?>" name="data[desc<?= $k ?>]" id="desc<?= $k ?>" rows="5" placeholder="Mô tả (<?= $k ?>)"><?= htmlspecialchars_decode((!empty($flash->has('desc' . $k))) ? $flash->get('desc' . $k) : (@$item['desc' . $k] ?? '')) ?></textarea>
                                                 </div>
                                             <?php } ?>
                                             <?php if (isset($config['product'][$type]['content_list']) && $config['product'][$type]['content_list'] == true) { ?>
                                                 <div class="form-group">
                                                     <label for="content<?= $k ?>">Nội dung (<?= $k ?>):</label>
-                                                    <textarea class="form-control for-seo text-sm <?= (isset($config['product'][$type]['content_cke_list']) && $config['product'][$type]['content_cke_list'] == true) ? 'form-control-ckeditor' : '' ?>" name="data[content<?= $k ?>]" id="content<?= $k ?>" rows="5" placeholder="Nội dung (<?= $k ?>)"><?= htmlspecialchars_decode((!empty($flash->has('content' . $k))) ? $flash->get('content' . $k) : @$item['content' . $k]) ?></textarea>
+                                                    <textarea class="form-control for-seo text-sm <?= (isset($config['product'][$type]['content_cke_list']) && $config['product'][$type]['content_cke_list'] == true) ? 'form-control-ckeditor' : '' ?>" name="data[content<?= $k ?>]" id="content<?= $k ?>" rows="5" placeholder="Nội dung (<?= $k ?>)"><?= htmlspecialchars_decode((!empty($flash->has('content' . $k))) ? $flash->get('content' . $k) : (@$item['content' . $k] ?? '')) ?></textarea>
                                                 </div>
                                             <?php } ?>
                                         </div>

@@ -2,21 +2,16 @@
     <div class="wrapper">
         <div class="container">
             <div class="content-main">
+
+            
                 <?php if (!empty($static)) { ?>
                     <!-- Breadcrumbs -->
-                    <?php if (!empty($breadcrumbs)) { ?>
-                        <nav aria-label="breadcrumb" class="mb-4">
-                            <ol class="breadcrumb">
-                                <?= $breadcrumbs ?>
-                            </ol>
-                        </nav>
-                    <?php } ?>
-
                     <!-- Page Title -->
                     <div class="static-page-header mb-4">
-                        <h1 class="static-page-title">
-                            <?= !empty($static['name' . $lang]) ? htmlspecialchars($static['name' . $lang]) : $titleMain ?>
-                        </h1>
+                    <div class="section-header-isp text-center">
+            <h1 class="section-title-isp"><?= !empty($static['name' . $lang]) ? htmlspecialchars($static['name' . $lang]) :$titleMain ?></h1>
+        </div>          
+                    
                     </div>
 
                     <!-- Table of Contents (if enabled) -->
@@ -25,7 +20,7 @@
                             <div class="toc-wrapper">
                                 <div class="toc-header">
                                     <i class="fas fa-list me-2"></i>
-                                    <strong>Mục lục</strong>
+                                    <strong><?= mucluc ?></strong>
                                 </div>
                                 <ul class="toc-list" data-toc="article" data-toc-headings="h1, h2, h3"></ul>
                             </div>

@@ -6,7 +6,9 @@
 
             <?php if (!empty($news)) { ?>
 
-                <?= $custom->titleContainer($titleMain) ?>
+                <div class="section-header-isp text-center">
+            <h2 class="section-title-isp"><?= ($titleMain == 'tintuc' || empty($titleMain)) ? tintuc : $titleMain ?></h2>
+        </div>  
 
                 <div class="news-listing-container">
                     
@@ -58,7 +60,7 @@
                                             <?php endif; ?>
                                             <div class="mt-auto">
                                                 <a href="<?= $firstNews['slug' . $lang] ?>" class="btn-read-more btn btn-primary rounded-pill px-4 py-2 d-inline-flex align-items-center">
-                                                    Đọc thêm <i class="fas fa-arrow-right ms-2"></i>
+                                                    <?= docthem ?> <i class="fas fa-arrow-right ms-2"></i>
                                                 </a>
                                             </div>
                                         </div>
@@ -88,7 +90,7 @@
                 <div class="alert alert-warning w-100 text-center py-5" role="alert">
                     <i class="fas fa-info-circle fa-3x mb-3 d-block"></i>
                     <strong><?= khongtimthayketqua ?></strong>
-                    <p class="mt-2 mb-0">Vui lòng quay lại sau hoặc thử tìm kiếm với từ khóa khác.</p>
+                    <p class="mt-2 mb-0"><?= vuilongquaylaisau ?></p>
                 </div>
 
             <?php } ?>

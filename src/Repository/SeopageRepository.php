@@ -28,10 +28,13 @@ class SeopageRepository
      */
     public function getByType(string $type): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT * FROM #_seopage WHERE type = ? LIMIT 0,1",
             [$type]
         );
+        
+        // rawQueryOne returns false when no results found, convert to null
+        return ($result === false) ? null : $result;
     }
 
     /**
@@ -52,9 +55,9 @@ class SeopageRepository
      */
     public function create(array $data): bool
     {
-        if (!isset($data['date_created'])) {
-            $data['date_created'] = time();
-        }
+        // Note: seopage table does not have date_created column
+        // Remove date_created if it exists in data
+        unset($data['date_created']);
         return $this->d->insert('seopage', $data);
     }
 
@@ -67,9 +70,9 @@ class SeopageRepository
      */
     public function updateByType(string $type, array $data): bool
     {
-        if (!isset($data['date_updated'])) {
-            $data['date_updated'] = time();
-        }
+        // Note: seopage table does not have date_updated column
+        // Remove date_updated if it exists in data
+        unset($data['date_updated']);
         $this->d->where('type', $type);
         return $this->d->update('seopage', $data);
     }

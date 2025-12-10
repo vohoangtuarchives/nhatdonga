@@ -751,7 +751,7 @@ class elFinder
             foreach ($opts['bind'] as $cmd => $handlers) {
                 $doRegist = (strpos($cmd, '*') !== false);
                 if (!$doRegist) {
-                    $doRegist = ($_reqCmd && in_array($_reqCmd, array_map('self::getCmdOfBind', explode(' ', $cmd))));
+                    $doRegist = ($_reqCmd && in_array($_reqCmd, array_map([elFinder::class, 'getCmdOfBind'], explode(' ', $cmd))));
                 }
                 if ($doRegist) {
                     // for backward compatibility

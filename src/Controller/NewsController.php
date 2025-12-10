@@ -69,6 +69,12 @@ class NewsController extends BaseController
         if (!empty($seoDB['description' . $seolang])) {
             $this->seo->set('description', $seoDB['description' . $seolang]);
         }
+        if (empty($this->seo->get('description'))) {
+            $src = $rowDetail['desc' . $lang] ?? $rowDetail['content' . $lang] ?? '';
+            $src = strip_tags($src);
+            $src = preg_replace('/\s+/', ' ', $src);
+            $this->seo->set('description', mb_substr($src, 0, 160));
+        }
         $this->seo->set('url', $this->func->getPageURL());
 
         // Handle SEO image
@@ -87,7 +93,7 @@ class NewsController extends BaseController
 
         // Breadcrumbs
         if (!empty($GLOBALS['titleMain'])) {
-            $this->breadcrumbHelper->add($GLOBALS['titleMain'], '/tin-tuc');
+            $this->breadcrumbHelper->add($GLOBALS['titleMain'],  ($type ?? 'tin-tuc'));
         }
         if (!empty($newsContext['list'])) {
             $this->breadcrumbHelper->add($newsContext['list']['name' . $lang], $newsContext['list'][$sluglang]);
@@ -132,10 +138,18 @@ class NewsController extends BaseController
         $url = $this->func->getCurrentPageURL();
         $paging = $this->paginationHelper->getPagination($listResult['total'], $url, '');
 
+        // Get titleMain from global or use default constant
+        $titleMain = $GLOBALS['titleMain'] ?? null;
+        // If titleMain is 'tintuc' or empty, use constant
+        if (empty($titleMain) || $titleMain === 'tintuc') {
+            $titleMain = null; // Will use constant in template
+        }
+
         return [
             'news' => $listResult['items'],
             'total' => $listResult['total'],
             'paging' => $paging,
+            'titleMain' => $titleMain,
         ];
     }
 

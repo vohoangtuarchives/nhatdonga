@@ -12,6 +12,11 @@
 
 if (!defined('SOURCES')) die("Error");
 
+// Ensure ROOT is defined
+if (!defined('ROOT')) {
+	define('ROOT', dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR);
+}
+
 use Tuezy\Admin\AdminCRUDHelper;
 use Tuezy\Admin\AdminURLHelper;
 use Tuezy\Repository\ProductRepository;
@@ -89,7 +94,7 @@ switch ($act) {
 		if (!empty($_REQUEST['keyword'])) $filters['keyword'] = SecurityHelper::sanitize($_REQUEST['keyword']);
 		if (!empty($_REQUEST['comment_status'])) $filters['status'] = SecurityHelper::sanitize($_REQUEST['comment_status']);
 
-		$listing = $productService->getListing($type, $filters, $curPage, 10);
+        $listing = $productService->getListing($type, $filters, $curPage, 10, 'default', 'desc', false);
 		$items = $listing['items'];
 		$totalItems = $listing['total'];
 		
@@ -116,16 +121,16 @@ switch ($act) {
 		}
 		
 		$id = (int)($_GET['id'] ?? $_GET['id_copy'] ?? 0);
-		if ($id) {
-			$detailContext = $productService->getDetailContext($id, $type, false);
-			if ($detailContext) {
-				$item = $detailContext['detail'];
-				$gallery = $detailContext['photos'];
-			} else {
-				$item = $adminCRUD->getItem($id);
-				$gallery = [];
-			}
-		}
+        if ($id) {
+            $detailContext = $productService->getDetailContext($id, $type, false, false);
+            if ($detailContext) {
+                $item = $detailContext['detail'];
+                $gallery = $detailContext['photos'];
+            } else {
+                $item = $adminCRUD->getItem($id);
+                $gallery = [];
+            }
+        }
 		$template = "product/man/man_add";
 		break;
 
@@ -160,14 +165,26 @@ switch ($act) {
 		// Nếu không loại bỏ, có thể gây conflict và tạo row mới thay vì update
 		unset($data['id']);
 		
-		// Sanitize data
-		foreach ($data as $key => $value) {
-			if (is_string($value)) {
-				$data[$key] = SecurityHelper::sanitize($value);
-			} elseif (is_array($value)) {
-				$data[$key] = SecurityHelper::sanitizeArray($value);
-			}
-		}
+        
+        foreach ($data as $key => $value) {
+            if (is_string($value)) {
+                $data[$key] = SecurityHelper::sanitize($value);
+            } elseif (is_array($value)) {
+                $data[$key] = SecurityHelper::sanitizeArray($value);
+            }
+        }
+
+        if (!empty($config['website']['slug']) && is_array($config['website']['slug'])) {
+            foreach ($config['website']['slug'] as $k => $_) {
+                $slugKey = 'slug' . $k;
+                if (isset($_POST[$slugKey])) {
+                    $data[$slugKey] = SecurityHelper::sanitize($_POST[$slugKey]);
+                }
+            }
+        } else {
+            if (isset($_POST['slugvi'])) { $data['slugvi'] = SecurityHelper::sanitize($_POST['slugvi']); }
+            if (isset($_POST['slugen'])) { $data['slugen'] = SecurityHelper::sanitize($_POST['slugen']); }
+        }
 
 		// Get related data
 		$dataSC = $_POST['dataSC'] ?? [];
@@ -209,7 +226,12 @@ switch ($act) {
 						if ($id) {
 							$oldProduct = $d->rawQueryOne("SELECT photo FROM #_product WHERE id = ? LIMIT 0,1", [$productId]);
 							if ($oldProduct && !empty($oldProduct['photo'])) {
-								$func->deleteFile(UPLOAD_PRODUCT . $oldProduct['photo']);
+								$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+								$filePath = ROOT . $uploadPath . $oldProduct['photo'];
+								$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+								if (file_exists($filePath)) {
+									$func->deleteFile($filePath);
+								}
 							}
 						}
 						
@@ -231,7 +253,12 @@ switch ($act) {
 						if ($id) {
 							$oldProduct = $d->rawQueryOne("SELECT photo2 FROM #_product WHERE id = ? LIMIT 0,1", [$productId]);
 							if ($oldProduct && !empty($oldProduct['photo2'])) {
-								$func->deleteFile(UPLOAD_PRODUCT . $oldProduct['photo2']);
+								$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+								$filePath = ROOT . $uploadPath . $oldProduct['photo2'];
+								$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+								if (file_exists($filePath)) {
+									$func->deleteFile($filePath);
+								}
 							}
 						}
 						
@@ -252,7 +279,12 @@ switch ($act) {
 						if ($id) {
 							$oldProduct = $d->rawQueryOne("SELECT photo3 FROM #_product WHERE id = ? LIMIT 0,1", [$productId]);
 							if ($oldProduct && !empty($oldProduct['photo3'])) {
-								$func->deleteFile(UPLOAD_PRODUCT . $oldProduct['photo3']);
+								$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+								$filePath = ROOT . $uploadPath . $oldProduct['photo3'];
+								$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+								if (file_exists($filePath)) {
+									$func->deleteFile($filePath);
+								}
 							}
 						}
 						
@@ -261,13 +293,43 @@ switch ($act) {
 					}
 				}
 				
-				$message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
-				// Build return URL using AdminURLHelper
-				$urlHelper->reset();
-				$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
-				$urlHelper->addParam('p', $curPage);
-				$returnUrl = $urlHelper->getUrl('product', 'man', $type);
-				$func->transfer($message, $returnUrl);
+                // Save SEO and Schema
+                $dataSeo = $_POST['dataSeo'] ?? [];
+                $dataSchema = $_POST['dataSchema'] ?? [];
+                if (is_array($dataSeo)) { $dataSeo = SecurityHelper::sanitizeArray($dataSeo); }
+                if (is_array($dataSchema)) { $dataSchema = SecurityHelper::sanitizeArray($dataSchema); }
+                $seoPayload = array_merge($dataSeo ?: [], $dataSchema ?: []);
+
+                // Instantiate SeoService and save
+                $seoService = new \Tuezy\Service\SeoService($d);
+                if (!empty($seoPayload)) {
+                    $seoService->saveSeo($productId, 'product', 'man', $type, $seoPayload);
+                }
+
+                // Auto-generate minimal Product schema if empty
+                if (empty($seoPayload) || (empty($seoPayload['schemavi']) && empty($seoPayload['schemaen']))) {
+                    $row = $d->rawQueryOne("SELECT name{$lang}, desc{$lang}, content{$lang}, photo, code, slug{$lang}, date_created, type FROM #_product WHERE id = ? LIMIT 0,1", [$productId]);
+                    if ($row) {
+                        $imageUrl = (defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/') . ($row['photo'] ?? '');
+                        $schema = json_encode([
+                            '@context' => 'https://schema.org',
+                            '@type' => 'Product',
+                            'name' => $row['name' . $lang] ?? '',
+                            'image' => $imageUrl,
+                            'description' => strip_tags($row['desc' . $lang] ?? ''),
+                            'sku' => $row['code'] ?? ''
+                        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                        $seoService->saveSeo($productId, 'product', 'man', $type, ['schemavi' => $schema]);
+                    }
+                }
+
+                $message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+                // Build return URL using AdminURLHelper
+                $urlHelper->reset();
+                $urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
+                $urlHelper->addParam('p', $curPage);
+                $returnUrl = $urlHelper->getUrl('product', 'man', $type);
+                $func->transfer($message, $returnUrl);
 			} else {
 				$urlHelper->reset();
 				$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
@@ -286,17 +348,123 @@ switch ($act) {
 		break;
 
 	case "delete":
-		$id = (int)($_GET['id'] ?? 0);
-		// Build return URL using AdminURLHelper
-		$urlHelper->reset();
-		$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
-		$urlHelper->addParam('p', $curPage);
-		$returnUrl = $urlHelper->getUrl('product', 'man', $type);
-		
-		if ($id && $adminCRUD->delete($id)) {
-			$func->transfer("Xóa dữ liệu thành công", $returnUrl);
+		// Xử lý xóa nhiều items (listid)
+		if (!empty($_GET['listid'])) {
+			$listid = SecurityHelper::sanitizeGet('listid', '');
+			$ids = explode(',', $listid);
+			$ids = array_filter(array_map('intval', $ids)); // Loại bỏ giá trị rỗng và convert sang int
+			
+			// Build return URL using AdminURLHelper
+			$urlHelper->reset();
+			$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
+			$urlHelper->addParam('p', $curPage);
+			$returnUrl = $urlHelper->getUrl('product', 'man', $type);
+			
+			if (empty($ids)) {
+				$func->transfer("Không nhận được dữ liệu", $returnUrl, false);
+			}
+			
+			$successCount = 0;
+			$failedCount = 0;
+			
+			foreach ($ids as $productId) {
+				if ($productId > 0) {
+					// Lấy thông tin sản phẩm để xóa ảnh nếu cần
+					$product = $d->rawQueryOne("SELECT photo, photo2, photo3 FROM #_product WHERE id = ? AND type = ? LIMIT 0,1", [$productId, $type]);
+					
+					// Xóa record
+					if ($adminCRUD->delete($productId)) {
+						// Xóa file ảnh nếu có
+						if ($product) {
+							if (!empty($product['photo'])) {
+								$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+								$filePath = ROOT . $uploadPath . $product['photo'];
+								$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+								if (file_exists($filePath)) {
+									$func->deleteFile($filePath);
+								}
+							}
+							if (!empty($product['photo2'])) {
+								$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+								$filePath = ROOT . $uploadPath . $product['photo2'];
+								$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+								if (file_exists($filePath)) {
+									$func->deleteFile($filePath);
+								}
+							}
+							if (!empty($product['photo3'])) {
+								$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+								$filePath = ROOT . $uploadPath . $product['photo3'];
+								$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+								if (file_exists($filePath)) {
+									$func->deleteFile($filePath);
+								}
+							}
+						}
+						$successCount++;
+					} else {
+						$failedCount++;
+					}
+				}
+			}
+			
+			if ($successCount > 0) {
+				$message = "Đã xóa thành công {$successCount} sản phẩm";
+				if ($failedCount > 0) {
+					$message .= " ({$failedCount} sản phẩm xóa thất bại)";
+				}
+				$func->transfer($message, $returnUrl);
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", $returnUrl, false);
+			}
 		} else {
-			$func->transfer("Xóa dữ liệu thất bại", $returnUrl, false);
+			// Xóa một item (id)
+			$id = (int)($_GET['id'] ?? 0);
+			// Build return URL using AdminURLHelper
+			$urlHelper->reset();
+			$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
+			$urlHelper->addParam('p', $curPage);
+			$returnUrl = $urlHelper->getUrl('product', 'man', $type);
+			
+			if ($id) {
+				// Lấy thông tin sản phẩm để xóa ảnh nếu cần
+				$product = $d->rawQueryOne("SELECT photo, photo2, photo3 FROM #_product WHERE id = ? AND type = ? LIMIT 0,1", [$id, $type]);
+				
+				if ($adminCRUD->delete($id)) {
+					// Xóa file ảnh nếu có
+					if ($product) {
+						if (!empty($product['photo'])) {
+							$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+							$filePath = ROOT . $uploadPath . $product['photo'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
+							}
+						}
+						if (!empty($product['photo2'])) {
+							$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+							$filePath = ROOT . $uploadPath . $product['photo2'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
+							}
+						}
+						if (!empty($product['photo3'])) {
+							$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+							$filePath = ROOT . $uploadPath . $product['photo3'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
+							}
+						}
+					}
+					$func->transfer("Xóa dữ liệu thành công", $returnUrl);
+				} else {
+					$func->transfer("Xóa dữ liệu thất bại", $returnUrl, false);
+				}
+			} else {
+				$func->transfer("Không nhận được dữ liệu", $returnUrl, false);
+			}
 		}
 		break;
 
@@ -362,6 +530,21 @@ switch ($act) {
 		
 		// Loại bỏ id khỏi data vì id được truyền riêng
 		unset($data['id']);
+
+		// Gộp slug từ input bên ngoài vào data để lưu DB
+		if (isset($_POST['slugvi'])) {
+			$data['slugvi'] = SecurityHelper::sanitize($_POST['slugvi']);
+		}
+		if (isset($_POST['slugen'])) {
+			$data['slugen'] = SecurityHelper::sanitize($_POST['slugen']);
+		}
+		// Tự động tạo slug nếu chưa nhập
+		if (empty($data['slugvi']) && !empty($data['namevi'])) {
+			$data['slugvi'] = $func->changeTitle($data['namevi']);
+		}
+		if (empty($data['slugen']) && !empty($data['nameen'])) {
+			$data['slugen'] = $func->changeTitle($data['nameen']);
+		}
 		
 		// Xử lý upload ảnh chính (file -> photo)
 		$imgType = $config['product'][$type]['img_type_list'] ?? '.jpg|.gif|.png|.jpeg|.webp';
@@ -379,7 +562,12 @@ switch ($act) {
 				if ($id) {
 					$oldList = $d->rawQueryOne("SELECT photo FROM #_product_list WHERE id = ? LIMIT 0,1", [$id]);
 					if ($oldList && !empty($oldList['photo'])) {
-						$func->deleteFile(UPLOAD_PRODUCT . $oldList['photo']);
+						$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+						$filePath = ROOT . $uploadPath . $oldList['photo'];
+						$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+						if (file_exists($filePath)) {
+							$func->deleteFile($filePath);
+						}
 					}
 				}
 				$data['photo'] = $photo;
@@ -398,7 +586,12 @@ switch ($act) {
 				if ($id) {
 					$oldList = $d->rawQueryOne("SELECT photo2 FROM #_product_list WHERE id = ? LIMIT 0,1", [$id]);
 					if ($oldList && !empty($oldList['photo2'])) {
-						$func->deleteFile(UPLOAD_PRODUCT . $oldList['photo2']);
+						$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+						$filePath = ROOT . $uploadPath . $oldList['photo2'];
+						$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+						if (file_exists($filePath)) {
+							$func->deleteFile($filePath);
+						}
 					}
 				}
 				$data['photo2'] = $photo2;
@@ -427,11 +620,111 @@ switch ($act) {
 		break;
 
 	case "delete_list":
-		$id = (int)($_GET['id'] ?? 0);
-		if ($id && $listCRUD->delete($id)) {
-			$func->transfer("Xóa dữ liệu thành công", "index.php?com=product&act=man_list&type=" . $type);
+		// Xử lý xóa nhiều items (listid)
+		if (!empty($_GET['listid'])) {
+			$listid = SecurityHelper::sanitizeGet('listid', '');
+			$ids = explode(',', $listid);
+			$ids = array_filter(array_map('intval', $ids)); // Loại bỏ giá trị rỗng và convert sang int
+			
+			if (empty($ids)) {
+				$func->transfer("Không nhận được dữ liệu", "index.php?com=product&act=man_list&type=" . $type, false);
+			}
+			
+			$successCount = 0;
+			$failedCount = 0;
+			
+			foreach ($ids as $productId) {
+				if ($productId > 0) {
+					// Lấy thông tin sản phẩm để xóa ảnh nếu cần
+					$product = $d->rawQueryOne("SELECT photo, photo2, photo3 FROM #_product WHERE id = ? AND type = ? LIMIT 0,1", [$productId, $type]);
+					
+					// Xóa record
+					if ($listCRUD->delete($productId)) {
+						// Xóa file ảnh nếu có
+						if ($product) {
+						if (!empty($product['photo'])) {
+							$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+							$filePath = ROOT . $uploadPath . $product['photo'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
+							}
+						}
+						if (!empty($product['photo2'])) {
+							$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+							$filePath = ROOT . $uploadPath . $product['photo2'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
+							}
+						}
+						if (!empty($product['photo3'])) {
+							$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+							$filePath = ROOT . $uploadPath . $product['photo3'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
+							}
+						}
+						}
+						$successCount++;
+					} else {
+						$failedCount++;
+					}
+				}
+			}
+			
+			if ($successCount > 0) {
+				$message = "Đã xóa thành công {$successCount} sản phẩm";
+				if ($failedCount > 0) {
+					$message .= " ({$failedCount} sản phẩm xóa thất bại)";
+				}
+				$func->transfer($message, "index.php?com=product&act=man_list&type=" . $type);
+			} else {
+				$func->transfer("Xóa dữ liệu thất bại", "index.php?com=product&act=man_list&type=" . $type, false);
+			}
 		} else {
-			$func->transfer("Xóa dữ liệu thất bại", "index.php?com=product&act=man_list&type=" . $type, false);
+			// Xóa một item (id)
+			$id = (int)($_GET['id'] ?? 0);
+			if ($id) {
+				// Lấy thông tin sản phẩm để xóa ảnh nếu cần
+				$product = $d->rawQueryOne("SELECT photo, photo2, photo3 FROM #_product WHERE id = ? AND type = ? LIMIT 0,1", [$id, $type]);
+				
+				if ($listCRUD->delete($id)) {
+					// Xóa file ảnh nếu có
+					if ($product) {
+						if (!empty($product['photo'])) {
+							$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+							$filePath = ROOT . $uploadPath . $product['photo'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
+							}
+						}
+						if (!empty($product['photo2'])) {
+							$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+							$filePath = ROOT . $uploadPath . $product['photo2'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
+							}
+						}
+						if (!empty($product['photo3'])) {
+							$uploadPath = defined('UPLOAD_PRODUCT_L') ? UPLOAD_PRODUCT_L : 'upload/product/';
+							$filePath = ROOT . $uploadPath . $product['photo3'];
+							$filePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+							if (file_exists($filePath)) {
+								$func->deleteFile($filePath);
+							}
+						}
+					}
+					$func->transfer("Xóa dữ liệu thành công", "index.php?com=product&act=man_list&type=" . $type);
+				} else {
+					$func->transfer("Xóa dữ liệu thất bại", "index.php?com=product&act=man_list&type=" . $type, false);
+				}
+			} else {
+				$func->transfer("Không nhận được dữ liệu", "index.php?com=product&act=man_list&type=" . $type, false);
+			}
 		}
 		break;
 

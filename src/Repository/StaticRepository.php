@@ -76,7 +76,7 @@ class StaticRepository
             "SELECT id, type, name{$this->lang}, content{$this->lang}, photo, date_created, date_updated 
              FROM #_static 
              WHERE {$where} 
-             ORDER BY numb, id DESC",
+             ORDER BY id DESC",
             $params
         ) ?: [];
     }
@@ -92,9 +92,8 @@ class StaticRepository
         if (!isset($data['date_created'])) {
             $data['date_created'] = time();
         }
-        if (!isset($data['numb'])) {
-            $data['numb'] = 0;
-        }
+        // Remove 'numb' if it exists - static table doesn't have this column
+        unset($data['numb']);
         return $this->d->insert('static', $data);
     }
 

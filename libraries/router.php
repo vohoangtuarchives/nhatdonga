@@ -51,6 +51,10 @@ if (!isset($configBase)) {
     $configBase = $http . $configUrl;
 }
 
+if ((isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] == 1)) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+}
+
 /* Check HTTP */
 $func->checkHTTP($http, $config['arrayDomainSSL'], $configBase, $configUrl);
 
@@ -419,6 +423,8 @@ $requick = array(
 	array("tbl" => "news_item", "field" => "idi", "source" => "news", "com" => "tin-tuc", "type" => "tin-tuc"),
 	array("tbl" => "news_sub", "field" => "ids", "source" => "news", "com" => "tin-tuc", "type" => "tin-tuc"),
 	array("tbl" => "news", "field" => "id", "source" => "news", "com" => "tin-tuc", "type" => "tin-tuc", "menu" => true),
+
+	array("tbl" => "news", "field" => "id", "source" => "news", "com" => "tai-sao-chon", "type" => "tai-sao-chon", "menu" => true),
 
 	array("tbl" => "news", "field" => "id", "source" => "news", "com" => "su-kien", "type" => "su-kien", "menu" => true),
 

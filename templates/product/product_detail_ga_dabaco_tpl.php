@@ -17,7 +17,7 @@ $assets = $isWater ? WATERMARK . '/product' : THUMBS;
             <div class="container">
                 <div class="alert alert-warning text-center py-5">
                     <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
-                    <p class="mb-0">Sản phẩm không tồn tại hoặc đã bị xóa.</p>
+                    <p class="mb-0"><?= sanphamkhongtontai ?></p>
                 </div>
             </div>
         </div>
@@ -228,7 +228,7 @@ $assets = $isWater ? WATERMARK . '/product' : THUMBS;
             <?php if (!empty($relatedProducts)) { ?>
                 <div class="related-products-modern mt-5">
                     <h3 class="section-title-modern mb-4">
-                        <i class="fas fa-th-large me-2"></i>Sản phẩm liên quan
+                        <i class="fas fa-th-large me-2"></i><?= sanphamcungloai ?>
                     </h3>
                     <div class="row g-3 related-products-grid">
                         <?php foreach ($relatedProducts as $k => $v): ?>

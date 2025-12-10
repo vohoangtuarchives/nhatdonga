@@ -1,4 +1,5 @@
 <!-- Css Files -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
 
 <?php
 
@@ -121,6 +122,12 @@ echo $css->get();
 <!-- Js Google Analytic -->
 
 <?= htmlspecialchars_decode($setting['analytics']) ?>
+<?php if (empty($setting['analytics']) && !empty($config['googleAPI']['analytics']['id'])) { ?>
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?= $config['googleAPI']['analytics']['id'] ?>"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<?= $config['googleAPI']['analytics']['id'] ?>');
+</script>
+<?php } ?>
 
 
 

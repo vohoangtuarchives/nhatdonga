@@ -11,12 +11,11 @@
                     <ul>
 
                         <?php foreach ($splist as $klist => $vlist) {
-
                             $spcat = $d->rawQuery("select name$lang, slugvi, slugen, id from #_product_cat where id_list = ? and find_in_set('hienthi',status) order by numb,id desc", array($vlist['id'])); ?>
 
                             <li>
 
-                                <a class="transition" title="<?= $vlist['name' . $lang] ?>" href="<?= $vlist[$sluglang] ?>"><?= $vlist['name' . $lang] ?></a>
+                                <a class="transition" title="<?= $vlist['name' . $lang] ?>" href="<?= $vlist["slug$lang"] ?>"><?= $vlist['name' . $lang] ?></a>
 
                                 <?php if (!empty($spcat)) { ?>
 
@@ -28,7 +27,7 @@
 
                                             <li>
 
-                                                <a class="transition" title="<?= $vcat['name' . $lang] ?>" href="<?= $vcat[$sluglang] ?>"><?= $vcat['name' . $lang] ?></a>
+                                                <a class="transition" title="<?= $vcat['name' . $lang] ?>" href="<?= $vcat["slug$lang"] ?>"><?= $vcat['name' . $lang] ?></a>
 
                                                 <?php if (!empty($spitem)) { ?>
 
@@ -40,7 +39,7 @@
 
                                                             <li>
 
-                                                                <a class="has-child transition" title="<?= $vitem['name' . $lang] ?>" href="<?= $vitem[$sluglang] ?>"><?= $vitem['name' . $lang] ?></a>
+                                                                <a class="has-child transition" title="<?= $vitem['name' . $lang] ?>" href="<?= $vitem["slug$lang"] ?>"><?= $vitem['name' . $lang] ?></a>
 
                                                                 <?php if (!empty($spsub)) { ?>
 
@@ -50,7 +49,7 @@
 
                                                                             <li>
 
-                                                                                <a class="transition" title="<?= $vsub['name' . $lang] ?>" href="<?= $vsub[$sluglang] ?>"><?= $vsub['name' . $lang] ?></a>
+                                                                                <a class="transition" title="<?= $vsub['name' . $lang] ?>" href="<?= $vsub["slug$lang"] ?>"><?= $vsub['name' . $lang] ?></a>
 
                                                                             </li>
 
@@ -105,7 +104,7 @@
 
                             <li>
 
-                                <a class="has-child transition" title="<?= $vlist['name' . $lang] ?>" href="<?= $vlist[$sluglang] ?>"><?= $vlist['name' . $lang] ?></a>
+                                <a class="has-child transition" title="<?= $vlist['name' . $lang] ?>" href="<?= $vlist["slug$lang"] ?>"><?= $vlist['name' . $lang] ?></a>
 
                                 <?php if (!empty($ttcat)) { ?>
 
@@ -117,7 +116,7 @@
 
                                             <li>
 
-                                                <a class="has-child transition" title="<?= $vcat['name' . $lang] ?>" href="<?= $vcat[$sluglang] ?>"><?= $vcat['name' . $lang] ?></a>
+                                                <a class="has-child transition" title="<?= $vcat['name' . $lang] ?>" href="<?= $vcat["slug$lang"] ?>"><?= $vcat['name' . $lang] ?></a>
 
                                                 <?php if (!empty($ttitem)) { ?>
 
@@ -129,7 +128,7 @@
 
                                                             <li>
 
-                                                                <a class="has-child transition" title="<?= $vitem['name' . $lang] ?>" href="<?= $vitem[$sluglang] ?>"><?= $vitem['name' . $lang] ?></a>
+                                                                <a class="has-child transition" title="<?= $vitem['name' . $lang] ?>" href="<?= $vitem["slug$lang"] ?>"><?= $vitem['name' . $lang] ?></a>
 
                                                                 <?php if (!empty($ttsub)) { ?>
 
@@ -139,7 +138,7 @@
 
                                                                             <li>
 
-                                                                                <a class="transition" title="<?= $vsub['name' . $lang] ?>" href="<?= $vsub[$sluglang] ?>"><?= $vsub['name' . $lang] ?></a>
+                                                                                <a class="transition" title="<?= $vsub['name' . $lang] ?>" href="<?= $vsub["slug$lang"] ?>"><?= $vsub['name' . $lang] ?></a>
 
                                                                             </li>
 

@@ -88,6 +88,17 @@ class RouteHandler
                 'titleMain' => 'Kiến Thức',
                 'type' => 'kien-thuc',
             ],
+            'tai-sao-chon' => [
+                'source' => 'news',
+                'template' => null,
+                'templateDetail' => 'news/news_detail',
+                'templateList' => 'news/news',
+                'seoType' => null,
+                'seoTypeDetail' => 'article',
+                'seoTypeList' => 'object',
+                'titleMain' => 'Tại sao chọn',
+                'type' => 'tai-sao-chon',
+            ],
             'dich-vu' => [
                 'source' => 'news',
                 'template' => null,
