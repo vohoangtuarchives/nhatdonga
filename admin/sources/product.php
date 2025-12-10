@@ -204,8 +204,9 @@ switch ($act) {
 		$dataTags = array_filter($dataTags, function($v) { return $v > 0; });
 
 		// Save product using ProductService
-		try {
-			$productId = $productService->saveProduct($data, $id, $dataSC, $dataTags, $type, $func);
+        try {
+            if (method_exists($d, 'beginTransaction')) { $d->beginTransaction(); }
+            $productId = $productService->saveProduct($data, $id, $dataSC, $dataTags, $type, $func);
 
 			if ($productId) {
 				// Xử lý upload ảnh chính và các ảnh phụ của sản phẩm
@@ -300,10 +301,9 @@ switch ($act) {
                 if (is_array($dataSchema)) { $dataSchema = SecurityHelper::sanitizeArray($dataSchema); }
                 $seoPayload = array_merge($dataSeo ?: [], $dataSchema ?: []);
 
-                // Instantiate SeoService and save
-                $seoService = new \Tuezy\Service\SeoService($d);
                 if (!empty($seoPayload)) {
-                    $seoService->saveSeo($productId, 'product', 'man', $type, $seoPayload);
+                    $seoRepo = new \Tuezy\Repository\SeoRepository($d);
+                    (new \Tuezy\Application\SEO\SaveSeoMeta($seoRepo))->execute($productId, 'product', 'man', $type, $seoPayload);
                 }
 
                 // Auto-generate minimal Product schema if empty
@@ -319,7 +319,8 @@ switch ($act) {
                             'description' => strip_tags($row['desc' . $lang] ?? ''),
                             'sku' => $row['code'] ?? ''
                         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                        $seoService->saveSeo($productId, 'product', 'man', $type, ['schemavi' => $schema]);
+                        $seoRepo = new \Tuezy\Repository\SeoRepository($d);
+                        (new \Tuezy\Application\SEO\SaveSeoMeta($seoRepo))->execute($productId, 'product', 'man', $type, ['schemavi' => $schema]);
                     }
                 }
 
@@ -329,17 +330,20 @@ switch ($act) {
                 $urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
                 $urlHelper->addParam('p', $curPage);
                 $returnUrl = $urlHelper->getUrl('product', 'man', $type);
+                if (method_exists($d, 'commit')) { $d->commit(); }
                 $func->transfer($message, $returnUrl);
-			} else {
-				$urlHelper->reset();
+            } else {
+                if (method_exists($d, 'rollBack')) { $d->rollBack(); }
+                $urlHelper->reset();
 				$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
 				$urlHelper->addParam('p', $curPage);
 				$returnUrl = $urlHelper->getUrl('product', 'man', $type);
 				$func->transfer("Có lỗi xảy ra khi lưu dữ liệu", $returnUrl, false);
 			}
-		} catch (\Exception $e) {
-			// Handle slug validation error
-			$urlHelper->reset();
+        } catch (\Exception $e) {
+            if (method_exists($d, 'rollBack')) { $d->rollBack(); }
+            // Handle slug validation error
+            $urlHelper->reset();
 			$urlHelper->buildFromRequest(['id_list', 'id_cat', 'id_item', 'id_sub', 'id_brand'], ['comment_status', 'keyword']);
 			$urlHelper->addParam('p', $curPage);
 			$returnUrl = $urlHelper->getUrl('product', 'man', $type);

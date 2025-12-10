@@ -4,7 +4,9 @@
 
         <div class="content-main">
 
-            <?php if (!empty($products)) { ?>
+            <?php 
+            $items = !empty($productsVo) ? $productsVo : ($products ?? []);
+            if (!empty($items)) { ?>
 
                 <?php 
                 // Xác định title
@@ -203,7 +205,7 @@
                         <div class="col-lg-12 col-md-12">
                             <?php
                             // Sử dụng $total từ controller thay vì count array
-                            $totalProducts = $total ?? count($products);
+                            $totalProducts = $total ?? count($items);
                             ?>
 
                             <?php if ($totalProducts > 0): ?>
@@ -263,7 +265,7 @@
                                         <div class="col-md-4 col-12 mb-2 mb-md-0">
                                             <p class="mb-0 text-muted">
                                                 <i class="fas fa-box me-2"></i>
-                                                <?= hienthi ?> <strong><?= count($products) ?></strong> / <strong><?= $totalProducts ?></strong> <?= sanphamthuong ?>
+                                                <?= hienthi ?> <strong><?= count($items) ?></strong> / <strong><?= $totalProducts ?></strong> <?= sanphamthuong ?>
                                             </p>
                                         </div>
                                         <div class="col-md-8 col-12">
@@ -310,43 +312,51 @@
                             <?php endif; ?>
 
                             <div class="row g-3" id="productGrid">
-                                <?php foreach ($products as $k => $v): ?>
+                                <?php foreach ($items as $k => $v): 
+                                    $isArray = is_array($v);
+                                    $name = $isArray ? ($v['name' . $lang] ?? '') : ($v->name ?? '');
+                                    $slug = $isArray ? ($v['slug' . $lang] ?? ($v['slugvi'] ?? '')) : ($v->slug ?? '');
+                                    $photo = $isArray ? ($v['photo'] ?? '') : ($v->photo ?? '');
+                                    $sale = $isArray ? ($v['sale_price'] ?? null) : ($v->salePrice ?? null);
+                                    $regular = $isArray ? ($v['regular_price'] ?? null) : ($v->regularPrice ?? null);
+                                    $discount = $isArray ? ($v['discount'] ?? null) : ($v->discount ?? null);
+                                ?>
                                     <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-item">
                                         <div class="product-card-isp">
                                             <div class="product-image-isp">
-                                                <a href="<?= $configBase . $v['slug' . $lang] ?>">
+                                                <a href="<?= $configBase . $slug ?>">
                                                     <?php
                                                     $image = $func->getImage([
                                                             'sizes' => '400x400x1',
                                                             'isWatermark' => false,
                                                             'prefix' => 'product',
                                                             'upload' => UPLOAD_PRODUCT_L,
-                                                            'image' => $v['photo'],
-                                                            'alt' => $v['name' . $lang]
+                                                            'image' => $photo,
+                                                            'alt' => $name
                                                     ]);
                                                     echo $image;
                                                     ?>
                                                 </a>
-                                                <?php if (!empty($v['discount']) && $v['discount'] > 0): ?>
+                                                <?php if (!empty($discount) && $discount > 0): ?>
                                                     <div class="discount-badge-isp">
-                                                        <span>-<?= $v['discount'] ?>%</span>
+                                                        <span>-<?= (int)$discount ?>%</span>
                                                     </div>
                                                 <?php endif; ?>
                                             </div>
                                             <div class="product-info-isp">
                                                 <h3 class="product-name-isp">
-                                                    <a href="<?= $configBase . $v['slug' . $lang] ?>">
-                                                        <?= htmlspecialchars($v['name' . $lang]) ?>
+                                                    <a href="<?= $configBase . $slug ?>">
+                                                        <?= htmlspecialchars($name) ?>
                                                     </a>
                                                 </h3>
                                                 <div class="product-price-isp">
-                                                    <?php if (!empty($v['sale_price']) && $v['sale_price'] > 0): ?>
-                                                        <span class="price-new"><?= number_format($v['sale_price'], 0, ',', '.') ?> đ</span>
-                                                        <?php if (!empty($v['regular_price']) && $v['regular_price'] > $v['sale_price']): ?>
-                                                            <span class="price-old"><?= number_format($v['regular_price'], 0, ',', '.') ?> đ</span>
+                                                    <?php if (!empty($sale) && $sale > 0): ?>
+                                                        <span class="price-new"><?= number_format($sale, 0, ',', '.') ?> đ</span>
+                                                        <?php if (!empty($regular) && $regular > $sale): ?>
+                                                            <span class="price-old"><?= number_format($regular, 0, ',', '.') ?> đ</span>
                                                         <?php endif; ?>
-                                                    <?php elseif (!empty($v['regular_price']) && $v['regular_price'] > 0): ?>
-                                                        <span class="price-new"><?= number_format($v['regular_price'], 0, ',', '.') ?> đ</span>
+                                                    <?php elseif (!empty($regular) && $regular > 0): ?>
+                                                        <span class="price-new"><?= number_format($regular, 0, ',', '.') ?> đ</span>
                                                     <?php else: ?>
                                                         <span class="price-contact">Liên hệ</span>
                                                     <?php endif; ?>
@@ -359,16 +369,24 @@
 
                             <!-- List View (hidden by default) -->
                             <div class="product-list-view d-none" id="productList">
-                                <?php foreach ($products as $k => $v): ?>
+                                <?php foreach ($items as $k => $v): 
+                                    $isArray = is_array($v);
+                                    $name = $isArray ? ($v['name' . $lang] ?? '') : ($v->name ?? '');
+                                    $slug = $isArray ? ($v['slug' . $lang] ?? ($v['slugvi'] ?? '')) : ($v->slug ?? '');
+                                    $photo = $isArray ? ($v['photo'] ?? '') : ($v->photo ?? '');
+                                    $sale = $isArray ? ($v['sale_price'] ?? null) : ($v->salePrice ?? null);
+                                    $regular = $isArray ? ($v['regular_price'] ?? null) : ($v->regularPrice ?? null);
+                                    $discount = $isArray ? ($v['discount'] ?? null) : ($v->discount ?? null);
+                                ?>
                                     <div class="product-list-item mb-3">
                                         <div class="row g-3">
                                             <div class="col-md-3 col-12">
                                                 <div class="product-list-image">
-                                                    <a href="<?= $configBase . $v['slug' . $lang] ?>">
+                                                    <a href="<?= $configBase . $slug ?>">
                                                         <?php
                                                         // Kiểm tra và sử dụng ảnh sản phẩm
-                                                        $productPhoto = !empty($v['photo']) ? $v['photo'] : '';
-                                                        $productName = !empty($v['name' . $lang]) ? $v['name' . $lang] : sanpham;
+                                                        $productPhoto = !empty($photo) ? $photo : '';
+                                                        $productName = !empty($name) ? $name : sanpham;
                                                         
                                                         $image = $func->getImage([
                                                                 'sizes' => '300x300x2',
@@ -382,9 +400,9 @@
                                                         echo $image;
                                                         ?>
                                                     </a>
-                                                    <?php if (!empty($v['discount']) && $v['discount'] > 0): ?>
+                                                    <?php if (!empty($discount) && $discount > 0): ?>
                                                         <div class="discount-badge-isp">
-                                                            <span>-<?= $v['discount'] ?>%</span>
+                                                            <span>-<?= (int)$discount ?>%</span>
                                                         </div>
                                                     <?php endif; ?>
                                                 </div>
@@ -392,18 +410,18 @@
                                             <div class="col-md-9 col-12">
                                                 <div class="product-list-info">
                                                     <h3 class="product-name-isp mb-2">
-                                                        <a href="<?= $configBase . $v['slug' . $lang] ?>">
-                                                            <?= htmlspecialchars($v['name' . $lang]) ?>
+                                                        <a href="<?= $configBase . $slug ?>">
+                                                            <?= htmlspecialchars($name) ?>
                                                         </a>
                                                     </h3>
                                                     <div class="product-price-isp mb-3">
-                                                        <?php if (!empty($v['sale_price']) && $v['sale_price'] > 0): ?>
-                                                            <span class="price-new fs-5"><?= number_format($v['sale_price'], 0, ',', '.') ?> đ</span>
-                                                            <?php if (!empty($v['regular_price']) && $v['regular_price'] > $v['sale_price']): ?>
-                                                                <span class="price-old ms-2"><?= number_format($v['regular_price'], 0, ',', '.') ?> đ</span>
+                                                        <?php if (!empty($sale) && $sale > 0): ?>
+                                                            <span class="price-new fs-5"><?= number_format($sale, 0, ',', '.') ?> đ</span>
+                                                            <?php if (!empty($regular) && $regular > $sale): ?>
+                                                                <span class="price-old ms-2"><?= number_format($regular, 0, ',', '.') ?> đ</span>
                                                             <?php endif; ?>
-                                                        <?php elseif (!empty($v['regular_price']) && $v['regular_price'] > 0): ?>
-                                                            <span class="price-new fs-5"><?= number_format($v['regular_price'], 0, ',', '.') ?> đ</span>
+                                                        <?php elseif (!empty($regular) && $regular > 0): ?>
+                                                            <span class="price-new fs-5"><?= number_format($regular, 0, ',', '.') ?> đ</span>
                                                         <?php else: ?>
                                                             <span class="price-contact fs-5">Liên hệ</span>
                                                         <?php endif; ?>

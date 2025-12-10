@@ -1,0 +1,23 @@
+---
+import AdminLayout from '../layouts/AdminLayout.astro';
+---
+
+<AdminLayout>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card p-4">
+      <div class="font-semibold mb-2">Redirects</div>
+      <p class="text-sm text-slate-400">Quản lý chuyển hướng URL, SEO-friendly.</p>
+      <a class="btn mt-3" href="/redirects">Mở</a>
+    </div>
+    <div class="card p-4">
+      <div class="font-semibold mb-2">Products</div>
+      <p class="text-sm text-slate-400">Danh sách sản phẩm, lọc theo type/keyword.</p>
+      <a class="btn mt-3" href="/products">Mở</a>
+    </div>
+    <div class="card p-4">
+      <div class="font-semibold mb-2">News</div>
+      <p class="text-sm text-slate-400">Đang triển khai…</p>
+      <a class="btn mt-3" href="#" aria-disabled="true">Sắp có</a>
+    </div>
+  </div>
+</AdminLayout>

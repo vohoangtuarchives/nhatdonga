@@ -41,22 +41,29 @@ loadEnv(BASE_PATH);
 $composerAutoload = BASE_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 if (file_exists($composerAutoload)) {
     require_once $composerAutoload;
+    if (!defined('COMPOSER_AUTOLOADED')) {
+        define('COMPOSER_AUTOLOADED', true);
+    }
+    $aliases = BASE_PATH . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Libraries' . DIRECTORY_SEPARATOR . 'aliases.php';
+    if (file_exists($aliases)) {
+        require_once $aliases;
+    }
 }
 
 require_once LIBRARIES . 'config.php';
-require_once LIBRARIES . 'autoload.php';
 
-$refactoredAutoload = LIBRARIES . 'autoload-refactored.php';
-if (file_exists($refactoredAutoload)) {
-    require_once $refactoredAutoload;
-}
-
-if (class_exists('AutoLoad')) {
-    new AutoLoad();
-}
-
-if (class_exists('AutoLoadRefactored')) {
-    new AutoLoadRefactored();
+if (!defined('COMPOSER_AUTOLOADED')) {
+    require_once LIBRARIES . 'autoload.php';
+    $refactoredAutoload = LIBRARIES . 'autoload-refactored.php';
+    if (file_exists($refactoredAutoload)) {
+        require_once $refactoredAutoload;
+    }
+    if (class_exists('AutoLoad')) {
+        new AutoLoad();
+    }
+    if (class_exists('AutoLoadRefactored')) {
+        new AutoLoadRefactored();
+    }
 }
 
 require_once BASE_PATH . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Application.php';

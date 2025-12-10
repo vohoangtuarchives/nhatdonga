@@ -2,11 +2,13 @@
 
 namespace Tuezy\Repository;
 
+use Tuezy\Domain\Content\ArticleRepository as ArticleRepositoryInterface;
+
 /**
  * NewsRepository - Data access layer for news/articles
  * Refactors repetitive news queries in sources/news.php
  */
-class NewsRepository
+class NewsRepository implements ArticleRepositoryInterface
 {
     private $d;
     private string $lang;
@@ -27,7 +29,7 @@ class NewsRepository
      */
     public function getDetail(int $id): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "select id, view, date_created, id_list, id_cat, id_item, id_sub, type, 
              name{$this->lang}, slugvi, slugen, desc{$this->lang}, content{$this->lang}, 
              photo, options 
@@ -36,6 +38,30 @@ class NewsRepository
              limit 0,1",
             [$id, $this->type]
         );
+        return $result ?: null;
+    }
+
+    private function toArticleEntity(array $row): \Tuezy\Domain\Content\Article
+    {
+        $name = (string)($row['name' . $this->lang] ?? '');
+        $slugField = ($this->sluglang ?? 'slugvi');
+        $slug = (string)($row[$slugField] ?? '');
+        $photo = (string)($row['photo'] ?? '');
+        $view = (int)($row['view'] ?? 0);
+        return new \Tuezy\Domain\Content\Article(
+            (int)$row['id'],
+            (string)$row['type'],
+            $name,
+            $slug,
+            $photo,
+            $view
+        );
+    }
+
+    public function getDetailEntity(int $id): ?\Tuezy\Domain\Content\Article
+    {
+        $row = $this->getDetail($id);
+        return $row ? $this->toArticleEntity($row) : null;
     }
 
     /**
@@ -79,13 +105,14 @@ class NewsRepository
             return null;
         }
 
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "select id, name{$this->lang}, slugvi, slugen 
              from #_$table 
              where id = ? and type = ? and find_in_set('hienthi',status) 
              limit 0,1",
             [$id, $this->type]
         );
+        return $result ?: null;
     }
 
     /**

@@ -89,9 +89,176 @@ $router->map('GET', array(ADMIN, 'admin'), function () {
 $router->map('GET|POST', '', 'index', 'home');
 $router->map('GET|POST', 'index.php', 'index', 'index');
 $router->map('GET|POST', 'sitemap.xml', 'sitemap', 'sitemap');
+$router->map('GET', 'sitemap-products.xml', function(){
+    header('Content-Type: application/xml; charset=utf-8');
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    $base = rtrim($config['database']['url'], '/');
+    echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    echo "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+    $rows = $db->rawQuery("SELECT {$sluglang} as slug, date_updated, type FROM #_product WHERE find_in_set('hienthi',status) ORDER BY date_updated DESC LIMIT 0, 5000");
+    foreach($rows as $r){
+        $loc = $base . '/' . ($r['slug'] ?? '');
+        $lastmod = !empty($r['date_updated']) ? date('c', (int)$r['date_updated']) : date('c');
+        echo "  <url><loc>{$loc}</loc><lastmod>{$lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>\n";
+    }
+    echo "</urlset>\n";
+    exit;
+}, 'sitemap_products');
+
+$router->map('GET', 'sitemap-news.xml', function(){
+    header('Content-Type: application/xml; charset=utf-8');
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    $base = rtrim($config['database']['url'], '/');
+    echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    echo "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+    $rows = $db->rawQuery("SELECT {$sluglang} as slug, date_updated, type FROM #_news WHERE find_in_set('hienthi',status) ORDER BY date_updated DESC LIMIT 0, 5000");
+    foreach($rows as $r){
+        $loc = $base . '/' . ($r['slug'] ?? '');
+        $lastmod = !empty($r['date_updated']) ? date('c', (int)$r['date_updated']) : date('c');
+        echo "  <url><loc>{$loc}</loc><lastmod>{$lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>\n";
+    }
+    echo "</urlset>\n";
+    exit;
+}, 'sitemap_news');
 $router->map('GET|POST', '[a:com]', 'allpage', 'show');
 $router->map('GET|POST', '[a:com]/[a:lang]/', 'allpagelang', 'lang');
 $router->map('GET|POST', '[a:com]/[a:action]', 'account', 'account');
+
+/* API routes */
+$router->map('GET|POST', 'api/product/list', function () {
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $cache = \Tuezy\Helper\GlobalHelper::cache();
+    $func = \Tuezy\Helper\GlobalHelper::func();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    (new \Tuezy\API\Controller\ProductAPIController($db, $cache, $func, $config, $lang, $sluglang))->getList();
+}, 'api_product_list');
+
+$router->map('GET|POST', 'api/product/detail/[i:id]', function ($id) {
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $cache = \Tuezy\Helper\GlobalHelper::cache();
+    $func = \Tuezy\Helper\GlobalHelper::func();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    (new \Tuezy\API\Controller\ProductAPIController($db, $cache, $func, $config, $lang, $sluglang))->getDetail((int)$id);
+}, 'api_product_detail');
+
+$router->map('GET|POST', 'api/product/list-by-hierarchy', function () {
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $cache = \Tuezy\Helper\GlobalHelper::cache();
+    $func = \Tuezy\Helper\GlobalHelper::func();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    (new \Tuezy\API\Controller\ProductAPIController($db, $cache, $func, $config, $lang, $sluglang))->getListByHierarchy();
+}, 'api_product_list_hierarchy');
+
+$router->map('GET|POST', 'api/news/list', function () {
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $cache = \Tuezy\Helper\GlobalHelper::cache();
+    $func = \Tuezy\Helper\GlobalHelper::func();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    (new \Tuezy\API\Controller\NewsAPIController($db, $cache, $func, $config, $lang, $sluglang))->getList();
+}, 'api_news_list');
+
+$router->map('GET|POST', 'api/news/detail/[i:id]', function ($id) {
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $cache = \Tuezy\Helper\GlobalHelper::cache();
+    $func = \Tuezy\Helper\GlobalHelper::func();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    (new \Tuezy\API\Controller\NewsAPIController($db, $cache, $func, $config, $lang, $sluglang))->getDetail((int)$id);
+}, 'api_news_detail');
+
+$router->map('GET|POST', 'api/news/list-by-hierarchy', function () {
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $cache = \Tuezy\Helper\GlobalHelper::cache();
+    $func = \Tuezy\Helper\GlobalHelper::func();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    (new \Tuezy\API\Controller\NewsAPIController($db, $cache, $func, $config, $lang, $sluglang))->getListByHierarchy();
+}, 'api_news_list_hierarchy');
+
+$router->map('GET|POST', 'api/search/products', function () {
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $cache = \Tuezy\Helper\GlobalHelper::cache();
+    $func = \Tuezy\Helper\GlobalHelper::func();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    (new \Tuezy\API\Controller\SearchAPIController($db, $cache, $func, $config, $lang, $sluglang))->products();
+}, 'api_search_products');
+
+$router->map('GET|POST', 'api/search/articles', function () {
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $cache = \Tuezy\Helper\GlobalHelper::cache();
+    $func = \Tuezy\Helper\GlobalHelper::func();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    (new \Tuezy\API\Controller\SearchAPIController($db, $cache, $func, $config, $lang, $sluglang))->articles();
+}, 'api_search_articles');
+
+$router->map('GET|POST', 'api/search/suggest-products', function () {
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $cache = \Tuezy\Helper\GlobalHelper::cache();
+    $func = \Tuezy\Helper\GlobalHelper::func();
+    $config = \Tuezy\Helper\GlobalHelper::config();
+    $lang = $_SESSION['lang'] ?? 'vi';
+    $sluglang = 'slugvi';
+    (new \Tuezy\API\Controller\SearchAPIController($db, $cache, $func, $config, $lang, $sluglang))->suggestProducts();
+}, 'api_search_suggest_products');
+
+/* Admin API (for AstroJS admin) */
+$router->map('GET', 'api/admin/redirects', function () {
+    header('Content-Type: application/json; charset=utf-8');
+    header('Access-Control-Allow-Origin: *');
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $items = [];
+    try {
+        $items = $db->rawQuery("SELECT id, `from`, `to`, status_code, status FROM #_redirects ORDER BY id DESC LIMIT 0, 200");
+    } catch (\Throwable $e) {
+        $items = [];
+    }
+    echo json_encode($items);
+    exit;
+}, 'api_admin_redirects');
+
+$router->map('GET', 'api/admin/products', function () {
+    header('Content-Type: application/json; charset=utf-8');
+    header('Access-Control-Allow-Origin: *');
+    $db = \Tuezy\Helper\GlobalHelper::db();
+    $items = [];
+    try {
+        $type = $_GET['type'] ?? null;
+        if ($type) {
+            $items = $db->rawQuery(
+                "SELECT id, namevi, slugvi, type, date_updated FROM #_product WHERE type = ? ORDER BY id DESC LIMIT 0, 200",
+                [$type]
+            );
+        } else {
+            $items = $db->rawQuery(
+                "SELECT id, namevi, slugvi, type, date_updated FROM #_product ORDER BY id DESC LIMIT 0, 200"
+            );
+        }
+    } catch (\Throwable $e) {
+        $items = [];
+    }
+    echo json_encode($items);
+    exit;
+}, 'api_admin_products');
 
 $router->map('GET', THUMBS . '/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z, $src) {
 	$func = GlobalHelper::func();
@@ -181,7 +348,7 @@ $router->map('GET', THUMBS . '/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z
 		$relativeFolder .= '/';
 	}
 	// Gọi createThumb với đường dẫn đầy đủ, nhưng sẽ tính lại folder_old từ $src
-	$func->createThumb($w, $h, $z, $filePath, null, THUMBS, false, ['folder_old' => $relativeFolder]);
+    (new \Tuezy\Infrastructure\Media\ThumbService())->generate($w, $h, $z, $filePath, null, THUMBS);
 }, 'thumb');
 
 $router->map('GET', WATERMARK . '/product/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z, $src) {
@@ -260,7 +427,7 @@ $router->map('GET', WATERMARK . '/product/[i:w]x[i:h]x[i:z]/[**:src]', function 
 	$photoRepo = new PhotoRepository($d, $lang ?? 'vi', $sluglang ?? 'slugvi');
 	$wtm = $photoRepo->getByTypeAndAct('watermark', 'photo_static');
 	
-	$func->createThumb($w, $h, $z, $filePath, $wtm, "product");
+    (new \Tuezy\Infrastructure\Media\ThumbService())->generate($w, $h, $z, $filePath, $wtm, "product");
 }, 'watermark');
 
 $router->map('GET', WATERMARK . '/news/[i:w]x[i:h]x[i:z]/[**:src]', function ($w, $h, $z, $src) {
@@ -339,7 +506,7 @@ $router->map('GET', WATERMARK . '/news/[i:w]x[i:h]x[i:z]/[**:src]', function ($w
 	$photoRepo = new PhotoRepository($d, $lang ?? 'vi', $sluglang ?? 'slugvi');
 	$wtm = $photoRepo->getByTypeAndAct('watermark-news', 'photo_static');
 	
-	$func->createThumb($w, $h, $z, $filePath, $wtm, "news");
+    (new \Tuezy\Infrastructure\Media\ThumbService())->generate($w, $h, $z, $filePath, $wtm, "news");
 }, 'watermarkNews');
 
 /* Router match */
@@ -444,27 +611,27 @@ $requick = array(
 
 /* Find data */
 if (!empty($com) && !in_array($com, ['tim-kiem', 'account', 'sitemap'])) {
-	foreach ($requick as $k => $v) {
-		$urlTbl = (!empty($v['tbl'])) ? $v['tbl'] : '';
-		$urlTblTag = (!empty($v['tbltag'])) ? $v['tbltag'] : '';
-		$urlType = (!empty($v['type'])) ? $v['type'] : '';
-		$urlField = (!empty($v['field'])) ? $v['field'] : '';
-		$urlCom = (!empty($v['com'])) ? $v['com'] : '';
+    $resolver = \Tuezy\Application\Routing\SlugResolver::resolve($com, $d, $sluglang, $requick);
+    $com = $resolver['com'] ?? $com;
+    if (!empty($resolver['type'])) { $type = $resolver['type']; }
+}
 
-		if (!empty($urlTbl) && !in_array($urlTbl, ['static', 'photo'])) {
-			$row = $d->rawQueryOne("select id from #_$urlTbl where $sluglang = ? and type = ? and find_in_set('hienthi',status) limit 0,1", array($com, $urlType));
-
-			if (!empty($row['id'])) {
-				$_GET[$urlField] = $row['id'];
-				$com = $urlCom;
-				// Set type từ urlType để đảm bảo type được truyền đúng
-				if (!empty($urlType)) {
-					$type = $urlType;
-				}
-				break;
-			}
-		}
-	}
+/* Redirect manager: handle 301/302 when slug changes */
+if (!headers_sent()) {
+    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    if (!empty($path)) {
+        $row = null;
+        try {
+            $row = $d->rawQueryOne("SELECT `to`, status_code FROM #_redirects WHERE `from` = ? AND find_in_set('hienthi',status) LIMIT 0,1", [$path]);
+        } catch (\Throwable $e) {
+            $row = null;
+        }
+        if (!empty($row['to'])) {
+            $code = (int)($row['status_code'] ?? 301);
+            header("Location: " . $row['to'], true, ($code >= 300 && $code < 400) ? $code : 301);
+            exit;
+        }
+    }
 }
 
 /* Switch coms - Sử dụng RouteHandler */

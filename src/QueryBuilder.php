@@ -145,7 +145,8 @@ class QueryBuilder
     {
         $this->limit(1);
         $sql = $this->buildSql();
-        return $this->d->rawQueryOne($sql, $this->params);
+        $result = $this->d->rawQueryOne($sql, $this->params);
+        return $result ?: null;
     }
 
     /**

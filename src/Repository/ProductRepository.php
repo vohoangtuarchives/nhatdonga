@@ -1,10 +1,12 @@
 <?php
 namespace Tuezy\Repository;
 
+use Tuezy\Domain\Catalog\ProductRepository as ProductRepositoryInterface;
+
 /**
  * ProductRepository - Data access layer chuẩn hóa cho module sản phẩm.
  */
-class ProductRepository
+class ProductRepository implements ProductRepositoryInterface
 {
     private \PDODb $d;
     private ?\Cache $cache;
@@ -36,8 +38,7 @@ class ProductRepository
         $type = $this->resolveType($type);
 
         $statusClause = $activeOnly ? " and find_in_set('hienthi',status)" : "";
-
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "select type, id, name{$this->lang}, slugvi, slugen, desc{$this->lang}, content{$this->lang},
                     code, view, id_brand, id_list, id_cat, id_item, id_sub, photo, options, discount,
                     sale_price, regular_price, status, date_created, status
@@ -46,6 +47,33 @@ class ProductRepository
              limit 0,1",
             [$id, $type]
         );
+        return $result ?: null;
+    }
+
+    private function toProductEntity(array $row): \Tuezy\Domain\Catalog\Product
+    {
+        $name = (string)($row['name' . $this->lang] ?? '');
+        $slug = (string)($row[$this->sluglang] ?? '');
+        $photo = (string)($row['photo'] ?? '');
+        $sale = (float)($row['sale_price'] ?? 0);
+        $regular = (float)($row['regular_price'] ?? 0);
+        $view = (int)($row['view'] ?? 0);
+        return new \Tuezy\Domain\Catalog\Product(
+            (int)$row['id'],
+            (string)$row['type'],
+            $name,
+            $slug,
+            $photo,
+            $sale,
+            $regular,
+            $view
+        );
+    }
+
+    public function getProductDetailEntity(int $id, ?string $type = null, bool $activeOnly = true): ?\Tuezy\Domain\Catalog\Product
+    {
+        $row = $this->getProductDetail($id, $type, $activeOnly);
+        return $row ? $this->toProductEntity($row) : null;
     }
 
     public function updateProductView(int $id, int $currentView): void
@@ -231,6 +259,15 @@ class ProductRepository
             }
         }
 
+        // Featured filter
+        if (isset($filters['noibat'])) {
+            if ($filters['noibat']) {
+                $where[] = "find_in_set('noibat',status)";
+            } else {
+                $where[] = "NOT find_in_set('noibat',status)";
+            }
+        }
+
         // Filter by discount (khuyến mãi)
         if (!empty($filters['has_discount']) && $filters['has_discount'] == true) {
             $where[] = "discount > 0";
@@ -258,6 +295,12 @@ class ProductRepository
             $params[] = $keyword;
         }
 
+        // Filter by tag id (faceted)
+        if (!empty($filters['tag_id'])) {
+            $where[] = "id IN (SELECT id_parent FROM #_product_tags WHERE id_tags = ?)";
+            $params[] = (int)$filters['tag_id'];
+        }
+
         return [implode(' and ', $where), $params];
     }
 
@@ -279,6 +322,15 @@ class ProductRepository
              ORDER BY pb.numb, pb.id DESC",
             [$type, $type]
         ) ?: [];
+    }
+
+    public function getBrandById(int $id, string $type): ?array
+    {
+        $result = $this->d->rawQueryOne(
+            "SELECT id, name{$this->lang}, slugvi, slugen FROM #_product_brand WHERE id = ? AND type = ? AND find_in_set('hienthi',status) LIMIT 0,1",
+            [$id, $type]
+        );
+        return $result ?: null;
     }
 
     private function pluckIds(array $rows, string $key): array
@@ -314,6 +366,23 @@ class ProductRepository
              ORDER BY numb, id DESC 
              LIMIT 0, ?",
             [$type, $limit]
+        ) ?: [];
+    }
+
+    /**
+     * Suggestions by prefix for product names/slugs
+     */
+    public function getSuggestions(string $type, string $prefix, int $limit = 10): array
+    {
+        $type = $this->resolveType($type);
+        $like = $prefix . '%';
+        return $this->d->rawQuery(
+            "SELECT id, name{$this->lang} as name, slugvi, slugen
+             FROM #_product
+             WHERE type = ? AND (name{$this->lang} LIKE ? OR slugvi LIKE ? OR slugen LIKE ?)
+             ORDER BY numb, id DESC
+             LIMIT 0, ?",
+            [$type, $like, $like, $like, $limit]
         ) ?: [];
     }
 

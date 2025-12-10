@@ -56,13 +56,14 @@ class PhotoRepository
      */
     public function getById(int $id): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT id, name{$this->lang}, photo, link, options, type, status 
              FROM #_photo 
              WHERE id = ? AND find_in_set('hienthi',status) 
              LIMIT 0,1",
             [$id]
         );
+        return $result ?: null;
     }
 
     /**

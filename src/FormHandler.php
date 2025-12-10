@@ -16,6 +16,7 @@ class FormHandler
     private string $configBase;
     private string $lang;
     private array $setting;
+    private \Tuezy\Application\Contact\SubmitContactHandler $submitHandler;
 
     public function __construct($d, $func, $emailer, $flash, ValidationHelper $validator, string $configBase, string $lang, array $setting)
     {
@@ -27,6 +28,8 @@ class FormHandler
         $this->configBase = $configBase;
         $this->lang = $lang;
         $this->setting = $setting;
+        $repo = new \Tuezy\Infrastructure\Persistence\Contact\PDODbContactRepository($this->d);
+        $this->submitHandler = new \Tuezy\Application\Contact\SubmitContactHandler($repo, $this->validator, $this->emailer);
     }
 
     /**
@@ -38,67 +41,32 @@ class FormHandler
      */
     public function handleContact(array $data, string $recaptchaResponse): bool
     {
-        // Validate recaptcha
-        if (!$this->validator->recaptcha($recaptchaResponse, 'contact')) {
-            $this->func->transfer("Gửi liên hệ thất bại. Vui lòng thử lại sau", $this->configBase, false);
-            return false;
-        }
+        $command = new \Tuezy\Application\Contact\SubmitContactCommand($data, $recaptchaResponse);
+        $result = $this->submitHandler->handle($command);
 
-        // Validate data
-        if (!$this->validator->validateContact($data)) {
-            $errors = $this->validator->getErrors();
-            
-            // Store form data in flash
+        if (!$result['success']) {
+            $errors = $result['errors'] ?? [];
             foreach ($data as $k => $v) {
                 if (!empty($v)) {
                     $this->flash->set($k, $v);
                 }
             }
-
-            // Set error response
             $response = [
                 'status' => 'danger',
                 'messages' => $errors
             ];
             $message = base64_encode(json_encode($response));
-            $this->flash->set("message", $message);
-            $this->func->redirect("lien-he");
-            return false;
-        }
-
-        // Prepare data for database
-        $dbData = [
-            'fullname' => htmlspecialchars($data['fullname']),
-            'email' => htmlspecialchars($data['email']),
-            'phone' => htmlspecialchars($data['phone']),
-            'address' => htmlspecialchars($data['address']),
-            'subject' => htmlspecialchars($data['subject']),
-            'content' => htmlspecialchars($data['content']),
-            'date_created' => time(),
-            'numb' => 1,
-        ];
-
-        // Insert to database
-        if (!$this->d->insert('contact', $dbData)) {
-            $this->func->transfer("Gửi liên hệ thất bại. Vui lòng thử lại sau.", $this->configBase, false);
+            $this->flash->set('message', $message);
+            $this->func->redirect('lien-he');
             return false;
         }
 
         $idInsert = $this->d->getLastInsertId();
-
-        // Handle file upload
-        if ($this->func->hasFile("file_attach")) {
+        if ($this->func->hasFile('file_attach')) {
             $this->handleFileUpload($idInsert, 'contact');
         }
-
-        // Send emails
-        if ($this->sendContactEmails($dbData)) {
-            $this->func->transfer("Gửi liên hệ thành công", $this->configBase);
-            return true;
-        }
-
-        $this->func->transfer("Gửi liên hệ thất bại. Vui lòng thử lại sau", $this->configBase, false);
-        return false;
+        $this->func->transfer("Gửi liên hệ thành công", $this->configBase);
+        return true;
     }
 
     /**

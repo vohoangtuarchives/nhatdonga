@@ -52,8 +52,7 @@ class ProductAPIController extends BaseAPIController
             $filters['noibat'] = $noibat === 'true' ? 1 : 0;
         }
 
-        // Get products
-        $listing = $this->productService->getListing('san-pham', $filters, $page, $perPage);
+        $listing = (new \Tuezy\Application\Catalog\ListProducts($this->productRepo))->execute('san-pham', $filters, $page, $perPage);
 
         // Generate pagination HTML
         $paginationHtml = $this->paginationAjax->generate(
@@ -67,6 +66,22 @@ class ProductAPIController extends BaseAPIController
             'products' => $listing['items'],
             'total' => $listing['total'],
             'pagination' => $paginationHtml,
+            'dto' => $listing['dto'],
+        ]);
+    }
+
+    public function getListByHierarchy(): void
+    {
+        $perPage = (int)$this->get('perpage', 12);
+        $page = (int)$this->get('p', 1);
+        $level = $this->get('level', 'list');
+        $id = (int)$this->get('id', 0);
+        if ($id <= 0) { $this->error('Invalid id'); return; }
+        $listing = (new \Tuezy\Application\Catalog\ListProductsByHierarchy($this->productRepo))->execute('san-pham', $level, $id, $page, $perPage);
+        $this->success([
+            'products' => $listing['items'],
+            'total' => $listing['total'],
+            'dto' => $listing['dto'],
         ]);
     }
 
@@ -83,7 +98,7 @@ class ProductAPIController extends BaseAPIController
             return;
         }
 
-        $detailContext = $this->productService->getDetailContext($id, 'san-pham');
+        $detailContext = (new \Tuezy\Application\Catalog\GetProductDetail($this->productRepo, $this->categoryRepo, new \Tuezy\Repository\TagsRepository($this->db, $this->cache, $this->lang, $this->sluglang), $this->db, $this->lang))->execute($id, 'san-pham');
 
         if (!$detailContext) {
             $this->error('Product not found', 404);
@@ -97,6 +112,7 @@ class ProductAPIController extends BaseAPIController
             'sizes' => $detailContext['sizes'] ?? [],
             'photos' => $detailContext['photos'] ?? [],
             'related' => $detailContext['related'] ?? [],
+            'dto' => $detailContext['dto'] ?? null,
         ]);
     }
 

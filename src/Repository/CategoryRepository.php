@@ -93,6 +93,20 @@ class CategoryRepository
         return $result ?: null;
     }
 
+    private function toLink(array $row): \Tuezy\Domain\Catalog\CategoryLink
+    {
+        $name = (string)($row['name' . $this->lang] ?? '');
+        $slugField = $this->sluglang;
+        $slug = (string)($row[$slugField] ?? '');
+        return new \Tuezy\Domain\Catalog\CategoryLink($name, $slug);
+    }
+
+    public function getListLinkById(int $id, string $type): ?\Tuezy\Domain\Catalog\CategoryLink
+    {
+        $row = $this->getListById($id, $type);
+        return $row ? $this->toLink($row) : null;
+    }
+
     /**
      * Get categories (cat)
      * 
@@ -141,6 +155,12 @@ class CategoryRepository
             [$id, $type]
         );
         return $result ?: null;
+    }
+
+    public function getCatLinkById(int $id, string $type): ?\Tuezy\Domain\Catalog\CategoryLink
+    {
+        $row = $this->getCatById($id, $type);
+        return $row ? $this->toLink($row) : null;
     }
 
     /**
@@ -193,6 +213,12 @@ class CategoryRepository
         return $result ?: null;
     }
 
+    public function getItemLinkById(int $id, string $type): ?\Tuezy\Domain\Catalog\CategoryLink
+    {
+        $row = $this->getItemById($id, $type);
+        return $row ? $this->toLink($row) : null;
+    }
+
     /**
      * Get subs
      * 
@@ -241,6 +267,12 @@ class CategoryRepository
             [$id, $type]
         );
         return $result ?: null;
+    }
+
+    public function getSubLinkById(int $id, string $type): ?\Tuezy\Domain\Catalog\CategoryLink
+    {
+        $row = $this->getSubById($id, $type);
+        return $row ? $this->toLink($row) : null;
     }
 
     /**

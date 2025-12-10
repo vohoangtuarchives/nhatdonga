@@ -5,126 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7cb2e1da-5a5f-45f9-b70d-b9da988d2d3d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/assets/js/apps.js" beforeDir="false" afterPath="$PROJECT_DIR$/admin/assets/js/apps.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/elfinder/php/connector.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/elfinder/php/connector.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/elfinder/php/elFinder.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/elfinder/php/elFinder.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/sources/contact.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/contact.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/sources/filter.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/filter.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin/sources/news.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/news.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/sources/newsletter.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/newsletter.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/sources/order.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/order.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin/sources/product.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/product.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/sources/static.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/static.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/sources/tags.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/tags.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/templates/layout/transfer.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/layout/transfer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/templates/product/list/list_add_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/product/list/list_add_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/templates/product/man/man_add_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/product/man/man_add_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/templates/static/man/man_add_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/static/man/man_add_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/templates/tags/man/man_add_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/tags/man/man_add_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/custom.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/custom.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/homepage-isp.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/homepage-isp.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/main.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build-scss.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build-scss.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/class/class.Custom.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Custom.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/lang/en.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/lang/en.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/lang/vi.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/lang/vi.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/requick.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/requick.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.PDODb.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.PDODb.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.Seo.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Seo.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libraries/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/router.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/12-06-2025.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/13-06-2025.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/14-06-2025.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/25-11-2025.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/26-11-2025.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/27-11-2025.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Admin/AdminCRUDHelper.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Admin/AdminCRUDHelper.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/ContactController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/ContactController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/allpage.php" beforeDir="false" afterPath="$PROJECT_DIR$/sources/allpage.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/API/Controller/ProductAPIController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/API/Controller/ProductAPIController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/NewsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/NewsController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/ProductController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/StaticController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/StaticController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Repository/NewsRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/NewsRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Repository/NewsletterRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/NewsletterRepository.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Repository/ProductRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/ProductRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/SeopageRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/SeopageRepository.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Repository/StaticRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/StaticRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/RouteHandler.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/RouteHandler.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/ProductService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/ProductService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Repository/TagsRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/TagsRepository.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Service/SeoService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/SeoService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/contact/contact_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/contact/contact_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/layout/css.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/css.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/footer.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/footer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/header2.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/header2.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/js.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/js.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/menu.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/menu.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/topbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/topbar.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/news/news_detail_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/news/news_detail_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/news/news_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/news/news_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/product/layouts/product-twoLayout.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/product/layouts/product-twoLayout.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/product/product_detail_ga_dabaco_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/product/product_detail_ga_dabaco_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/product/product_detail_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/product/product_detail_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/product/product_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/product/product_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/product/quickview.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/product/quickview.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/static/static_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/static/static_tpl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/100x100x1/upload/news/chatgpt-image-nov-20-2025-111427-am-5534.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/100x100x1/upload/news/chatgpt-image-nov-20-2025-111427-am-6393.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/1200x675x1/upload/news/chatgpt-image-nov-20-2025-111427-am-4756.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/1228x1060x1/upload/product/1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/1230x175x2/assets/images/noimage.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/124x50x1/upload/photo/pexels-pixabay-40896-5631.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/124x50x1/upload/photopexels-pixabay-40896-5631.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/140x140x2/assets/images/noimage.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/140x140x2/upload/product/1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/155x155x1/upload/news/chatgpt-image-nov-20-2025-111427-am-4756.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/155x155x1/upload/news/chatgpt-image-nov-20-2025-111427-am-6393.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/155x155x1/upload/news/chatgpt-image-nov-20-2025-111427-am-8308.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/1920x796x1/upload/photo/slider1-9787.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/248x165x1/upload/news/chatgpt-image-nov-20-2025-111427-am-4756.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/248x165x1/upload/news/chatgpt-image-nov-20-2025-111427-am-5534.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/248x165x1/upload/news/chatgpt-image-nov-20-2025-111427-am-8308.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/248x165x1/upload/news/slider-7411.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/270x270x1/upload/product/1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/280x280x1/upload/news/chatgpt-image-nov-20-2025-111427-am-4756.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/280x280x1/upload/news/chatgpt-image-nov-20-2025-111427-am-8308.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/280x280x1/upload/news/slider-7411.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/300x300x2/assets/images/noimage.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/300x300x2/assets/imagesnoimage.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/300x300x2/upload/product/1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/300x300x2/upload/product1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/360x240x1/upload/news/chatgpt-image-nov-20-2025-111427-am-4756.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/360x240x1/upload/news/chatgpt-image-nov-20-2025-111427-am-5534.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/360x240x1/upload/news/chatgpt-image-nov-20-2025-111427-am-6393.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/360x240x1/upload/news/chatgpt-image-nov-20-2025-111427-am-8308.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/400x400x1/assets/images/noimage.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/400x400x1/upload/product/1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/400x400x1/upload/product1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/400x400x2/upload/product/1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/500x500x1/upload/news/chatgpt-image-nov-20-2025-111427-am-4756.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/500x500x1/upload/product/1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/614x530x1/upload/product/1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/640x425x2/upload/news/chatgpt-image-nov-20-2025-111427-am-4756.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thumbs/640x425x2/upload/news/chatgpt-image-nov-20-2025-111427-am-8308.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/news/133921800403880399-3272.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/news/chatgpt-image-nov-20-2025-111427-am-4756.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/news/chatgpt-image-nov-20-2025-111427-am-5534.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/news/chatgpt-image-nov-20-2025-111427-am-6393.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/news/chatgpt-image-nov-20-2025-111427-am-8308.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/news/slider-7411.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/news/slider-7756.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/news/usmanhinhquanly-8054.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/photo/pexels-pixabay-40896-5631.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/photo/slider1-9787.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/product/08c6dcc1-fd14-4372-82d9-9e91a7fd26e4-5419.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/product/1-1233.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/product/1-1858.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/product/1-3517.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/product/1-3765.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/product/1-4097.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/product/1-5968.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/product/1-8156.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/product/1-9483.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/product/1-9996.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout/head.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/head.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout/strucdata.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/strucdata.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -236,7 +136,7 @@
       <workItem from="1764818491823" duration="599000" />
       <workItem from="1765170741663" duration="2416000" />
       <workItem from="1765250771694" duration="3270000" />
-      <workItem from="1765333468490" duration="1447000" />
+      <workItem from="1765333468490" duration="3846000" />
     </task>
     <servers />
   </component>

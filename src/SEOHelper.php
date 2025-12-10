@@ -71,19 +71,19 @@ class SEOHelper
      */
     public function setupFromSetting(int $id = 0): void
     {
-        $seoDB = $this->seo->getOnDB($id, 'setting', 'update', 'setting');
+        $seoMeta = (new \Tuezy\Application\SEO\GetSeoMetaByParentVo(new \Tuezy\Repository\SeoRepository($this->d)))->execute($id, 'setting', 'update', 'setting', $this->seolang);
 
-        if (!empty($seoDB['title' . $this->seolang])) {
-            $this->seo->set('h1', $seoDB['title' . $this->seolang]);
-            $this->seo->set('title', $seoDB['title' . $this->seolang]);
+        if ($seoMeta && $seoMeta->title) {
+            $this->seo->set('h1', $seoMeta->title);
+            $this->seo->set('title', $seoMeta->title);
         }
 
-        if (!empty($seoDB['keywords' . $this->seolang])) {
-            $this->seo->set('keywords', $seoDB['keywords' . $this->seolang]);
+        if ($seoMeta && $seoMeta->keywords) {
+            $this->seo->set('keywords', $seoMeta->keywords);
         }
 
-        if (!empty($seoDB['description' . $this->seolang])) {
-            $this->seo->set('description', $seoDB['description' . $this->seolang]);
+        if ($seoMeta && $seoMeta->description) {
+            $this->seo->set('description', $seoMeta->description);
         }
 
         $this->seo->set('url', $this->func->getPageURL());

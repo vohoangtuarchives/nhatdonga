@@ -208,7 +208,8 @@ switch ($act) {
 		$dataTags = array_filter($dataTags, function($v) { return $v > 0; });
 
 		// Save using adminCRUD
-		try {
+        try {
+            if (method_exists($d, 'beginTransaction')) { $d->beginTransaction(); }
 			// Set type
 			$data['type'] = $type;
 			
@@ -304,9 +305,9 @@ switch ($act) {
                 if (is_array($dataSchema)) { $dataSchema = SecurityHelper::sanitizeArray($dataSchema); }
                 $seoPayload = array_merge($dataSeo ?: [], $dataSchema ?: []);
 
-                $seoService = new \Tuezy\Service\SeoService($d);
                 if (!empty($seoPayload)) {
-                    $seoService->saveSeo($newsId, 'news', 'man', $type, $seoPayload);
+                    $seoRepo = new \Tuezy\Repository\SeoRepository($d);
+                    (new \Tuezy\Application\SEO\SaveSeoMeta($seoRepo))->execute($newsId, 'news', 'man', $type, $seoPayload);
                 }
 
                 // Auto-generate minimal Article schema if empty
@@ -322,16 +323,19 @@ switch ($act) {
                             'datePublished' => !empty($row['date_created']) ? date('c', (int)$row['date_created']) : date('c'),
                             'dateModified' => !empty($row['date_updated']) ? date('c', (int)$row['date_updated']) : date('c')
                         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                        $seoService->saveSeo($newsId, 'news', 'man', $type, ['schemavi' => $schema]);
+                        $seoRepo = new \Tuezy\Repository\SeoRepository($d);
+                        (new \Tuezy\Application\SEO\SaveSeoMeta($seoRepo))->execute($newsId, 'news', 'man', $type, ['schemavi' => $schema]);
                     }
                 }
 
                 $message = $id ? "Cập nhật dữ liệu thành công" : "Thêm dữ liệu thành công";
+                if (method_exists($d, 'commit')) { $d->commit(); }
                 $func->transfer($message, "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl);
-			}
-		} catch (\Exception $e) {
-			$func->transfer($e->getMessage(), "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
-		}
+            }
+        } catch (\Exception $e) {
+            if (method_exists($d, 'rollBack')) { $d->rollBack(); }
+            $func->transfer($e->getMessage(), "index.php?com=news&act=man&type=" . $type . "&p=" . $curPage . $strUrl, false);
+        }
 		break;
 
 	case "delete":

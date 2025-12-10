@@ -64,7 +64,7 @@ class SeoService
                  LIMIT 0,1",
                 [$id, $com, $act, $type]
             );
-            return $row ?: null;
+            return is_array($row) ? $row : null;
         }
 
         $row = $this->db->rawQueryOne(
@@ -73,7 +73,7 @@ class SeoService
              LIMIT 0,1",
             [$com, $act, $type]
         );
-        return $row ?: null;
+        return is_array($row) ? $row : null;
     }
 
     /**

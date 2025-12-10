@@ -2,10 +2,12 @@
 
 namespace Tuezy\Repository;
 
+use Tuezy\Domain\Static\StaticRepository as StaticRepositoryInterface;
+
 /**
  * StaticRepository - Data access layer for static content
  */
-class StaticRepository
+class StaticRepository implements StaticRepositoryInterface
 {
     private $d;
     private $cache;
@@ -123,4 +125,3 @@ class StaticRepository
         return $this->d->delete('static');
     }
 }
-

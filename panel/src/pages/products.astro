@@ -1,0 +1,67 @@
+---
+import AdminLayout from "../layouts/AdminLayout.astro";
+
+const apiBase = import.meta.env.PUBLIC_API_BASE || 'http://localhost';
+const typeParam = Astro.url.searchParams.get('type') ?? '';
+const qParam = Astro.url.searchParams.get('q') ?? '';
+let items: Array<{id:number, namevi:string, slugvi:string, type:string, date_updated?:number}> = [];
+
+try {
+  const query = typeParam ? `?type=${encodeURIComponent(typeParam)}` : '';
+  const res = await fetch(`${apiBase}/api/admin/products${query}`, { headers: { 'Accept': 'application/json' } });
+  if (res.ok) {
+    items = await res.json();
+  }
+} catch (e) {
+  // swallow
+}
+---
+<AdminLayout>
+  <div class="card p-4">
+    <form class="mb-4 flex items-end gap-2" method="get">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2 w-full">
+        <div>
+          <label class="block text-xs mb-1">Type</label>
+          <input class="input" name="type" placeholder="vd: san-pham" value={typeParam} />
+        </div>
+        <div>
+          <label class="block text-xs mb-1">Keyword</label>
+          <input class="input" name="q" placeholder="Tìm theo tên/slug" value={qParam} />
+        </div>
+      </div>
+      <button class="btn" type="submit">Lọc</button>
+    </form>
+    {items.length === 0 ? (
+      <p>Không có dữ liệu hoặc không thể tải danh sách.</p>
+    ) : (
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="th">ID</th>
+            <th class="th">Tên (VI)</th>
+            <th class="th">Slug (VI)</th>
+            <th class="th">Type</th>
+            <th class="th">Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items
+            .filter((r) => {
+              const q = qParam.toLowerCase();
+              if (!q) return true;
+              return (r.namevi?.toLowerCase().includes(q) || r.slugvi?.toLowerCase().includes(q));
+            })
+            .map((r) => (
+              <tr class="hover:bg-slate-800">
+                <td class="td">{r.id}</td>
+                <td class="td">{r.namevi}</td>
+                <td class="td">{r.slugvi}</td>
+                <td class="td">{r.type}</td>
+                <td class="td">{r.date_updated ?? ''}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    )}
+  </div>
+</AdminLayout>

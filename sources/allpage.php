@@ -110,12 +110,8 @@ $online = $statistic->getOnline();
 // ============================================
 if (isset($_POST['submit-newsletter'])) {
     $validator = new ValidationHelper($func, $config);
-    $formHandler = new FormHandler($d, $func, $emailer, $flash, $validator, $configBase, $lang, $setting);
-    
     $dataNewsletter = $_POST['dataNewsletter'] ?? [];
-    // Normalize keys from forms
     if (!empty($dataNewsletter)) {
-        // Map form fields to expected keys
         if (isset($dataNewsletter['name']) && !isset($dataNewsletter['fullname'])) {
             $dataNewsletter['fullname'] = $dataNewsletter['name'];
         }
@@ -127,8 +123,18 @@ if (isset($_POST['submit-newsletter'])) {
         }
     }
     $recaptchaResponse = $_POST['recaptcha_response_newsletter'] ?? '';
-    
-    $formHandler->handleNewsletter($dataNewsletter, $recaptchaResponse);
+    if (!$validator->recaptcha($recaptchaResponse, 'Newsletter')) {
+        $func->transfer("Thông tin không được gửi đi. Vui lòng thử lại sau.", $configBase, false);
+    } else {
+        $repo = new \Tuezy\Repository\NewsletterRepository($d, $cache);
+        $useCase = new \Tuezy\Application\Newsletter\SubscribeNewsletter($repo, $emailer, $validator, $setting['name' . $lang] ?? '');
+        $ok = $useCase->execute($dataNewsletter);
+        if ($ok) {
+            $func->transfer("Thông tin đã được gửi. Chúng tôi sẽ liên hệ với bạn sớm.", $configBase);
+        } else {
+            $func->transfer("Đăng ký nhận tin thất bại. Vui lòng thử lại sau.", $configBase, false);
+        }
+    }
 }
 
 // ============================================

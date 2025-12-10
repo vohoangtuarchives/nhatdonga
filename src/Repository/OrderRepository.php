@@ -24,10 +24,11 @@ class OrderRepository
      */
     public function getById(int $id): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT * FROM #_order WHERE id = ? LIMIT 0,1",
             [$id]
         );
+        return $result ?: null;
     }
 
     /**
@@ -38,10 +39,11 @@ class OrderRepository
      */
     public function getByCode(string $code): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT * FROM #_order WHERE code = ? LIMIT 0,1",
             [$code]
         );
+        return $result ?: null;
     }
 
     /**

@@ -37,7 +37,7 @@ class StaticController extends BaseController
      */
     public function index(string $type): array
     {
-        $static = $this->staticService->getByType($type);
+        $static = (new \Tuezy\Application\Static\GetStaticByType($this->staticRepo))->execute($type);
         
         if (!$static) {
             $lang = $_SESSION['lang'] ?? 'vi';
@@ -53,7 +53,7 @@ class StaticController extends BaseController
         $seolang = 'vi';
 
         // SEO
-        $seoDB = $this->seo->getOnDB(0, 'static', 'update', $static['type']);
+        $seoDB = (new \Tuezy\Application\SEO\GetSeoByParent(new \Tuezy\Repository\SeoRepository($this->db)))->execute(0, 'static', 'update', $static['type']);
         $this->seo->set('h1', $static['name' . $lang]);
 
         if (!empty($seoDB['title' . $seolang])) {
@@ -71,6 +71,8 @@ class StaticController extends BaseController
         }
 
         $this->seo->set('url', $this->func->getPageURL());
+        $this->seo->set('canonical', $this->func->getPageURL());
+        $this->seo->set('robots', 'index,follow');
 
         // Breadcrumbs
         $sluglang = 'slugvi';

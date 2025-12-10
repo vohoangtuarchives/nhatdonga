@@ -1,11 +1,11 @@
-<?php if (isset($seoDB['schema' . $seolang]) && ($seoDB['schema' . $seolang] != '')) { ?>
+<?php if (isset($seoDB['schema' . $seolang]) && ($seoDB['schema' . $seolang] != '')) { ?>
     <!-- Product -->
     <script type="application/ld+json">
         <?= htmlspecialchars_decode($seoDB['schema' . $seolang])  ?>
-    </script>
-<?php } ?>
-<!-- General -->
-<script type="application/ld+json">
+</script>
+<?php } ?>
+<!-- General -->
+<script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "Organization",
@@ -27,4 +27,26 @@
             "addressCountry": "vi"
         }
     }
+</script>
+
+<!-- Breadcrumb -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Trang chủ",
+      "item": "<?= $config_base ?>"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "<?= $seo->get('title') ?>",
+      "item": "<?= $seo->get('url') ?>"
+    }
+  ]
+}
 </script>

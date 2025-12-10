@@ -2,10 +2,13 @@
 
 namespace Tuezy\Repository;
 
+use Tuezy\Domain\Newsletter\NewsletterRepository as NewsletterRepositoryInterface;
+use Tuezy\Domain\Newsletter\Subscription;
+
 /**
  * NewsletterRepository - Data access layer for newsletter subscriptions
  */
-class NewsletterRepository
+class NewsletterRepository implements NewsletterRepositoryInterface
 {
     private $d;
     private $cache;
@@ -33,10 +36,11 @@ class NewsletterRepository
             $params[] = $type;
         }
         
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT * FROM #_newsletter WHERE {$where} LIMIT 0,1",
             $params
         );
+        return $result ?: null;
     }
 
     /**
@@ -47,10 +51,11 @@ class NewsletterRepository
      */
     public function getByEmail(string $email): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT * FROM #_newsletter WHERE email = ? LIMIT 0,1",
             [$email]
         );
+        return $result ?: null;
     }
 
     /**
@@ -145,6 +150,21 @@ class NewsletterRepository
             $data['type'] = 'dangkynhantin';
         }
         return $this->d->insert('newsletter', $data);
+    }
+
+    public function createFromEntity(Subscription $subscription): bool
+    {
+        $data = [
+            'email' => $subscription->email,
+            'phone' => $subscription->phone ?? '',
+            'fullname' => $subscription->fullname ?? '',
+            'address' => $subscription->address ?? '',
+            'subject' => $subscription->subject ?? '',
+            'content' => $subscription->content ?? '',
+            'date_created' => $subscription->dateCreated ?? time(),
+            'type' => $subscription->type,
+        ];
+        return $this->create($data);
     }
 
     /**

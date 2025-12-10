@@ -4,7 +4,10 @@
         "psr-4": {
             "Tuezy\\": "src/",
             "App\\": "admin-tools/"
-        }
+        },
+        "classmap": [
+            "libraries/class/"
+        ]
     },
     "authors": [
         {

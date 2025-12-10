@@ -1,0 +1,66 @@
+---
+import AdminLayout from "../layouts/AdminLayout.astro";
+
+const apiBase = import.meta.env.PUBLIC_API_BASE || 'http://localhost';
+let items: Array<{id:number, from:string, to:string, status_code:number, status:string}> = [];
+
+try {
+  const res = await fetch(`${apiBase}/api/admin/redirects`, { headers: { 'Accept': 'application/json' } });
+  if (res.ok) {
+    items = await res.json();
+  }
+} catch (e) {
+  // swallow
+}
+---
+<AdminLayout>
+  <div class="card p-4">
+    <div class="mb-4 flex items-center gap-2">
+      <input class="input max-w-sm" type="text" placeholder="Tìm theo from/to" id="q" />
+      <button class="btn" type="button" id="applyFilter">Lọc</button>
+    </div>
+    {items.length === 0 ? (
+      <p>Không có dữ liệu hoặc không thể tải danh sách.</p>
+    ) : (
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="th">ID</th>
+            <th class="th">From</th>
+            <th class="th">To</th>
+            <th class="th">Status Code</th>
+            <th class="th">Status</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          {items.map((r) => (
+            <tr class="hover:bg-slate-800">
+              <td class="td">{r.id}</td>
+              <td class="td">{r.from}</td>
+              <td class="td">{r.to}</td>
+              <td class="td">{r.status_code}</td>
+              <td class="td">
+                {r.status?.includes('hienthi') ? (
+                  <span class="badge badge-success">Hiển thị</span>
+                ) : (
+                  <span class="badge badge-warning">Ẩn</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </div>
+  <script>
+    const btn = document.getElementById('applyFilter');
+    const q = document.getElementById('q') as HTMLInputElement | null;
+    btn?.addEventListener('click', () => {
+      const val = (q?.value || '').toLowerCase();
+      document.querySelectorAll('#rows tr').forEach((tr) => {
+        const t = tr.textContent?.toLowerCase() || '';
+        tr.classList.toggle('hidden', (!!val) && !t.includes(val));
+      });
+    });
+  </script>
+</AdminLayout>

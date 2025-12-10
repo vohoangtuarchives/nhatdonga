@@ -24,10 +24,11 @@ class SettingRepository
      */
     public function get(int $id = 0): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT * FROM #_setting WHERE id = ? LIMIT 0,1",
             [$id]
         );
+        return $result ?: null;
     }
 
     /**
@@ -37,7 +38,8 @@ class SettingRepository
      */
     public function getFirst(): ?array
     {
-        return $this->d->rawQueryOne("SELECT * FROM #_setting LIMIT 0,1");
+        $result = $this->d->rawQueryOne("SELECT * FROM #_setting LIMIT 0,1");
+        return $result ?: null;
     }
 
     /**

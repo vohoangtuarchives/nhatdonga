@@ -67,6 +67,13 @@ echo $css->get();
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<link rel="canonical" href="<?= $seo->get('canonical') ?: $seo->get('url') ?>" />
+<?php if (!empty($config['website']['lang']) && is_array($config['website']['lang'])) { 
+    foreach ($config['website']['lang'] as $code => $name) { 
+        $altUrl = rtrim($config['database']['url'], '/') . '/' . ($com ?? '') . '/' . $code . '/'; ?>
+<link rel="alternate" href="<?= $altUrl ?>" hreflang="<?= $code ?>" />
+<?php } } ?>
+<meta name="robots" content="<?= $seo->get('robots') ?: 'index,follow' ?>" />
 <!-- Background -->
 
 <?php

@@ -164,10 +164,11 @@ class CommentRepository
      */
     public function getVideo(int $idParent): ?array
     {
-        return $this->db->rawQueryOne(
+        $result = $this->db->rawQueryOne(
             "SELECT id, photo, video FROM #_comment_video WHERE id_parent = ? LIMIT 0,1",
             [$idParent]
         );
+        return $result ?: null;
     }
 
     /**
@@ -259,10 +260,11 @@ class CommentRepository
      */
     public function getById(int $id): ?array
     {
-        return $this->db->rawQueryOne(
+        $result = $this->db->rawQueryOne(
             "SELECT * FROM #_comment WHERE id = ? LIMIT 0,1",
             [$id]
         );
+        return $result ?: null;
     }
 
     /**

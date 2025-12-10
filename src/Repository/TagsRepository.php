@@ -2,10 +2,12 @@
 
 namespace Tuezy\Repository;
 
+use Tuezy\Domain\Tags\TagsRepository as TagsRepositoryInterface;
+
 /**
  * TagsRepository - Data access layer for tags
  */
-class TagsRepository
+class TagsRepository implements TagsRepositoryInterface
 {
     private $d;
     private $cache;
@@ -29,13 +31,14 @@ class TagsRepository
      */
     public function getById(int $id, string $type): ?array
     {
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT id, name{$this->lang}, type, photo, slugvi, slugen, options 
              FROM #_tags 
              WHERE id = ? AND type = ? AND find_in_set('hienthi',status) 
              LIMIT 0,1",
             [$id, $type]
         );
+        return $result ?: null;
     }
 
     /**
@@ -76,13 +79,14 @@ class TagsRepository
     public function getBySlug(string $slug, string $type): ?array
     {
         $slugField = $this->sluglang;
-        return $this->d->rawQueryOne(
+        $result = $this->d->rawQueryOne(
             "SELECT id, name{$this->lang}, type, photo, slugvi, slugen, options 
              FROM #_tags 
              WHERE {$slugField} = ? AND type = ? AND find_in_set('hienthi',status) 
              LIMIT 0,1",
             [$slug, $type]
         );
+        return $result ?: null;
     }
 
     /**

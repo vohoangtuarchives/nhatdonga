@@ -22,16 +22,16 @@
 			return (!empty($this->data[$key])) ? $this->data[$key] : '';
 		}
 
-		public function getOnDB($id=0, $com='', $act='', $type='')
-		{
-			if($id || $act=='update')
-			{
-				if($id) $row = $this->d->rawQueryOne("select * from #_seo where id_parent = ? and com = ? and act = ? and type = ? limit 0,1",array($id,$com,$act,$type));
-				else $row = $this->d->rawQueryOne("select * from #_seo where com = ? and act = ? and type = ? limit 0,1",array($com,$act,$type));
-
-				return $row;
-			}
-		}
+		public function getOnDB($id=0, $com='', $act='', $type='')
+		{
+			if($id || $act=='update')
+			{
+				if($id) $row = $this->d->rawQueryOne("select * from #_seo where id_parent = ? and com = ? and act = ? and type = ? limit 0,1",array($id,$com,$act,$type));
+				else $row = $this->d->rawQueryOne("select * from #_seo where com = ? and act = ? and type = ? limit 0,1",array($com,$act,$type));
+
+				return is_array($row) ? $row : null;
+			}
+		}
 
 		public function updateSeoDB($json = '', $table = '', $id = 0)
 		{
