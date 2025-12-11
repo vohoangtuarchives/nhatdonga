@@ -5,26 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7cb2e1da-5a5f-45f9-b70d-b9da988d2d3d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/sources/news.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/news.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/sources/product.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/product.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/class/class.PDODb.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.PDODb.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/class/class.Seo.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Seo.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libraries/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/router.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sources/allpage.php" beforeDir="false" afterPath="$PROJECT_DIR$/sources/allpage.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/API/Controller/ProductAPIController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/API/Controller/ProductAPIController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/NewsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/NewsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/ProductController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/StaticController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/StaticController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/NewsRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/NewsRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/NewsletterRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/NewsletterRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/ProductRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/ProductRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/StaticRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/StaticRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Repository/TagsRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/TagsRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/SeoService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/SeoService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/css.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/css.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/head.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/head.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/strucdata.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/strucdata.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/css/custom.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/custom.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_24320e6021f585083c6ea9b21a9d40fa" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_24320e6021f585083c6ea9b21a9d40fa" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_441a79c74de4df9ced257afb0e8bdbd5" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_441a79c74de4df9ced257afb0e8bdbd5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_6036fda74776cf4c24e318af048d71d4" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_6036fda74776cf4c24e318af048d71d4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_6193eb9e9d365a565f2eea713c0d7867" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_6193eb9e9d365a565f2eea713c0d7867" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_ade88b845cfb09f64727369d5e58fc65" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_ade88b845cfb09f64727369d5e58fc65" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_b692e88ad71025b75768b1e6cb599520" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_b692e88ad71025b75768b1e6cb599520" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_c3f914e0ea786a6fc3ad80eb24800bf4" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_c3f914e0ea786a6fc3ad80eb24800bf4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_f5514d62fc9e08807c9f90ef5f6c2a26" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_f5514d62fc9e08807c9f90ef5f6c2a26" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/HomeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/HomeController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index/index_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index/index_tpl.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout/js.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/js.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout/slide.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/slide.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -137,6 +131,7 @@
       <workItem from="1765170741663" duration="2416000" />
       <workItem from="1765250771694" duration="3270000" />
       <workItem from="1765333468490" duration="3846000" />
+      <workItem from="1765422283041" duration="12000" />
     </task>
     <servers />
   </component>

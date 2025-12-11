@@ -80,6 +80,7 @@ class HomeController extends BaseController
             'productCategories' => $productCategories ?? [],
             'categoryProducts' => $categoryProducts ?? [],
             'certificates' => $certificates ?? [],
+            'slider' => $this->photoRepo->getSlider(),
         ];
     }
 }

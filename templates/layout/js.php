@@ -72,6 +72,22 @@ $js->set("js/scrollAnimation.js");
 
 $js->set("js/functions.js");
 
+if ($source == 'product') {
+    $js->set('magiczoomplus/magiczoomplus.js');
+    $js->set('slick/slick.js');
+    $js->set('fotorama/fotorama.js');
+    $js->set('owlcarousel2/owl.carousel.js');
+    $js->set('fancybox3/jquery.fancybox.js');
+} elseif ($source == 'news') {
+    $js->set('fancybox3/jquery.fancybox.js');
+    $js->set('photobox/photobox.js');
+    $js->set('owlcarousel2/owl.carousel.js');
+} elseif ($source == 'index') {
+    $js->set('owlcarousel2/owl.carousel.js');
+    $js->set('slick/slick.js');
+    $js->set('flipster/jquery.flipster.min.js');
+}
+
 $js->set("js/apps.js");
 
 $js->set("js/cart.js");
@@ -347,19 +363,11 @@ if (!empty($popup) > 0 &&  $source == 'index') {
     (function(){
         var plugins=[];
         <?php if ($source == 'product') { ?>
-            plugins.push('magiczoomplus/magiczoomplus.js');
-            plugins.push('slick/slick.js');
-            plugins.push('fotorama/fotorama.js');
-            plugins.push('owlcarousel2/owl.carousel.js');
-            plugins.push('fancybox3/jquery.fancybox.js');
+         
         <?php } elseif ($source == 'news') { ?>
-            plugins.push('fancybox3/jquery.fancybox.js');
-            plugins.push('photobox/photobox.js');
-            plugins.push('owlcarousel2/owl.carousel.js');
+
         <?php } elseif ($source == 'index') { ?>
-            plugins.push('owlcarousel2/owl.carousel.js');
-            plugins.push('slick/slick.js');
-            plugins.push('flipster/jquery.flipster.min.js');
+
         <?php } ?>
         function loadDefer(src){
             var s=document.createElement('script');
