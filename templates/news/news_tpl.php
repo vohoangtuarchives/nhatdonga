@@ -55,7 +55,7 @@
                                             </h2>
                                             <?php if (!empty($firstNews['desc' . $lang])): ?>
                                             <div class="featured-news-desc mb-4 text-muted flex-grow-1">
-                                                <?= htmlspecialchars_decode($firstNews['desc' . $lang]) ?>
+                                                <?= $firstNews['desc' . $lang] ?>
                                             </div>
                                             <?php endif; ?>
                                             <div class="mt-auto">

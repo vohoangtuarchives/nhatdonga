@@ -25,38 +25,42 @@ class RouteHandler
     {
         return [
             'lien-he' => [
-                'source' => 'contact',
+                'controller' => \Tuezy\Controller\ContactController::class,
+                'action' => 'index',
                 'template' => 'contact/contact',
                 'seoType' => 'object',
                 'titleMain' => 'lienhe',
             ],
             'gioi-thieu' => [
-                'source' => 'static',
+                'controller' => \Tuezy\Controller\StaticController::class,
+                'action' => 'index',
                 'template' => 'static/static',
                 'seoType' => 'article',
                 'titleMain' => 'gioithieu',
                 'type' => 'gioi-thieu',
             ],
             'bang-gia' => [
-                'source' => 'static',
+                'controller' => \Tuezy\Controller\StaticController::class,
+                'action' => 'index',
                 'template' => 'static/static',
                 'seoType' => 'article',
                 'titleMain' => 'Bảng Giá',
                 'type' => 'bang-gia',
             ],
             'tin-tuc' => [
-                'source' => 'news',
-                'template' => null, // Will be determined dynamically
+                'controller' => \Tuezy\Controller\NewsController::class,
+                // Action will be determined dynamically (list, cat, item, sub, detail) or default to 'index'
+                'template' => null, 
                 'templateDetail' => 'news/news_detail',
                 'templateList' => 'news/news',
-                'seoType' => null, // Will be determined dynamically
+                'seoType' => null,
                 'seoTypeDetail' => 'article',
                 'seoTypeList' => 'object',
                 'titleMain' => 'tintuc',
                 'type' => 'tin-tuc',
             ],
             'su-kien' => [
-                'source' => 'news',
+                'controller' => \Tuezy\Controller\NewsController::class,
                 'template' => null,
                 'templateDetail' => 'news/news_detail',
                 'templateList' => 'news/news',
@@ -67,7 +71,7 @@ class RouteHandler
                 'type' => 'su-kien',
             ],
             'tuyen-dung' => [
-                'source' => 'news',
+                'controller' => \Tuezy\Controller\NewsController::class,
                 'template' => null,
                 'templateDetail' => 'news/news_detail',
                 'templateList' => 'news/news',
@@ -78,7 +82,7 @@ class RouteHandler
                 'type' => 'tuyen-dung',
             ],
             'kien-thuc' => [
-                'source' => 'news',
+                'controller' => \Tuezy\Controller\NewsController::class,
                 'template' => null,
                 'templateDetail' => 'news/news_detail',
                 'templateList' => 'news/news',
@@ -89,7 +93,7 @@ class RouteHandler
                 'type' => 'kien-thuc',
             ],
             'tai-sao-chon' => [
-                'source' => 'news',
+                'controller' => \Tuezy\Controller\NewsController::class,
                 'template' => null,
                 'templateDetail' => 'news/news_detail',
                 'templateList' => 'news/news',
@@ -100,7 +104,7 @@ class RouteHandler
                 'type' => 'tai-sao-chon',
             ],
             'dich-vu' => [
-                'source' => 'news',
+                'controller' => \Tuezy\Controller\NewsController::class,
                 'template' => null,
                 'templateDetail' => 'news/news_detail2',
                 'templateList' => 'news/news',
@@ -111,7 +115,7 @@ class RouteHandler
                 'type' => 'dich-vu',
             ],
             'thu-vien' => [
-                'source' => 'news',
+                'controller' => \Tuezy\Controller\NewsController::class,
                 'template' => null,
                 'templateDetail' => 'news/news_detail',
                 'templateList' => 'news/news_dichvu',
@@ -122,7 +126,7 @@ class RouteHandler
                 'type' => 'thu-vien',
             ],
             'catalogue' => [
-                'source' => 'news',
+                'controller' => \Tuezy\Controller\NewsController::class,
                 'template' => null,
                 'templateDetail' => 'news/news_detail',
                 'templateList' => 'news/news',
@@ -133,7 +137,7 @@ class RouteHandler
                 'type' => 'catalogue',
             ],
             'chinh-sach' => [
-                'source' => 'news',
+                'controller' => \Tuezy\Controller\NewsController::class,
                 'template' => null,
                 'templateDetail' => 'news/news_detail',
                 'templateList' => 'news/news',
@@ -142,28 +146,33 @@ class RouteHandler
                 'type' => 'chinh-sach',
             ],
             'yeu-thich' => [
-                'source' => 'product',
+                'controller' => \Tuezy\Controller\ProductController::class,
+                // Need to specify an action for these special product lists if they exist, or map to index with filters
+                'action' => 'index', 
                 'template' => 'product/product',
                 'seoType' => 'object',
                 'type' => 'san-pham',
                 'titleMain' => null,
             ],
             'noi-bat' => [
-                'source' => 'product',
+                'controller' => \Tuezy\Controller\ProductController::class,
+                'action' => 'index',
                 'template' => 'product/product',
                 'seoType' => 'object',
                 'type' => 'san-pham',
                 'titleMain' => null,
             ],
             'khuyen-mai' => [
-                'source' => 'product',
+                'controller' => \Tuezy\Controller\ProductController::class,
+                'action' => 'index',
                 'template' => 'product/product',
                 'seoType' => 'object',
                 'type' => 'san-pham',
                 'titleMain' => null,
             ],
             'san-pham' => [
-                'source' => 'product',
+                'controller' => \Tuezy\Controller\ProductController::class,
+                // Action dynamic
                 'template' => null,
                 'templateDetail' => 'product/product_detail',
                 'templateList' => 'product/product',
@@ -174,21 +183,24 @@ class RouteHandler
                 'type' => 'san-pham',
             ],
             'tim-kiem' => [
-                'source' => 'search',
+                'controller' => \Tuezy\Controller\ProductController::class,
+                'action' => 'search',
                 'template' => 'product/product',
                 'seoType' => 'object',
                 'titleMain' => 'timkiem',
             ],
             'tags-san-pham' => [
-                'source' => 'tags',
+                'controller' => \Tuezy\Controller\ProductController::class, // Or TagsController if exists, but usually product list
+                'action' => 'tags', // Need to check if this action exists or implement it
                 'template' => 'product/product',
                 'seoType' => 'object',
                 'titleMain' => null,
-                'dynamicType' => true, // Type will be set from $urlType
-                'dynamicTable' => true, // Table will be set from $urlTblTag
+                'dynamicType' => true, 
+                'dynamicTable' => true, 
             ],
             'tags-tin-tuc' => [
-                'source' => 'tags',
+                'controller' => \Tuezy\Controller\NewsController::class,
+                'action' => 'tags', // Need to check
                 'template' => 'news/news',
                 'seoType' => 'object',
                 'titleMain' => null,
@@ -196,7 +208,9 @@ class RouteHandler
                 'dynamicTable' => true,
             ],
             'thu-vien-anh' => [
-                'source' => 'product',
+                'controller' => \Tuezy\Controller\ProductController::class, // Or AlbumController? 'thu-vien-anh' typically maps to Album logic?
+                // The legacy config had 'source' => 'product', 'type' => 'thu-vien-anh'. 
+                // Wait, if source was product, it used ProductController logic.
                 'template' => null,
                 'templateDetail' => 'album/album_detail',
                 'templateList' => 'album/album',
@@ -207,29 +221,34 @@ class RouteHandler
                 'type' => 'thu-vien-anh',
             ],
             'video' => [
-                'source' => 'video',
+                'controller' => \Tuezy\Controller\VideoController::class,
+                'action' => 'index',
                 'template' => 'video/video',
                 'seoType' => 'object',
                 'titleMain' => 'Video',
                 'type' => 'video',
             ],
             'gio-hang' => [
-                'source' => 'order',
+                'controller' => \Tuezy\Controller\OrderController::class,
+                'action' => 'index',
                 'template' => 'order/order',
                 'seoType' => 'object',
                 'titleMain' => 'giohang',
             ],
             'account' => [
-                'source' => 'user',
+                'controller' => \Tuezy\Controller\UserController::class,
+                // Action determined by sub-route or default
                 'template' => null,
             ],
             'index' => [
-                'source' => 'index',
+                'controller' => \Tuezy\Controller\HomeController::class,
+                'action' => 'index',
                 'template' => 'index/index',
                 'seoType' => 'website',
             ],
             '' => [
-                'source' => 'index',
+                'controller' => \Tuezy\Controller\HomeController::class,
+                'action' => 'index',
                 'template' => 'index/index',
                 'seoType' => 'website',
             ],
@@ -284,6 +303,19 @@ class RouteHandler
         if (isset($config['templateDetail']) && isset($config['templateList'])) {
             $hasId = !empty($context['hasId'] ?? $_GET['id'] ?? null);
             $config['template'] = $hasId ? $config['templateDetail'] : $config['templateList'];
+            
+            // DEBUG: Log template selection
+            if(isset($_GET['debug_routing']) || isset($_GET['debug_template'])) {
+                error_log("DEBUG [RouteHandler::getRouteConfig] Dynamic template selection:");
+                error_log("  - Com: $com");
+                error_log("  - hasId: " . ($hasId ? 'YES' : 'NO'));
+                error_log("  - context['hasId']: " . ($context['hasId'] ?? 'NOT SET'));
+                error_log("  - \$_GET['id']: " . ($_GET['id'] ?? 'NOT SET'));
+                error_log("  - templateDetail: " . $config['templateDetail']);
+                error_log("  - templateList: " . $config['templateList']);
+                error_log("  - Selected template: " . $config['template']);
+            }
+            
             unset($config['templateDetail'], $config['templateList']);
         }
 
@@ -303,6 +335,12 @@ class RouteHandler
         if (!empty($config['dynamicTable']) && isset($context['urlTblTag'])) {
             $config['table'] = $context['urlTblTag'];
             unset($config['dynamicTable']);
+        }
+
+        // DEBUG: Log final config template
+        if(isset($_GET['debug_routing']) || isset($_GET['debug_template'])) {
+            error_log("DEBUG [RouteHandler::getRouteConfig] Final config template: " . ($config['template'] ?? 'NULL'));
+            error_log("DEBUG [RouteHandler::getRouteConfig] Final config keys: " . implode(', ', array_keys($config)));
         }
 
         return $config;

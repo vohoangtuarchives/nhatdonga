@@ -250,7 +250,7 @@ echo $js->get();
 
 <!-- Js Body -->
 
-<?= htmlspecialchars_decode($setting['bodyjs']) ?>
+<?= !empty($setting['bodyjs']) ? htmlspecialchars_decode($setting['bodyjs']) : '' ?>
 
 
 

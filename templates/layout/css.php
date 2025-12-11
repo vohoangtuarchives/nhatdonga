@@ -128,7 +128,7 @@ echo $css->get();
 
 <!-- Js Google Analytic -->
 
-<?= htmlspecialchars_decode($setting['analytics']) ?>
+<?= !empty($setting['analytics']) ? htmlspecialchars_decode($setting['analytics']) : '' ?>
 <?php if (empty($setting['analytics']) && !empty($config['googleAPI']['analytics']['id'])) { ?>
 <script async src="https://www.googletagmanager.com/gtag/js?id=<?= $config['googleAPI']['analytics']['id'] ?>"></script>
 <script>
@@ -140,4 +140,4 @@ window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);
 
 <!-- Js Head -->
 
-<?= htmlspecialchars_decode($setting['headjs']) ?>
+<?= !empty($setting['headjs']) ? htmlspecialchars_decode($setting['headjs']) : '' ?>

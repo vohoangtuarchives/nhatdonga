@@ -33,11 +33,16 @@ $assets = $isWater ? WATERMARK . '/product' : THUMBS;
                 <div class="col-12 col-lg-6 mb-4 mb-lg-0">
                     <div class="product-images-modern">
                         <!-- Main Image -->
-                        <a id="Zoom-1" class="MagicZoom" data-options="zoomMode: off; hint: off; rightClick: true; selectorTrigger: hover; expandCaption: false; history: false;" href="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $rowDetail['photo'] ?>" title="<?= $rowDetail['name' . $lang] ?>">
-
-                        <?= $func->getImage(['isLazy' => false, 'sizes' => $thumbnail, 'isWatermark' => $isWater, 'prefix' => 'product', 'upload' => UPLOAD_PRODUCT_L, 'image' => $rowDetail['photo'], 'alt' => $rowDetail['name' . $lang]]) ?>
-
-                    </a>
+                        <div class="main-image-wrapper mb-3">
+                            <a id="Zoom-1" class="MagicZoom product-main-image" 
+                               data-options="zoomMode: off; hint: off; rightClick: true; selectorTrigger: hover; expandCaption: false; history: false;" 
+                               href="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $rowDetail['photo'] ?>" 
+                               data-fancybox="product-gallery"
+                               data-src="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $rowDetail['photo'] ?>"
+                               title="<?= $rowDetail['name' . $lang] ?>">
+                                <?= $func->getImage(['isLazy' => false, 'sizes' => $thumbnail, 'isWatermark' => $isWater, 'prefix' => 'product', 'upload' => UPLOAD_PRODUCT_L, 'image' => $rowDetail['photo'], 'alt' => $rowDetail['name' . $lang], 'class' => 'img-fluid']) ?>
+                            </a>
+                        </div>
 
                     <?php if ($rowDetailPhoto) {
 
@@ -49,7 +54,13 @@ $assets = $isWater ? WATERMARK . '/product' : THUMBS;
 
                                     <div>
 
-                                        <a class="thumb-pro-detail" data-zoom-id="Zoom-1" href="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $rowDetail['photo'] ?>" title="<?= $rowDetail['name' . $lang] ?>">
+                                        <a class="thumb-pro-detail mz-thumb active" 
+                                           data-zoom-id="Zoom-1" 
+                                           href="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $rowDetail['photo'] ?>" 
+                                           data-main-image="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $rowDetail['photo'] ?>"
+                                           data-fancybox="product-gallery"
+                                           data-src="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $rowDetail['photo'] ?>"
+                                           title="<?= $rowDetail['name' . $lang] ?>">
 
                                             <?= $func->getImage(['class' => 'img-full', 'isLazy' => false, 'sizes' => $thumbnail, 'isWatermark' => $isWater, 'prefix' => 'product', 'upload' => UPLOAD_PRODUCT_L, 'image' => $rowDetail['photo'], 'alt' => $rowDetail['name' . $lang]]) ?>
 
@@ -61,7 +72,13 @@ $assets = $isWater ? WATERMARK . '/product' : THUMBS;
 
                                         <div>
 
-                                            <a class="thumb-pro-detail" data-zoom-id="Zoom-1" href="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $v['photo'] ?>" title="<?= $rowDetail['name' . $lang] ?>">
+                                            <a class="thumb-pro-detail mz-thumb" 
+                                               data-zoom-id="Zoom-1" 
+                                               href="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $v['photo'] ?>" 
+                                               data-main-image="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $v['photo'] ?>"
+                                               data-fancybox="product-gallery"
+                                               data-src="<?= ASSET . $assets ?>/<?= $thumbnail ?>/<?= UPLOAD_PRODUCT_L . $v['photo'] ?>"
+                                               title="<?= $rowDetail['name' . $lang] ?>">
 
                                                 <?= $func->getImage(['class' => 'img-full', 'isLazy' => false, 'sizes' => $thumbnail, 'isWatermark' => $isWater, 'prefix' => 'product', 'upload' => UPLOAD_PRODUCT_L, 'image' => $v['photo'], 'alt' => $rowDetail['name' . $lang]]) ?>
 
@@ -682,5 +699,120 @@ $assets = $isWater ? WATERMARK . '/product' : THUMBS;
         font-size: 1rem;
     }
 }
+
+/* Thumbnail Gallery Styles */
+.gallery-thumb-pro {
+    margin-top: 1rem;
+}
+
+.thumb-pro-detail {
+    display: block !important;
+    border: 2px solid #e9ecef;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.thumb-pro-detail:hover {
+    border-color: #dc3545;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+}
+
+.thumb-pro-detail.active,
+.thumb-pro-detail.mz-thumb-selected {
+    border-color: #dc3545;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.thumb-pro-detail img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 3px;
+}
+
+.main-image-wrapper {
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-main-image {
+    display: block;
+    cursor: pointer;
+}
+
+.product-main-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý click vào thumbnail để thay đổi ảnh chính
+    const thumbnails = document.querySelectorAll('.thumb-pro-detail');
+    const mainImageLink = document.getElementById('Zoom-1');
+    const mainImage = mainImageLink ? mainImageLink.querySelector('img') : null;
+    
+    if (thumbnails.length > 0 && mainImageLink && mainImage) {
+        thumbnails.forEach(function(thumb) {
+            thumb.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Lấy URL ảnh từ data attribute
+                const newImageUrl = this.getAttribute('data-main-image') || this.getAttribute('href');
+                const newImageSrc = this.querySelector('img').src;
+                
+                if (newImageUrl) {
+                    // Cập nhật href của ảnh chính
+                    mainImageLink.setAttribute('href', newImageUrl);
+                    mainImageLink.setAttribute('data-src', newImageUrl);
+                    
+                    // Cập nhật src của ảnh chính
+                    if (mainImage) {
+                        mainImage.src = newImageSrc;
+                        mainImage.alt = this.getAttribute('title') || mainImage.alt;
+                    }
+                    
+                    // Refresh MagicZoom
+                    if (typeof MagicZoom !== 'undefined') {
+                        MagicZoom.refresh('Zoom-1');
+                    }
+                    
+                    // Cập nhật active class cho thumbnail
+                    thumbnails.forEach(function(t) {
+                        t.classList.remove('active', 'mz-thumb-selected');
+                    });
+                    this.classList.add('active', 'mz-thumb-selected');
+                }
+            });
+        });
+    }
+    
+    // Khởi tạo Fancybox cho gallery
+    if (typeof jQuery !== 'undefined' && typeof jQuery.fancybox !== 'undefined') {
+        jQuery('[data-fancybox="product-gallery"]').fancybox({
+            buttons: [
+                "zoom",
+                "share",
+                "slideShow",
+                "fullScreen",
+                "download",
+                "thumbs",
+                "close"
+            ],
+            loop: true,
+            protect: true
+        });
+    }
+});
+</script>
 

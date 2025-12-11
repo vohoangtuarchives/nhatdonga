@@ -190,7 +190,7 @@ class ProductRepository implements ProductRepositoryInterface
              {$orderBy}
              limit ?, ?",
             $params
-        );
+        ) ?: [];
     }
 
     private function buildOrderBy(string $sortBy, string $sortOrder): string

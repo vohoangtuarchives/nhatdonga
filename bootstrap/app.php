@@ -54,15 +54,10 @@ require_once LIBRARIES . 'config.php';
 
 if (!defined('COMPOSER_AUTOLOADED')) {
     require_once LIBRARIES . 'autoload.php';
-    $refactoredAutoload = LIBRARIES . 'autoload-refactored.php';
-    if (file_exists($refactoredAutoload)) {
-        require_once $refactoredAutoload;
-    }
+    // AutoLoad now supports both old classes and new namespace classes
+    // AutoLoadRefactored is now just an alias, no need to load separately
     if (class_exists('AutoLoad')) {
         new AutoLoad();
-    }
-    if (class_exists('AutoLoadRefactored')) {
-        new AutoLoadRefactored();
     }
 }
 

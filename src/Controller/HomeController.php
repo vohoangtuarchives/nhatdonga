@@ -40,6 +40,8 @@ class HomeController extends BaseController
         $featuredProducts = $this->productRepo->getFeaturedProducts(12);
         $productCategories = $this->categoryRepo->getLists('san-pham', true, false);
         
+
+        
         // Lấy tối đa 8 danh mục đầu tiên
         $productCategories = array_slice($productCategories, 0, 8);
         

@@ -135,7 +135,7 @@ isset($config['static'][$type]['video']) && $config['static'][$type]['video'] ==
                             <?php
                             /* Photo detail */
                             $photoDetail = array();
-                            $photoDetail['upload'] = UPLOAD_NEWS_L;
+                            $photoDetail['upload'] = defined('UPLOAD_STATIC_L') ? UPLOAD_STATIC_L : 'upload/static/';
                             $photoDetail['image'] = (!empty($item)) ? $item['photo'] : '';
                             $photoDetail['dimension'] = "Width: " . $config['static'][$type]['width'] . " px - Height: " . $config['static'][$type]['height'] . " px (" . $config['static'][$type]['img_type'] . ")";
 
@@ -157,7 +157,7 @@ isset($config['static'][$type]['video']) && $config['static'][$type]['video'] ==
                             <?php
                             /* Photo detail */
                             $photoDetail = array();
-                            $photoDetail['upload'] = UPLOAD_NEWS_L;
+                            $photoDetail['upload'] = defined('UPLOAD_STATIC_L') ? UPLOAD_STATIC_L : 'upload/static/';
                             $photoDetail['image2'] = (!empty($item)) ? $item['photo2'] : '';
                             $photoDetail['dimension'] = "Width: " . $config['static'][$type]['width2'] . " px - Height: " . $config['static'][$type]['height2'] . " px (" . $config['static'][$type]['img_type'] . ")";
 

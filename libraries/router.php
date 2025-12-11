@@ -517,7 +517,6 @@ if (is_array($match)) {
 	if (is_callable($match['target'])) {
 		call_user_func_array($match['target'], $match['params']);
 	} else {
-		// Sử dụng SecurityHelper thay vì htmlspecialchars trực tiếp
 		$com = !empty($match['params']['com']) ? $match['params']['com'] : $match['target'];
 		$com = SecurityHelper::sanitize($com);
 		$getPage = SecurityHelper::sanitizeGet('p', '1');
@@ -611,7 +610,26 @@ $requick = array(
 
 /* Find data */
 if (!empty($com) && !in_array($com, ['tim-kiem', 'account', 'sitemap'])) {
+    if(isset($_GET['debug_routing'])) {
+        echo "<div style='background:lightblue;padding:10px;margin:5px;'>";
+        echo "<strong>Router Debug (Before SlugResolver):</strong><br>";
+        echo "Com: $com<br>";
+        echo "Slug lang: $sluglang<br>";
+        echo "</div>";
+    }
+    
     $resolver = \Tuezy\Application\Routing\SlugResolver::resolve($com, $d, $sluglang, $requick);
+    
+    if(isset($_GET['debug_routing'])) {
+        echo "<div style='background:lightgreen;padding:10px;margin:5px;'>";
+        echo "<strong>Router Debug (After SlugResolver):</strong><br>";
+        echo "Resolved com: " . ($resolver['com'] ?? 'null') . "<br>";
+        echo "Resolved type: " . ($resolver['type'] ?? 'null') . "<br>";
+        echo "Resolved table: " . ($resolver['table'] ?? 'null') . "<br>";
+        echo "\$_GET['id']: " . ($_GET['id'] ?? 'not set') . "<br>";
+        echo "</div>";
+    }
+    
     $com = $resolver['com'] ?? $com;
     if (!empty($resolver['type'])) { $type = $resolver['type']; }
 }
@@ -642,7 +660,6 @@ $routerHelper = new RouterHelper($routeHandler, $seo, $func);
 $specialResult = $routerHelper->processRoute($com, $match['params']['lang'] ?? null, $urlType ?? null, $urlTblTag ?? null);
 
 if ($specialResult && !empty($specialResult['exit'])) {
-	// Route đã được xử lý (sitemap, ngon-ngu, etc.)
 	exit;
 }
 
@@ -653,127 +670,276 @@ $routeConfig = $routeHandler->getRouteConfig($com, [
 	'urlTblTag' => $urlTblTag ?? null,
 ]);
 
-if ($routeConfig) {
-	// Sử dụng route config từ RouteHandler
-	// Nếu processRoute đã trả về kết quả, sử dụng nó (đã resolve titleMain)
-	if ($specialResult && !empty($specialResult['source'])) {
-		$source = $specialResult['source'];
-		$template = $specialResult['template'];
-		$type = $specialResult['type'] ?? $com;
-		$table = $specialResult['table'] ?? null;
-		$titleMain = $specialResult['titleMain'] ?? null;
-	} else {
-		// Fallback: sử dụng trực tiếp từ routeConfig
-		$source = $routeConfig['source'] ?? null;
-		$template = $routeConfig['template'] ?? null;
-		$type = $routeConfig['type'] ?? $com;
-		$table = $routeConfig['table'] ?? null;
-		$titleMain = $routeConfig['titleMain'] ?? null;
-	}
-	
-	if (isset($routeConfig['seoType'])) {
-		$seo->set('type', $routeConfig['seoType']);
-	}
+if(isset($_GET['debug_routing'])) {
+    echo "<div style='background:orange;padding:10px;margin:5px;'>";
+    echo "<strong>Route Config Debug:</strong><br>";
+    echo "Com: $com<br>";
+    echo "Has ID: " . (!empty($_GET['id']) ? 'YES' : 'NO') . "<br>";
+    echo "Route config found: " . ($routeConfig ? 'YES' : 'NO') . "<br>";
+    if($routeConfig) {
+        echo "Controller: " . ($routeConfig['controller'] ?? 'null') . "<br>";
+        echo "Action: " . ($routeConfig['action'] ?? 'null') . "<br>";
+        echo "Template: " . ($routeConfig['template'] ?? 'null') . "<br>";
+    }
+    echo "</div>";
+}
+
+// Determine View Variables
+$source = null;
+$template = null;
+$viewData = [];
+
+if ($routeConfig && isset($routeConfig['controller'])) {
+    $controllerClass = $routeConfig['controller'];
+    $controllerAction = $routeConfig['action'] ?? 'index';
+    
+    // Dynamic Action Resolution
+    if ($controllerAction === 'index') {
+        if (!empty($_GET['id'])) {
+            $controllerAction = 'detail';
+        } elseif (!empty($_GET['idc'])) {
+            $controllerAction = 'category'; // cat
+        } elseif (!empty($_GET['cat'])) { // Some routes might use 'cat' param?
+            $controllerAction = 'category';
+        } elseif (!empty($_GET['idl'])) {
+            $controllerAction = 'list';
+        } elseif (!empty($_GET['idi'])) {
+            $controllerAction = 'item';
+        } elseif (!empty($_GET['ids'])) {
+            $controllerAction = 'sub';
+        } elseif (!empty($_GET['idb'])) {
+            $controllerAction = 'brand';
+        }
+    }
+    
+    if(isset($_GET['debug_routing'])) {
+        echo "<div style='background:pink;padding:10px;margin:5px;'>";
+        echo "<strong>Controller Action Debug:</strong><br>";
+        echo "Controller class: $controllerClass<br>";
+        echo "Action (resolved): $controllerAction<br>";
+        echo "</div>";
+    }
+    
+    // Handle 'account' specific actions
+    if ($com === 'account' && !empty($match['params']['action'])) {
+        $userAction = $match['params']['action'];
+        switch ($userAction) {
+            case 'dang-nhap': $controllerAction = 'login'; break;
+            case 'dang-ky': $controllerAction = 'register'; break;
+            case 'dang-xuat': $controllerAction = 'logout'; break;
+            case 'thong-tin': $controllerAction = 'profile'; break;
+            case 'quen-mat-khau': $controllerAction = 'forgotPassword'; break;
+            default: $controllerAction = 'login'; break;
+        }
+    }
+
+    // Handle 'tim-kiem'
+    if ($com === 'tim-kiem') {
+        $controllerAction = 'search';
+    }
+
+    // Set template and SEO type from config if available (RouteHandler logic handled this somewhat)
+    $source = $routeConfig['source'] ?? $com; // Legacy source fallback for templates checking $source
+    $template = $routeConfig['template'] ?? null;
+    $type = $routeConfig['type'] ?? $com;
+    
+    // DEBUG: Log template after setting from routeConfig
+    if(isset($_GET['debug_routing']) || isset($_GET['debug_template'])) {
+        error_log("DEBUG [router.php:743] Template set from routeConfig: " . ($template ?? 'NULL'));
+        error_log("DEBUG [router.php:743] RouteConfig template value: " . ($routeConfig['template'] ?? 'NOT SET'));
+        error_log("DEBUG [router.php:743] RouteConfig keys: " . implode(', ', array_keys($routeConfig)));
+        error_log("DEBUG [router.php:743] Com: $com, Has ID: " . (!empty($_GET['id']) ? 'YES' : 'NO'));
+    }
+    
+    // Pass global dependencies
+    // For simple DI, we just instantiate manually here as we have all globals within scope
+    // Ideally use ServiceContainer, but let's wire it directly for stability first
+    
+    if (class_exists($controllerClass)) {
+        $controller = null;
+        
+        switch ($controllerClass) {
+            case \Tuezy\Controller\ProductController::class:
+                $controller = new \Tuezy\Controller\ProductController($d, $cache, $func, $seo, $config, $type);
+                break;
+            case \Tuezy\Controller\NewsController::class:
+                $controller = new \Tuezy\Controller\NewsController($d, $cache, $func, $seo, $config, $type);
+                break;
+            case \Tuezy\Controller\StaticController::class:
+                $controller = new \Tuezy\Controller\StaticController($d, $cache, $func, $seo, $config);
+                break;
+            case \Tuezy\Controller\ContactController::class:
+                $controller = new \Tuezy\Controller\ContactController($d, $cache, $func, $seo, $config, $emailer, $flash ?? null);
+                break;
+            case \Tuezy\Controller\HomeController::class:
+                $controller = new \Tuezy\Controller\HomeController($d, $cache, $func, $seo, $config);
+                break;
+            case \Tuezy\Controller\VideoController::class:
+                $controller = new \Tuezy\Controller\VideoController($d, $cache, $func, $seo, $config);
+                break;
+            case \Tuezy\Controller\OrderController::class:
+                $controller = new \Tuezy\Controller\OrderController($d, $cache, $func, $seo, $config, $cart, $emailer, $flash ?? null);
+                break;
+            case \Tuezy\Controller\UserController::class:
+                $loginMember = $loginMember ?? 'member'; // Default
+                $controller = new \Tuezy\Controller\UserController($d, $cache, $func, $seo, $config, $flash ?? null, $loginMember);
+                break;
+            default:
+                // Not mapped specifically in switch, try basic if possible or fail safely
+                break;
+        }
+
+        if ($controller) {
+            // Execute Action
+            if (method_exists($controller, $controllerAction)) {
+                $args = [];
+                // Argument population logic
+                if ($controllerAction === 'detail') $args[] = (int)($_GET['id'] ?? 0);
+                if ($controllerAction === 'category') $args[] = (int)($_GET['idc'] ?? 0);
+                if ($controllerAction === 'list') $args[] = (int)($_GET['idl'] ?? 0);
+                if ($controllerAction === 'item') $args[] = (int)($_GET['idi'] ?? 0);
+                if ($controllerAction === 'sub') $args[] = (int)($_GET['ids'] ?? 0);
+                if ($controllerAction === 'brand') $args[] = (int)($_GET['idb'] ?? 0);
+                
+                if (in_array($controllerAction, ['detail', 'category', 'list', 'item', 'sub', 'brand'])) {
+                    $args[] = $type;
+                }
+                
+                if ($controllerAction === 'search' && $controllerClass === \Tuezy\Controller\ProductController::class) {
+                    $args[] = $_GET['keyword'] ?? '';
+                    $args[] = $type;
+                }
+                
+                // StaticController::index() requires $type parameter
+                if ($controllerAction === 'index' && $controllerClass === \Tuezy\Controller\StaticController::class) {
+                    $args[] = $type;
+                }
+                
+                // NewsController::index() and ProductController::index() require $type parameter
+                if ($controllerAction === 'index' && in_array($controllerClass, [\Tuezy\Controller\NewsController::class, \Tuezy\Controller\ProductController::class])) {
+                    $args[] = $type;
+                }
+
+                if(isset($_GET['debug_routing'])) {
+                    echo "<div style='background:cyan;padding:10px;margin:5px;'>";
+                    echo "<strong>Calling Controller:</strong><br>";
+                    echo "Controller: " . get_class($controller) . "<br>";
+                    echo "Action: $controllerAction<br>";
+                    echo "Args: " . json_encode($args) . "<br>";
+                    echo "</div>";
+                }
+
+                try {
+                    $viewData = call_user_func_array([$controller, $controllerAction], $args);
+                    
+                    if(isset($_GET['debug_routing'])) {
+                        echo "<div style='background:lightgreen;padding:10px;margin:5px;'>";
+                        echo "<strong>Controller Returned:</strong><br>";
+                        echo "View data keys: " . (is_array($viewData) ? implode(', ', array_keys($viewData)) : 'NOT ARRAY') . "<br>";
+                        echo "</div>";
+                    }
+                } catch (\Throwable $e) {
+                    if(isset($_GET['debug_routing'])) {
+                        echo "<div style='background:red;color:white;padding:10px;margin:5px;'>";
+                        echo "<strong>Controller Error:</strong><br>";
+                        echo "Error: " . $e->getMessage() . "<br>";
+                        echo "File: " . $e->getFile() . ":" . $e->getLine() . "<br>";
+                        echo "</div>";
+                    }
+                    throw $e;
+                }
+                
+                if (isset($viewData['titleMain'])) {
+                    $titleMain = $viewData['titleMain'];
+                } elseif (isset($routeConfig['titleMain'])) {
+                    $titleMain = $routeConfig['titleMain'];
+                }
+                
+            } else {
+                 if(DEV_MODE) throw new Exception("Action $controllerAction not found in $controllerClass");
+            }
+        }
+    }
 } else {
-	// Fallback về switch statement cũ cho các routes chưa được định nghĩa
-	switch ($com) {
-		case 'bang-gia':
-			$source = "static";
-			$template = "static/static";
-			$type = $com;
-			$seo->set('type', 'article');
-			$titleMain = "Bảng Giá";
-			break;
-
-		case 'su-kien':
-			$source = "news";
-			$template = isset($_GET['id']) ? "news/news_detail" : "news/news";
-			$seo->set('type', isset($_GET['id']) ? "article" : "object");
-			$type = $com;
-			$titleMain = "Sự kiện";
-			break;
-
-		case 'kien-thuc':
-			$source = "news";
-			$template = isset($_GET['id']) ? "news/news_detail" : "news/news";
-			$seo->set('type', isset($_GET['id']) ? "article" : "object");
-			$type = $com;
-			$titleMain = "Kiến Thức";
-			break;
-
-		case 'dich-vu':
-			$source = "news";
-			$template = isset($_GET['id']) ? "news/news_detail2" : "news/news";
-			$seo->set('type', isset($_GET['id']) ? "article" : "object");
-			$type = $com;
-			$titleMain = "Dịch Vụ";
-			break;
-
-		case 'thu-vien':
-			$source = "news";
-			$template = isset($_GET['id']) ? "news/news_detail" : "news/news_dichvu";
-			$seo->set('type', isset($_GET['id']) ? "article" : "object");
-			$type = $com;
-			$titleMain = "Thư Viện";
-			break;
-
-		case 'catalogue':
-			$source = "news";
-			$template = isset($_GET['id']) ? "news/news_detail" : "news/news";
-			$seo->set('type', isset($_GET['id']) ? "article" : "object");
-			$type = $com;
-			$titleMain = "Catalogue";
-			break;
-
-		case 'chinh-sach':
-			$source = "news";
-			$template = isset($_GET['id']) ? "news/news_detail" : "news/news";
-			$seo->set('type', 'article');
-			$type = $com;
-			$titleMain = "Chính Sách";
-			break;
-
-		case 'yeu-thich':
-		case 'noi-bat':
-		case 'khuyen-mai':
-			$source = "product";
-			$template = "product/product";
-			$seo->set('type', 'object');
-			$type = 'san-pham';
-			$titleMain = null;
-			break;
-
-		case 'tim-kiem':
-			$source = "search";
-			$template = "product/product";
-			$seo->set('type', 'object');
-			$titleMain = timkiem;
-			break;
-
-		case '':
-		case 'index':
-			$source = "index";
-			$template = "index/index";
-			$seo->set('type', 'website');
-			break;
-
-		default:
-			header('HTTP/1.0 404 Not Found', true, 404);
-			include("404.php");
-			exit();
-	}
+    // If no route config found, 404.
+	header('HTTP/1.0 404 Not Found', true, 404);
+	include("404.php");
+	exit;
 }
 
 /* Require datas for all page */
 require_once SOURCES . "allpage.php";
 
-/* Include sources */
-if (!empty($source)) {
-	include SOURCES . $source . ".php";
+/* Extract view data */
+// DEBUG: Log template before extract
+if(isset($_GET['debug_routing']) || isset($_GET['debug_template'])) {
+    error_log("DEBUG [router.php:856] Template BEFORE extract: " . ($template ?? 'NULL'));
+    error_log("DEBUG [router.php:856] ViewData keys: " . (is_array($viewData) ? implode(', ', array_keys($viewData)) : 'NOT ARRAY'));
+    if(is_array($viewData) && isset($viewData['template'])) {
+        error_log("DEBUG [router.php:856] WARNING: viewData contains 'template' key with value: " . $viewData['template']);
+    }
 }
 
-/* Include sources */
+if (!empty($viewData) && is_array($viewData)) {
+    extract($viewData);
+}
+
+// DEBUG: Log template after extract
+if(isset($_GET['debug_routing']) || isset($_GET['debug_template'])) {
+    error_log("DEBUG [router.php:860] Template AFTER extract: " . ($template ?? 'NULL'));
+}
+
+/* Include template */
+// Determine actual template file path (with _tpl.php suffix as per templates/index.php line 33)
+$templateFile = TEMPLATE . $template . "_tpl.php";
+$templateFileAlt = TEMPLATE . $template . ".php"; // Fallback for templates without _tpl suffix
+
+// DEBUG: Final template check
+if(isset($_GET['debug_routing']) || isset($_GET['debug_template'])) {
+    error_log("DEBUG [router.php:882] FINAL Template check: " . ($template ?? 'NULL'));
+    error_log("DEBUG [router.php:882] Template empty check: " . (empty($template) ? 'YES (WILL 404!)' : 'NO'));
+    error_log("DEBUG [router.php:882] Template file path (_tpl.php): " . $templateFile);
+    error_log("DEBUG [router.php:882] Template file exists (_tpl.php): " . (file_exists($templateFile) ? 'YES' : 'NO'));
+    error_log("DEBUG [router.php:882] Template file path (.php): " . $templateFileAlt);
+    error_log("DEBUG [router.php:882] Template file exists (.php): " . (file_exists($templateFileAlt) ? 'YES' : 'NO'));
+    
+    echo "<div style='background:purple;color:white;padding:10px;margin:5px;'>";
+    echo "<strong>Template Debug:</strong><br>";
+    echo "Template var: " . ($template ?? 'NULL') . "<br>";
+    echo "Template file (_tpl.php): " . $templateFile . "<br>";
+    echo "File exists (_tpl.php): " . (file_exists($templateFile) ? 'YES' : 'NO') . "<br>";
+    echo "Template file (.php): " . $templateFileAlt . "<br>";
+    echo "File exists (.php): " . (file_exists($templateFileAlt) ? 'YES' : 'NO') . "<br>";
+    echo "RouteConfig template: " . ($routeConfig['template'] ?? 'NOT SET') . "<br>";
+    echo "Com: $com<br>";
+    echo "Has ID: " . (!empty($_GET['id']) ? 'YES' : 'NO') . "<br>";
+    echo "</div>";
+}
+
 if (empty($template)) {
+    // DEBUG: Log why template is empty
+    if(isset($_GET['debug_routing']) || isset($_GET['debug_template'])) {
+        error_log("ERROR [router.php:901] Template is EMPTY - causing 404!");
+        error_log("ERROR [router.php:901] RouteConfig was: " . ($routeConfig ? 'SET' : 'NULL'));
+        if($routeConfig) {
+            error_log("ERROR [router.php:901] RouteConfig template: " . ($routeConfig['template'] ?? 'NOT SET'));
+            error_log("ERROR [router.php:901] RouteConfig templateDetail: " . ($routeConfig['templateDetail'] ?? 'NOT SET'));
+            error_log("ERROR [router.php:901] RouteConfig templateList: " . ($routeConfig['templateList'] ?? 'NOT SET'));
+        }
+    }
+	header('HTTP/1.0 404 Not Found', true, 404);
+	include("404.php");
+	exit;
+}
+
+// Verify template file exists (with _tpl.php suffix as used in templates/index.php)
+if (!file_exists($templateFile) && !file_exists($templateFileAlt)) {
+    // DEBUG: Log template file not found
+    if(isset($_GET['debug_routing']) || isset($_GET['debug_template'])) {
+        error_log("ERROR [router.php:915] Template file NOT FOUND!");
+        error_log("ERROR [router.php:915] Tried: " . $templateFile);
+        error_log("ERROR [router.php:915] Tried: " . $templateFileAlt);
+    }
 	header('HTTP/1.0 404 Not Found', true, 404);
 	include("404.php");
 	exit;

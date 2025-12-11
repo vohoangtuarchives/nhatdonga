@@ -5,20 +5,69 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7cb2e1da-5a5f-45f9-b70d-b9da988d2d3d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/sources/static.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/sources/static.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/templates/static/man/man_add_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/templates/static/man/man_add_tpl.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/css/custom.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/custom.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/app.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_24320e6021f585083c6ea9b21a9d40fa" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_24320e6021f585083c6ea9b21a9d40fa" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_441a79c74de4df9ced257afb0e8bdbd5" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_441a79c74de4df9ced257afb0e8bdbd5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_441a79c74de4df9ced257afb0e8bdbd5" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_6036fda74776cf4c24e318af048d71d4" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_6036fda74776cf4c24e318af048d71d4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caches/cache_6193eb9e9d365a565f2eea713c0d7867" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_6193eb9e9d365a565f2eea713c0d7867" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_6193eb9e9d365a565f2eea713c0d7867" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_6a9e111b567f815c83ab85c2388bc324" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_6a9e111b567f815c83ab85c2388bc324" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_ade88b845cfb09f64727369d5e58fc65" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_ade88b845cfb09f64727369d5e58fc65" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_b692e88ad71025b75768b1e6cb599520" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_b692e88ad71025b75768b1e6cb599520" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_c3f914e0ea786a6fc3ad80eb24800bf4" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_c3f914e0ea786a6fc3ad80eb24800bf4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_de77399739e57b642e817f5b017058e6" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/caches/cache_f5514d62fc9e08807c9f90ef5f6c2a26" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_f5514d62fc9e08807c9f90ef5f6c2a26" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_f86e6548d3bc7d5dd419d4bd8ba7c158" beforeDir="false" afterPath="$PROJECT_DIR$/caches/cache_f86e6548d3bc7d5dd419d4bd8ba7c158" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/caches/cache_fdd5f1ac0703a751286dff57527ee355" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/autoload.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/autoload.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.BreadCrumbs.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.BreadCrumbs.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.Cache.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Cache.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.Cart.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Cart.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.Email.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Email.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.Flash.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Flash.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.Functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Functions.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.PDODb.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.PDODb.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.Seo.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Seo.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/class/class.Statistic.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/class/class.Statistic.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/constant.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/constant.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libraries/router.php" beforeDir="false" afterPath="$PROJECT_DIR$/libraries/router.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/11-12-2025.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/11-12-2025.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/contact.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/index.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/news.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/order.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/product.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/search.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/static.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/tags.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/user.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sources/video.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Admin/Controller/StaticAdminController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Admin/Controller/StaticAdminController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Application/Routing/SlugResolver.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application/Routing/SlugResolver.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/HomeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/HomeController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index/index_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index/index_tpl.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/NewsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/NewsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/ProductController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Libraries/Email.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Libraries/Email.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Libraries/Statistic.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Libraries/Statistic.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Repository/NewsRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/NewsRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Repository/ProductRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/ProductRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Repository/StaticRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/StaticRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/RouteHandler.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/RouteHandler.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Service/SeoService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/SeoService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Service/StaticService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/StaticService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/components/khachhang.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/khachhang.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/components/tintuc_with_news_list.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/tintuc_with_news_list.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/components/why.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/why.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout/css.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/css.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout/footer.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/footer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout/head.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/head.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout/header.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/layout/js.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/js.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/layout/slide.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/slide.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout/topbar.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout/topbar.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/news/news_tpl.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/news/news_tpl.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,25 +124,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/laragon/www/donga&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/laragon/www/donga",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\laragon\www\donga\assets\images" />
@@ -132,6 +182,7 @@
       <workItem from="1765250771694" duration="3270000" />
       <workItem from="1765333468490" duration="3846000" />
       <workItem from="1765422283041" duration="12000" />
+      <workItem from="1765445672247" duration="891000" />
     </task>
     <servers />
   </component>

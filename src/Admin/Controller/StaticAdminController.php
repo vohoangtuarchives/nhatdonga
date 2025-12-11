@@ -37,14 +37,15 @@ class StaticAdminController extends BaseAdminController
     }
 
     /**
-     * Get static content by type
+     * Get static content by type (for admin - no status filter)
      * 
      * @return array|null
      */
     public function getByType(): ?array
     {
         $this->requireAuth();
-        return $this->staticService->getByType($this->type);
+        // In admin, we need to get all data regardless of status
+        return $this->staticRepo->getByType($this->type, false);
     }
 
     /**

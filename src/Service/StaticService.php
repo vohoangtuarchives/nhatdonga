@@ -19,11 +19,12 @@ class StaticService
      * Get static content by type
      * 
      * @param string $type Static type
+     * @param bool $activeOnly Only active items (with 'hienthi' status)
      * @return array|null
      */
-    public function getByType(string $type): ?array
+    public function getByType(string $type, bool $activeOnly = true): ?array
     {
-        return $this->statics->getByType($type);
+        return $this->statics->getByType($type, $activeOnly);
     }
 
     /**

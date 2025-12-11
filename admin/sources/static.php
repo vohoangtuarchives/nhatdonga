@@ -72,7 +72,8 @@ function saveStatic()
 	}
 
 	/* Post dữ liệu */
-	$static = $staticService->getByType($type);
+	// In admin, get all data regardless of status
+	$static = $staticService->getByType($type, false);
 	$data = (!empty($_POST['data'])) ? $_POST['data'] : null;
 	
 	if($data) {
@@ -108,18 +109,19 @@ function saveStatic()
 		}
 	}
 
-	/* Save static content */
+		/* Save static content */
 	if (!empty($static)) {
 		// Update existing static
 		if ($staticRepo->update($static['id'], $data)) {
 			/* Photo upload */
-			if (isset($config['static'][$type]['photo']) && $config['static'][$type]['photo'] == true && $func->hasFile("file")) {
+			if (isset($config['static'][$type]['images']) && $config['static'][$type]['images'] == true && $func->hasFile("file")) {
 				$file_name = $func->uploadName($_FILES["file"]["name"]);
-				$imgType = $config['static'][$type]['img_type'] ?? ['jpg', 'png', 'gif', 'jpeg'];
+				$imgType = $config['static'][$type]['img_type'] ?? '.jpg|.gif|.png|.jpeg';
 				$uploadPath = defined('UPLOAD_STATIC') ? UPLOAD_STATIC : '../upload/static/';
 				
 				if ($photo = $func->uploadImage("file", $imgType, $uploadPath, $file_name)) {
-					$row = $staticRepo->getByType($type);
+					// In admin, get all data regardless of status
+					$row = $staticRepo->getByType($type, false);
 					
 					if (!empty($row['photo'])) {
 						$deletePath = defined('UPLOAD_STATIC') ? UPLOAD_STATIC : '../upload/static/';
@@ -127,6 +129,42 @@ function saveStatic()
 					}
 					
 					$staticRepo->update($static['id'], ['photo' => $photo]);
+				}
+			}
+			
+			/* Photo2 upload */
+			if (isset($config['static'][$type]['images2']) && $config['static'][$type]['images2'] == true && $func->hasFile("file2")) {
+				$file_name = $func->uploadName($_FILES["file2"]["name"]);
+				$imgType = $config['static'][$type]['img_type'] ?? '.jpg|.gif|.png|.jpeg';
+				$uploadPath = defined('UPLOAD_STATIC') ? UPLOAD_STATIC : '../upload/static/';
+				
+				if ($photo2 = $func->uploadImage("file2", $imgType, $uploadPath, $file_name)) {
+					$row = $staticRepo->getByType($type, false);
+					
+					if (!empty($row['photo2'])) {
+						$deletePath = defined('UPLOAD_STATIC') ? UPLOAD_STATIC : '../upload/static/';
+						$func->deleteFile($deletePath . $row['photo2']);
+					}
+					
+					$staticRepo->update($static['id'], ['photo2' => $photo2]);
+				}
+			}
+			
+			/* File attach upload */
+			if (isset($config['static'][$type]['file']) && $config['static'][$type]['file'] == true && $func->hasFile("file_attach")) {
+				$file_name = $func->uploadName($_FILES["file_attach"]["name"]);
+				$fileType = $config['static'][$type]['file_type'] ?? '.pdf|.doc|.docx|.xls|.xlsx|.zip|.rar';
+				$uploadPath = defined('UPLOAD_FILE') ? UPLOAD_FILE : '../upload/file/';
+				
+				if ($file_attach = $func->uploadImage("file_attach", $fileType, $uploadPath, $file_name)) {
+					$row = $staticRepo->getByType($type, false);
+					
+					if (!empty($row['file_attach'])) {
+						$deletePath = defined('UPLOAD_FILE') ? UPLOAD_FILE : '../upload/file/';
+						$func->deleteFile($deletePath . $row['file_attach']);
+					}
+					
+					$staticRepo->update($static['id'], ['file_attach' => $file_attach]);
 				}
 			}
 			
@@ -153,16 +191,39 @@ function saveStatic()
 		// Create new static
 		$data['date_created'] = time();
 		if ($staticRepo->create($data)) {
-			$newStatic = $staticRepo->getByType($type);
+			// In admin, get all data regardless of status
+			$newStatic = $staticRepo->getByType($type, false);
 			
 			/* Photo upload */
-			if (isset($config['static'][$type]['photo']) && $config['static'][$type]['photo'] == true && $func->hasFile("file")) {
+			if (isset($config['static'][$type]['images']) && $config['static'][$type]['images'] == true && $func->hasFile("file")) {
 				$file_name = $func->uploadName($_FILES["file"]["name"]);
-				$imgType = $config['static'][$type]['img_type'] ?? ['jpg', 'png', 'gif', 'jpeg'];
+				$imgType = $config['static'][$type]['img_type'] ?? '.jpg|.gif|.png|.jpeg';
 				$uploadPath = defined('UPLOAD_STATIC') ? UPLOAD_STATIC : '../upload/static/';
 				
 				if ($photo = $func->uploadImage("file", $imgType, $uploadPath, $file_name)) {
 					$staticRepo->update($newStatic['id'], ['photo' => $photo]);
+				}
+			}
+			
+			/* Photo2 upload */
+			if (isset($config['static'][$type]['images2']) && $config['static'][$type]['images2'] == true && $func->hasFile("file2")) {
+				$file_name = $func->uploadName($_FILES["file2"]["name"]);
+				$imgType = $config['static'][$type]['img_type'] ?? '.jpg|.gif|.png|.jpeg';
+				$uploadPath = defined('UPLOAD_STATIC') ? UPLOAD_STATIC : '../upload/static/';
+				
+				if ($photo2 = $func->uploadImage("file2", $imgType, $uploadPath, $file_name)) {
+					$staticRepo->update($newStatic['id'], ['photo2' => $photo2]);
+				}
+			}
+			
+			/* File attach upload */
+			if (isset($config['static'][$type]['file']) && $config['static'][$type]['file'] == true && $func->hasFile("file_attach")) {
+				$file_name = $func->uploadName($_FILES["file_attach"]["name"]);
+				$fileType = $config['static'][$type]['file_type'] ?? '.pdf|.doc|.docx|.xls|.xlsx|.zip|.rar';
+				$uploadPath = defined('UPLOAD_FILE') ? UPLOAD_FILE : '../upload/file/';
+				
+				if ($file_attach = $func->uploadImage("file_attach", $fileType, $uploadPath, $file_name)) {
+					$staticRepo->update($newStatic['id'], ['file_attach' => $file_attach]);
 				}
 			}
 			

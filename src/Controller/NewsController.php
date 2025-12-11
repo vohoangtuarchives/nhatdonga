@@ -4,6 +4,7 @@ namespace Tuezy\Controller;
 
 use Tuezy\Repository\NewsRepository;
 use Tuezy\Repository\CategoryRepository;
+use Tuezy\Repository\TagsRepository;
 use Tuezy\Service\NewsService;
 
 /**
@@ -14,6 +15,7 @@ class NewsController extends BaseController
     private NewsService $newsService;
     private NewsRepository $newsRepo;
     private CategoryRepository $categoryRepo;
+    private TagsRepository $tagsRepo;
     protected $db;
     private string $lang;
 
@@ -33,6 +35,7 @@ class NewsController extends BaseController
 
         $this->newsRepo = new NewsRepository($db, $this->lang, $type);
         $this->categoryRepo = new CategoryRepository($db, $cache, $this->lang, $sluglang, 'news');
+        $this->tagsRepo = new TagsRepository($db, $cache, $this->lang, $sluglang);
         $this->newsService = new NewsService($this->newsRepo, $this->categoryRepo, $db, $this->lang, $sluglang);
     }
 
@@ -104,7 +107,8 @@ class NewsController extends BaseController
 
         // Breadcrumbs
         if (!empty($GLOBALS['titleMain'])) {
-            $this->breadcrumbHelper->add($GLOBALS['titleMain'],  ($type ?? 'tin-tuc'));
+            $moduleSlug = '/' . ($type ?? 'tin-tuc');
+            $this->breadcrumbHelper->add($GLOBALS['titleMain'], $moduleSlug);
         }
         $sluglang = 'slugvi';
         $listItem = null; $catItem = null; $itemItem = null; $subItem = null;
@@ -128,12 +132,14 @@ class NewsController extends BaseController
 
         return [
             'detail' => $rowDetail,
+            'rowDetail' => $rowDetail, // Template expects $rowDetail variable
             'list' => $listItem,
             'cat' => $catItem,
             'item' => $itemItem,
             'sub' => $subItem,
             'photos' => $newsContext['photos'] ?? [],
             'related' => $newsContext['related'] ?? [],
+            'otherNewss' => $newsContext['related'] ?? [], // Template expects $otherNewss variable
             'breadcrumbs' => $this->breadcrumbHelper->render(),
         ];
     }
@@ -162,6 +168,12 @@ class NewsController extends BaseController
             $titleMain = null; // Will use constant in template
         }
 
+        // Breadcrumbs
+        if (!empty($titleMain)) {
+            $moduleSlug = '/' . $type;
+            $this->breadcrumbHelper->add($titleMain, $moduleSlug);
+        }
+
         $articlesVo = array_map(function ($r) {
             $name = (string)($r['name' . $this->lang] ?? '');
             $slug = (string)($r['slugvi'] ?? $r['slug' . $this->lang] ?? '');
@@ -175,6 +187,7 @@ class NewsController extends BaseController
             'paging' => $paging,
             'titleMain' => $titleMain,
             'articlesVo' => $articlesVo,
+            'breadcrumbs' => $this->breadcrumbHelper->render(),
         ];
     }
 
@@ -237,7 +250,8 @@ class NewsController extends BaseController
 
         // Breadcrumbs
         if (!empty($GLOBALS['titleMain'])) {
-            $this->breadcrumbHelper->add($GLOBALS['titleMain'], '/tin-tuc');
+            $moduleSlug = '/' . $type;
+            $this->breadcrumbHelper->add($GLOBALS['titleMain'], $moduleSlug);
         }
         $this->breadcrumbHelper->add($category['name' . $lang], $category[$sluglang]);
 
@@ -273,7 +287,10 @@ class NewsController extends BaseController
         if (!$category) { header('HTTP/1.0 404 Not Found', true, 404); include("404.php"); exit; }
         $lang = $this->lang; $sluglang = 'slugvi';
         $seolang = 'vi';
-        if (!empty($GLOBALS['titleMain'])) { $this->breadcrumbHelper->add($GLOBALS['titleMain'], '/tin-tuc'); }
+        if (!empty($GLOBALS['titleMain'])) { 
+            $moduleSlug = '/' . $type;
+            $this->breadcrumbHelper->add($GLOBALS['titleMain'], $moduleSlug); 
+        }
         $this->breadcrumbHelper->add($category['name' . $lang], $category[$sluglang]);
         $seoMeta = (new \Tuezy\Application\SEO\GetSeoMetaByParentVo(new \Tuezy\Repository\SeoRepository($this->db)))->execute($category['id'], 'news', 'man_cat', $category['type'], $seolang);
         $this->seo->set('h1', $category['name' . $lang]);
@@ -307,7 +324,10 @@ class NewsController extends BaseController
         if (!$category) { header('HTTP/1.0 404 Not Found', true, 404); include("404.php"); exit; }
         $lang = $this->lang; $sluglang = 'slugvi';
         $seolang = 'vi';
-        if (!empty($GLOBALS['titleMain'])) { $this->breadcrumbHelper->add($GLOBALS['titleMain'], '/tin-tuc'); }
+        if (!empty($GLOBALS['titleMain'])) { 
+            $moduleSlug = '/' . $type;
+            $this->breadcrumbHelper->add($GLOBALS['titleMain'], $moduleSlug); 
+        }
         $this->breadcrumbHelper->add($category['name' . $lang], $category[$sluglang]);
         $seoMeta = (new \Tuezy\Application\SEO\GetSeoMetaByParentVo(new \Tuezy\Repository\SeoRepository($this->db)))->execute($category['id'], 'news', 'man_item', $category['type'], $seolang);
         $this->seo->set('h1', $category['name' . $lang]);
@@ -341,7 +361,10 @@ class NewsController extends BaseController
         if (!$category) { header('HTTP/1.0 404 Not Found', true, 404); include("404.php"); exit; }
         $lang = $this->lang; $sluglang = 'slugvi';
         $seolang = 'vi';
-        if (!empty($GLOBALS['titleMain'])) { $this->breadcrumbHelper->add($GLOBALS['titleMain'], '/tin-tuc'); }
+        if (!empty($GLOBALS['titleMain'])) { 
+            $moduleSlug = '/' . $type;
+            $this->breadcrumbHelper->add($GLOBALS['titleMain'], $moduleSlug); 
+        }
         $this->breadcrumbHelper->add($category['name' . $lang], $category[$sluglang]);
         $seoMeta = (new \Tuezy\Application\SEO\GetSeoMetaByParentVo(new \Tuezy\Repository\SeoRepository($this->db)))->execute($category['id'], 'news', 'man_sub', $category['type'], $seolang);
         $this->seo->set('h1', $category['name' . $lang]);
@@ -365,6 +388,141 @@ class NewsController extends BaseController
             'paging' => $paging,
             'breadcrumbs' => $this->breadcrumbHelper->render(),
             'dto' => $listResult['dto'],
+            'articlesVo' => $articlesVo,
+        ];
+    }
+
+    /**
+     * Display news tag page
+     * 
+     * @return array View data
+     */
+    public function tags(): array
+    {
+        $id = (int)($_GET['id'] ?? 0);
+        $type = 'tin-tuc'; // Default for news controller tags
+        
+        if ($id <= 0) {
+            header('HTTP/1.0 404 Not Found', true, 404);
+            include("404.php");
+            exit;
+        }
+
+        /* Lấy tag detail */
+        $tags_detail = $this->tagsRepo->getById($id, $type);
+        
+        if (!$tags_detail) {
+            header('HTTP/1.0 404 Not Found', true, 404);
+            include("404.php");
+            exit;
+        }
+
+        /* Lấy items by tag */
+        $idTags = $this->db->rawQuery("select id_parent from #_news_tags where id_tags = ?", array($id));
+        $idTags = (!empty($idTags)) ? $this->func->joinCols($idTags, 'id_parent') : '';
+
+        $curPage = $this->paginationHelper->getCurrentPage();
+        $perPage = 12;
+        $start = $this->paginationHelper->getStartPoint($curPage, $perPage);
+
+        // Get news by IDs
+        $items = [];
+        $totalItems = 0;
+        
+        if (!empty($idTags)) {
+            $ids = explode(',', $idTags);
+            foreach ($ids as $newsId) {
+                // NewsRepository doesn't have getNewsDetail matching exact ProductRepository signature usually
+                // But context-based detail fetch or getOne?
+                // Checking NewsController::detail -> uses GetArticleDetail -> newsRepo
+                // Let's use getNewsDetail if it exists in Repo, or raw query or existing method.
+                // In legacy tags.php: $newsItem = $newsRepo->getNewsDetail((int)$newsId, $type);
+                // I should assume getNewsDetail exists on Repo if tags.php used it (assuming tags.php was correct legacy reference?)
+                // Actually tags.php I saw was "REFACTORED VERSION" created by me or previous session? 
+                // Ah, I created sources/tags.php in previous session? No, I read it. The file header said "REFACTORED VERSION".
+                // So NewsRepository should have getNewsDetail.
+                
+                // Let's verify NewsRepository methods? No time, let's trust tags.php usage.
+                
+                // Wait, in NewsController::detail I see:
+                // $newsContext = (new \Tuezy\Application\Content\GetArticleDetail($this->newsRepo))->execute($id, $type, true);
+                // $rowDetail = $newsContext['detail'];
+                
+                // I can use GetArticleDetail application service again easily.
+                
+                $newsContext = (new \Tuezy\Application\Content\GetArticleDetail($this->newsRepo))->execute((int)$newsId, $type, true);
+                if ($newsContext && !empty($newsContext['detail'])) {
+                    $items[] = $newsContext['detail'];
+                }
+            }
+            $totalItems = count($items);
+            $items = array_slice($items, $start, $perPage);
+        }
+
+        // Pagination
+        $url = $this->func->getCurrentPageURL();
+        $paging = $this->paginationHelper->getPagination($totalItems, $url, '', $perPage);
+
+        /* SEO */
+        $lang = $this->lang;
+        $seolang = 'vi';
+        $sluglang = 'slugvi';
+        
+        $titleMain = $tags_detail['name' . $lang];
+        $seoDB = $this->seo->getOnDB($tags_detail['id'], 'tags', 'man', $tags_detail['type']);
+        
+        $this->seo->set('h1', $tags_detail['name' . $lang]);
+        
+        if (!empty($seoDB['title' . $seolang])) {
+            $this->seo->set('title', $seoDB['title' . $seolang]);
+        } else {
+            $this->seo->set('title', $tags_detail['name' . $lang]);
+        }
+        
+        if (!empty($seoDB['keywords' . $seolang])) {
+            $this->seo->set('keywords', $seoDB['keywords' . $seolang]);
+        }
+        
+        if (!empty($seoDB['description' . $seolang])) {
+            $this->seo->set('description', $seoDB['description' . $seolang]);
+        }
+        
+        $this->seo->set('url', $this->func->getPageURL());
+        
+        // Handle SEO image
+        $imgJson = (!empty($tags_detail['options'])) ? json_decode($tags_detail['options'], true) : null;
+        
+        if (empty($imgJson) || ($imgJson['p'] != $tags_detail['photo'])) {
+            $imgJson = $this->func->getImgSize($tags_detail['photo'], UPLOAD_TAGS_L . $tags_detail['photo']);
+            $this->seo->updateSeoDB(json_encode($imgJson), 'tags', $tags_detail['id']);
+        }
+        
+        if (!empty($imgJson)) {
+            $configBase = $this->config['database']['url'] ?? '';
+            $this->seo->set('photo', $configBase . THUMBS . '/' . $imgJson['w'] . 'x' . $imgJson['h'] . 'x2/' . UPLOAD_TAGS_L . $tags_detail['photo']);
+            $this->seo->set('photo:width', $imgJson['w']);
+            $this->seo->set('photo:height', $imgJson['h']);
+            $this->seo->set('photo:type', $imgJson['m']);
+        }
+
+        /* Breadcrumbs */
+        if (!empty($titleMain)) {
+            $this->breadcrumbHelper->add($titleMain, $tags_detail[$sluglang]);
+        }
+        $breadcrumbs = $this->breadcrumbHelper->render();
+
+        $articlesVo = array_map(function ($r) {
+            $name = (string)($r['name' . $this->lang] ?? '');
+            $slug = (string)($r['slugvi'] ?? $r['slug' . $this->lang] ?? '');
+            $photo = (string)($r['photo'] ?? '');
+            return new \Tuezy\Domain\Content\ArticleListItem((int)$r['id'], $name, $slug, $photo);
+        }, $items ?? []);
+
+        return [
+            'news' => $items,
+            'paging' => $paging,
+            'titleMain' => $titleMain,
+            'breadcrumbs' => $breadcrumbs,
             'articlesVo' => $articlesVo,
         ];
     }

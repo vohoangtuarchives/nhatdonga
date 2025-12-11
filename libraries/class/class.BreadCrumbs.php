@@ -1,113 +1,18 @@
 <?php
+use Tuezy\BreadcrumbHelper;
 
-	class BreadCrumbs
+class BreadCrumbs extends BreadcrumbHelper
+{
+    public function set($slug = '', $name = '')
+    {
+        // Legacy 'set' had ($slug, $name)
+        // New 'add' has ($name, $slug)
+        parent::add($name, $slug);
+    }
 
-	{
-
-		private $d;
-
-		private $data = array();
-
-
-
-		function __construct($d)
-
-		{
-
-			$this->d = $d;
-
-		}
-
-
-
-		public function set($slug='', $name='')
-
-		{
-
-			if($name != '')
-
-			{
-
-				$this->data[] = array('slug' => $slug, 'name' => $name);
-
-			}
-
-		}
-
-
-
-	public function get($configBase = null)
-
-	{
-
-		// Get configBase from parameter or helper function
-		if ($configBase === null) {
-			// Try to get from helper function
-			if (function_exists('Tuezy\config')) {
-				$config = \Tuezy\config();
-				$http = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)) ? 'https://' : 'http://';
-				$configUrl = $config['database']['server-name'] . $config['database']['url'];
-				$configBase = $http . $configUrl;
-			} else {
-				// Fallback to global for backward compatibility
-				global $configBase;
-			}
-		}
-
-		
-
-		$json = array();
-
-		$breadcumb = '';
-
-
-
-		if($this->data)
-
-		{
-
-			$breadcumb .= '<ol class="breadcrumb">';
-
-			$breadcumb .= '<li class="breadcrumb-item"><a class="text-decoration-none" href="'.$configBase.'"><span>'.trangchu.'</span></a></li>';
-
-			$k = 1;
-
-			foreach($this->data as $key => $value)
-
-			{
-
-				if($value['name'] != '')
-
-				{
-
-					$slug = ($value['slug']) ? $configBase.$value['slug'] : '';
-
-					$name = $value['name'];
-
-					$active = ($key == count($this->data) - 1) ? "active" : "";
-
-					$breadcumb .= '<li class="breadcrumb-item '.$active.'"><a class="text-decoration-none" href="'.$slug.'"><span>'.$name.'</span></a></li>';
-
-					$json[] = array("@type"=>"ListItem","position"=>$k,"name"=>$name,"item"=>$slug);
-
-					$k++;
-
-				}
-
-			}
-
-		    $breadcumb .= '</ol>';
-
-		    $breadcumb .= '<script type="application/ld+json">{"@context": "https://schema.org","@type": "BreadcrumbList","itemListElement": '.((json_encode($json))).'}</script>';
-
-		}
-
-
-
-		    return $breadcumb;
-
-		}
-
-	}
-
-?>
+    public function get($configBase = null)
+    {
+        // Legacy get() returned rendered HTML
+        return parent::render();
+    }
+}

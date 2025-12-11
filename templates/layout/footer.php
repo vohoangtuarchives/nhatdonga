@@ -43,10 +43,10 @@
                         <a href="/"><img src="assets/images/logo_footer.webp" alt="logo footer" class="img-fluid"/></a>
                         <h3 class="footer-company-title py-3 my-3">CÔNG TY TNHH ISF</h3>
                         <div>
-                            <p><?=$optsetting["address"]?></p>
-                            <p>Hotline:<?=$optsetting["hotline"]?></p>
-                            <p>Email: <?=$optsetting["email"]?></p>
-                            <p>MST: <?=$optsetting["email"]?></p>
+                            <p><?=$optsetting["address"] ?? ''?></p>
+                            <p>Hotline: <?=$optsetting["hotline"] ?? ''?></p>
+                            <p>Email: <?=$optsetting["email"] ?? ''?></p>
+                            <p>MST: <?=$optsetting["email"] ?? ''?></p>
                         </div>
                         <div class="my-4 text-center">
                             <img src="assets/images/bct.webp" alt="bct" height="133">

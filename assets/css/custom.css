@@ -293,8 +293,8 @@
 
 /* Example usage */
 body {
-    font-family: var(--font-sans);
-    font-weight: 300;
+    /* font-family: var(--font-sans); */
+    /* font-weight: 300; */
     line-height: 1.5;
 }
 

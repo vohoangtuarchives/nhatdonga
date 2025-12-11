@@ -49,9 +49,9 @@ class SeoService
      * @param string $com Component name
      * @param string $act Action name
      * @param string $type Type
-     * @return array|null SEO data or null
+     * @return array SEO data or empty array if not found
      */
-    public function getOnDB(int $id = 0, string $com = '', string $act = '', string $type = ''): ?array
+    public function getOnDB(int $id = 0, string $com = '', string $act = '', string $type = ''): array
     {
         if (!$id && $act !== 'update') {
             return null;
@@ -64,7 +64,8 @@ class SeoService
                  LIMIT 0,1",
                 [$id, $com, $act, $type]
             );
-            return is_array($row) ? $row : null;
+            // rawQueryOne can return false, convert to empty array for template compatibility
+            return ($row !== false && is_array($row)) ? $row : [];
         }
 
         $row = $this->db->rawQueryOne(
@@ -73,7 +74,8 @@ class SeoService
              LIMIT 0,1",
             [$com, $act, $type]
         );
-        return is_array($row) ? $row : null;
+        // rawQueryOne can return false, convert to empty array for template compatibility
+        return ($row !== false && is_array($row)) ? $row : [];
     }
 
     /**

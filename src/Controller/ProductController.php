@@ -55,7 +55,9 @@ class ProductController extends BaseController
             // Return empty data structure instead of exit to allow template to handle
             return [
                 'detail' => null,
+                'rowDetail' => null, // Template expects $rowDetail variable
                 'tags' => [],
+                'rowTags' => [], // Template expects $rowTags variable
                 'colors' => [],
                 'sizes' => [],
                 'list' => null,
@@ -64,6 +66,7 @@ class ProductController extends BaseController
                 'sub' => null,
                 'brand' => null,
                 'photos' => [],
+                'rowDetailPhoto' => [], // Template expects $rowDetailPhoto
                 'related' => [],
                 'breadcrumbs' => ''
             ];
@@ -142,7 +145,9 @@ class ProductController extends BaseController
 
         return [
             'detail' => $rowDetail,
+            'rowDetail' => $rowDetail, // Template expects $rowDetail variable
             'tags' => $detailContext['tags'] ?? [],
+            'rowTags' => $detailContext['tags'] ?? [], // Template expects $rowTags variable
             'colors' => $detailContext['colors'] ?? [],
             'sizes' => $detailContext['sizes'] ?? [],
             'list' => $detailContext['list'] ?? null,
@@ -151,6 +156,7 @@ class ProductController extends BaseController
             'sub' => $detailContext['sub'] ?? null,
             'brand' => $detailContext['brand'] ?? null,
             'photos' => $detailContext['photos'] ?? [],
+            'rowDetailPhoto' => $detailContext['photos'] ?? [], // Template expects $rowDetailPhoto
             'related' => $detailContext['related'] ?? [],
             'breadcrumbs' => $this->breadcrumbHelper->render(),
             'dto' => $detailContext['dto'] ?? null,
@@ -195,6 +201,12 @@ class ProductController extends BaseController
             $titleMain = null; // Will use constant in template
         }
 
+        // Breadcrumbs
+        if (!empty($titleMain)) {
+            $moduleSlug = '/' . $type;
+            $this->breadcrumbHelper->add($titleMain, $moduleSlug);
+        }
+
         $productsVo = array_map(fn($r) => $this->mapProductListItem($r), $listResult['items'] ?? []);
 
         return [
@@ -206,6 +218,7 @@ class ProductController extends BaseController
             'titleMain' => $titleMain,
             'dto' => $listResult['dto'],
             'productsVo' => $productsVo,
+            'breadcrumbs' => $this->breadcrumbHelper->render(),
         ];
     }
 
@@ -312,7 +325,10 @@ class ProductController extends BaseController
         $this->seo->set('url', $this->func->getPageURL());
 
         $sluglang = 'slugvi';
-        if (!empty($GLOBALS['titleMain'])) { $this->breadcrumbHelper->add($GLOBALS['titleMain'], '/san-pham'); }
+        if (!empty($GLOBALS['titleMain'])) { 
+            $moduleSlug = '/' . $type;
+            $this->breadcrumbHelper->add($GLOBALS['titleMain'], $moduleSlug); 
+        }
         $this->breadcrumbHelper->add($category['name' . $lang], $category[$sluglang]);
 
         $listResult = (new \Tuezy\Application\Catalog\ListProductsByHierarchy($this->productRepo))->execute($type, 'list', $id, $page, $perPage);
@@ -342,7 +358,10 @@ class ProductController extends BaseController
             exit;
         }
         $lang = $this->lang; $sluglang = 'slugvi';
-        if (!empty($GLOBALS['titleMain'])) { $this->breadcrumbHelper->add($GLOBALS['titleMain'], '/san-pham'); }
+        if (!empty($GLOBALS['titleMain'])) { 
+            $moduleSlug = '/' . $type;
+            $this->breadcrumbHelper->add($GLOBALS['titleMain'], $moduleSlug); 
+        }
         $this->breadcrumbHelper->add($category['name' . $lang], $category[$sluglang]);
         $listResult = (new \Tuezy\Application\Catalog\ListProductsByHierarchy($this->productRepo))->execute($type, 'item', $id, $page, $perPage);
         $url = $this->func->getCurrentPageURL();
@@ -369,7 +388,10 @@ class ProductController extends BaseController
             exit;
         }
         $lang = $this->lang; $sluglang = 'slugvi';
-        if (!empty($GLOBALS['titleMain'])) { $this->breadcrumbHelper->add($GLOBALS['titleMain'], '/san-pham'); }
+        if (!empty($GLOBALS['titleMain'])) { 
+            $moduleSlug = '/' . $type;
+            $this->breadcrumbHelper->add($GLOBALS['titleMain'], $moduleSlug); 
+        }
         $this->breadcrumbHelper->add($category['name' . $lang], $category[$sluglang]);
         $listResult = (new \Tuezy\Application\Catalog\ListProductsByHierarchy($this->productRepo))->execute($type, 'sub', $id, $page, $perPage);
         $url = $this->func->getCurrentPageURL();
@@ -398,7 +420,10 @@ class ProductController extends BaseController
         if ($seoMeta && $seoMeta->title) { $this->seo->set('title', $seoMeta->title); } else { $this->seo->set('title', $brand['name' . $lang]); }
         if ($seoMeta && $seoMeta->keywords) { $this->seo->set('keywords', $seoMeta->keywords); }
         if ($seoMeta && $seoMeta->description) { $this->seo->set('description', $seoMeta->description); }
-        if (!empty($GLOBALS['titleMain'])) { $this->breadcrumbHelper->add($GLOBALS['titleMain'], '/san-pham'); }
+        if (!empty($GLOBALS['titleMain'])) { 
+            $moduleSlug = '/' . $type;
+            $this->breadcrumbHelper->add($GLOBALS['titleMain'], $moduleSlug); 
+        }
         $this->breadcrumbHelper->add($brand['name' . $lang], $brand[$sluglang]);
         $listResult = (new \Tuezy\Application\Catalog\ListProductsByHierarchy($this->productRepo))->execute($type, 'brand', $id, $page, $perPage);
         $url = $this->func->getCurrentPageURL();
@@ -454,6 +479,120 @@ class ProductController extends BaseController
             'paging' => $paging,
             'categoriesTree' => $categoriesTree,
             'brands' => $brands,
+            'productsVo' => $productsVo,
+        ];
+    }
+
+    /**
+     * Display product tag page
+     * 
+     * @return array View data
+     */
+    public function tags(): array
+    {
+        $id = (int)($_GET['id'] ?? 0);
+        $type = 'san-pham'; // Default for product controller tags
+        
+        if ($id <= 0) {
+            header('HTTP/1.0 404 Not Found', true, 404);
+            include("404.php");
+            exit;
+        }
+
+        /* Lấy tag detail */
+        $tags_detail = $this->tagsRepo->getById($id, $type);
+        
+        if (!$tags_detail) {
+            header('HTTP/1.0 404 Not Found', true, 404);
+            include("404.php");
+            exit;
+        }
+
+        /* Lấy items by tag */
+        $idTags = $this->db->rawQuery("select id_parent from #_product_tags where id_tags = ?", array($id));
+        $idTags = (!empty($idTags)) ? $this->func->joinCols($idTags, 'id_parent') : '';
+
+        $curPage = $this->paginationHelper->getCurrentPage();
+        $perPage = 12;
+        $start = $this->paginationHelper->getStartPoint($curPage, $perPage);
+
+        // Get products by IDs
+        $items = [];
+        $totalItems = 0;
+        
+        if (!empty($idTags)) {
+            $ids = explode(',', $idTags);
+            foreach ($ids as $productId) {
+                $product = $this->productRepo->getProductDetail((int)$productId, $type);
+                if ($product) {
+                    $items[] = $product;
+                }
+            }
+            $totalItems = count($items);
+            // Paginate manually since we fetched all compatible items (could be optimized with WHERE IN query in Repo but this follows port logic)
+            $items = array_slice($items, $start, $perPage);
+        }
+
+        // Pagination
+        $url = $this->func->getCurrentPageURL();
+        $paging = $this->paginationHelper->getPagination($totalItems, $url, '', $perPage);
+
+        /* SEO */
+        $lang = $this->lang;
+        $seolang = 'vi';
+        $sluglang = 'slugvi';
+        
+        $titleMain = $tags_detail['name' . $lang];
+        $seoDB = $this->seo->getOnDB($tags_detail['id'], 'tags', 'man', $tags_detail['type']);
+        
+        $this->seo->set('h1', $tags_detail['name' . $lang]);
+        
+        if (!empty($seoDB['title' . $seolang])) {
+            $this->seo->set('title', $seoDB['title' . $seolang]);
+        } else {
+            $this->seo->set('title', $tags_detail['name' . $lang]);
+        }
+        
+        if (!empty($seoDB['keywords' . $seolang])) {
+            $this->seo->set('keywords', $seoDB['keywords' . $seolang]);
+        }
+        
+        if (!empty($seoDB['description' . $seolang])) {
+            $this->seo->set('description', $seoDB['description' . $seolang]);
+        }
+        
+        $this->seo->set('url', $this->func->getPageURL());
+        
+        // Handle SEO image
+        $imgJson = (!empty($tags_detail['options'])) ? json_decode($tags_detail['options'], true) : null;
+        
+        if (empty($imgJson) || ($imgJson['p'] != $tags_detail['photo'])) {
+            $imgJson = $this->func->getImgSize($tags_detail['photo'], UPLOAD_TAGS_L . $tags_detail['photo']);
+            $this->seo->updateSeoDB(json_encode($imgJson), 'tags', $tags_detail['id']);
+        }
+        
+        if (!empty($imgJson)) {
+            $configBase = $this->config['database']['url'] ?? '';
+            $this->seo->set('photo', $configBase . THUMBS . '/' . $imgJson['w'] . 'x' . $imgJson['h'] . 'x2/' . UPLOAD_TAGS_L . $tags_detail['photo']);
+            $this->seo->set('photo:width', $imgJson['w']);
+            $this->seo->set('photo:height', $imgJson['h']);
+            $this->seo->set('photo:type', $imgJson['m']);
+        }
+
+        /* Breadcrumbs */
+        if (!empty($titleMain)) {
+            $this->breadcrumbHelper->add($titleMain, $tags_detail[$sluglang]);
+        }
+        $breadcrumbs = $this->breadcrumbHelper->render();
+
+        $productsVo = array_map(fn($r) => $this->mapProductListItem($r), $items ?? []);
+        
+        // Return standard view data for product template
+        return [
+            'product' => $items, 
+            'paging' => $paging,
+            'titleMain' => $titleMain,
+            'breadcrumbs' => $breadcrumbs,
             'productsVo' => $productsVo,
         ];
     }

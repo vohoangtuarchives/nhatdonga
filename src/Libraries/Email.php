@@ -30,7 +30,12 @@ class Email
         $social = array();
         $socialString = '';
         $this->company = $this->d->rawQueryOne("select options, namevi from #_setting limit 0,1");
-        $this->optcompany = json_decode($this->company['options'],true);
+        if ($this->company && !empty($this->company['options'])) {
+            $this->optcompany = json_decode($this->company['options'],true);
+        } else {
+            $this->optcompany = [];
+        }
+
         $logo = $this->d->rawQueryOne("select photo from #_photo where type = ? and act = ? limit 0,1",array('logo','photo_static'));
         $social = $this->d->rawQuery("select photo, link from #_photo where type = ? and find_in_set('hienthi',status) order by numb,id desc",array('social'));
 
@@ -45,17 +50,22 @@ class Email
         if(is_array($logo)){
             $logo_image = $logo['photo'];
         }
-        $this->data['email'] = ($this->optcompany['mailertype']==1) ? $this->optcompany['email_host'] : $this->optcompany['email_gmail'];
+        
+        $emailHost = $this->optcompany['email_host'] ?? '';
+        $emailGmail = $this->optcompany['email_gmail'] ?? '';
+        $mailerType = $this->optcompany['mailertype'] ?? 0;
+        
+        $this->data['email'] = ($mailerType == 1) ? $emailHost : $emailGmail;
         $this->data['color'] = '#94130F';
         $this->data['home'] = $configBase;
         $this->data['logo'] = '<img src="'.$configBase.\UPLOAD_PHOTO_L.$logo_image.'" style="max-height:70px;" >';
         $this->data['social'] = $socialString;
         $this->data['datesend'] = time();
-        $this->data['company'] = $this->company['namevi'];
-        $this->data['company:address'] = $this->optcompany['address'];
-        $this->data['company:email'] = $this->optcompany['email'];
-        $this->data['company:hotline'] = $this->optcompany['hotline'];
-        $this->data['company:website'] = $this->optcompany['website'];
+        $this->data['company'] = $this->company['namevi'] ?? '';
+        $this->data['company:address'] = $this->optcompany['address'] ?? '';
+        $this->data['company:email'] = $this->optcompany['email'] ?? '';
+        $this->data['company:hotline'] = $this->optcompany['hotline'] ?? '';
+        $this->data['company:website'] = $this->optcompany['website'] ?? '';
         $this->data['company:worktime'] = '(8-21h cả T7,CN)';
     }
 

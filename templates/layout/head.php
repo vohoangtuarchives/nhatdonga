@@ -34,7 +34,7 @@
 
 <!-- Webmaster Tool -->
 
-<?=htmlspecialchars_decode($setting['mastertool'])?>
+<?=!empty($setting['mastertool']) ? htmlspecialchars_decode($setting['mastertool']) : ''?>
 
 
 
@@ -54,9 +54,9 @@
 
 <meta name='revisit-after' content='1 days' />
 
-<meta name="author" content="<?=$setting['name'.$lang]?>" />
+<meta name="author" content="<?=$setting['name'.$lang] ?? ''?>" />
 
-<meta name="copyright" content="<?=$setting['name'.$lang]." - [".$optsetting['email']."]"?>" />
+<meta name="copyright" content="<?=($setting['name'.$lang] ?? '') ." - [".($optsetting['email'] ?? '')."]"?>" />
 
 
 
@@ -64,7 +64,7 @@
 
 <meta property="og:type" content="<?=$seo->get('type')?>" />
 
-<meta property="og:site_name" content="<?=$setting['name'.$lang]?>" />
+<meta property="og:site_name" content="<?=$setting['name'.$lang] ?? ''?>" />
 
 <meta property="og:title" content="<?=$seo->get('title')?>" />
 
@@ -88,9 +88,9 @@
 
 <meta name="twitter:card" content="summary_large_image" />
 
-<meta name="twitter:site" content="<?=$optsetting['email']?>" />
+<meta name="twitter:site" content="<?=$optsetting['email'] ?? ''?>" />
 
-<meta name="twitter:creator" content="<?=$setting['name'.$lang]?>" />
+<meta name="twitter:creator" content="<?=$setting['name'.$lang] ?? ''?>" />
 
 <meta property="og:url" content="<?=$seo->get('url')?>" />
 

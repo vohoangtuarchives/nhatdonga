@@ -37,7 +37,7 @@ $items = $khachhang;
 
 
 
- if(count($items)) { ?>
+ if(!empty($items)) { ?>
 
     <div class="wrap-khachhang wrapper py-5">
 

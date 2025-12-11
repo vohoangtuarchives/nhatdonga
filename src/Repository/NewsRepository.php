@@ -181,7 +181,7 @@ class NewsRepository implements ArticleRepositoryInterface
              WHERE {$where} 
              ORDER BY {$order} {$limitSql}",
             $params
-        );
+        ) ?: [];
     }
 
     /**
@@ -253,7 +253,7 @@ class NewsRepository implements ArticleRepositoryInterface
              order by numb,id desc
              limit ?, ?",
             $params
-        );
+        ) ?: [];
     }
 
     /**

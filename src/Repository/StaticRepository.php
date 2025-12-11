@@ -26,14 +26,20 @@ class StaticRepository implements StaticRepositoryInterface
      * Get static content by type
      * 
      * @param string $type Static type
+     * @param bool $activeOnly Only active items (with 'hienthi' status)
      * @return array|null
      */
-    public function getByType(string $type): ?array
+    public function getByType(string $type, bool $activeOnly = true): ?array
     {
+        $where = "type = ?";
+        if ($activeOnly) {
+            $where .= " AND find_in_set('hienthi',status)";
+        }
+        
         $result = $this->d->rawQueryOne(
-            "SELECT id, type, name{$this->lang}, content{$this->lang}, slug{$this->sluglang}, photo, date_created, date_updated, options 
+            "SELECT id, type, name{$this->lang}, desc{$this->lang}, content{$this->lang}, slug{$this->sluglang}, photo, photo2, link_video, file_attach, date_created, date_updated, options, status
              FROM #_static 
-             WHERE type = ? AND find_in_set('hienthi',status) 
+             WHERE {$where} 
              LIMIT 0,1",
             [$type]
         );
@@ -49,7 +55,7 @@ class StaticRepository implements StaticRepositoryInterface
     public function getById(int $id): ?array
     {
         $result = $this->d->rawQueryOne(
-            "SELECT id, type, name{$this->lang}, content{$this->lang}, slug{$this->sluglang}, photo, date_created, date_updated, options 
+            "SELECT id, type, name{$this->lang}, desc{$this->lang}, content{$this->lang}, slug{$this->sluglang}, photo, photo2, link_video, file_attach, date_created, date_updated, options 
              FROM #_static 
              WHERE id = ? 
              LIMIT 0,1",
